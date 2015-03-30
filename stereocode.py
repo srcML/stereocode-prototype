@@ -40,34 +40,34 @@ from stereocode import *
 
 
 if __name__ == "__main__":
+    config = parse_cli_arguments()
+
+#     arg_parser = argparse.ArgumentParser(
+#         prog="stereocode",
+#         description = 
+# """Annotate functions/methods with special different stereotypes.
+# The expected input to is a srcML archive.
 
 
-    arg_parser = argparse.ArgumentParser(
-        prog="stereocode",
-        description = 
-"""Annotate functions/methods with special different stereotypes.
-The expected input to is a srcML archive.
-
-
-This program has several methods of operation:
-    1) Source Code Re-documentation. Annotate the current source code itself with a
-        comment containing @stereotype followed by the stereotypes of that function.
-    2) XML Attribute Annotation. Each <function> is annotated with stereotype XML 
-        attribute that contains a comma separated list of stereotypes associated
-        with that method.
-    3) Function List. Creates a new archive containing an XML archive containing
-        a list of all function signatures by file paired with stereotype
-        information.
-        """
-    )
-    arg_parser.add_argument("-i,--input", metavar='N', type=int, nargs='+', help='an integer for the accumulator')
+# This program has several methods of operation:
+#     1) Source Code Re-documentation. Annotate the current source code itself with a
+#         comment containing @stereotype followed by the stereotypes of that function.
+#     2) XML Attribute Annotation. Each <function> is annotated with stereotype XML 
+#         attribute that contains a comma separated list of stereotypes associated
+#         with that method.
+#     3) Function List. Creates a new archive containing an XML archive containing
+#         a list of all function signatures by file paired with stereotype
+#         information.
+# """
+#     )
+#     arg_parser.add_argument("-i,--input", metavar='N', type=int, nargs='+', help='an integer for the accumulator')
 
     # parser.print_help()
     # parser.add_argument('--sum', dest='accumulate', action='store_const',
     #                    const=sum, default=max,
     #                    help='sum the integers (default: find the max)')
 
-    args = arg_parser.parse_args()
+    # args = arg_parser.parse_args()
     # if 
 
     # print args.accumulate(args.integers)

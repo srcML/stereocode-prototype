@@ -19,6 +19,13 @@
 
 import os.path, logging, argparse
 
+
+processingModes = [
+    "ReDocSrc",
+    "XmlAttr",
+    "FuncList"
+]
+
 def parse_cli_arguments(argumentString=None):
     """
     parse_cli_arguments - parse arguments from the command line. This returns
@@ -29,11 +36,34 @@ def parse_cli_arguments(argumentString=None):
     set to None.
     """
 
+    """
+    -------------------------------------------------------
+                            NOTES
+    -------------------------------------------------------
+    Needed CLI Arguments:
+        * input type - Default stdin. Possibly inferred via input type.
+        * output type - Defaults to stdout. Outputs to that or a file.
+        * Processing Mode - Defaults to source code annotating.
+            1) Source Code Re-documentation. Annotate the current source code itself with a
+                comment containing @stereotype followed by the stereotypes of that function.
+            2) XML Attribute Annotation. Each <function> is annotated with stereotype XML 
+                attribute that contains a comma separated list of stereotypes associated
+                with that method.
+            3) Function List. Creates a new archive containing an XML archive containing
+                a list of all function signatures by file paired with stereotype
+                information.
+        * Maybe formatting for comment/attribute given in the form of python
+            string formatting.
+
+        * Should this work with a URI?!?!?
+    """
+
     # Loading Help documentation.
     arg_parser = argparse.ArgumentParser(
         prog="stereocode",
         description = 
-"""Annotate functions/methods with special different stereotypes.
+"""
+Annotate functions/methods with special different stereotypes.
 The expected input to is a srcML archive.
 
 
@@ -49,8 +79,43 @@ This program has several methods of operation:
 """
     )
 
+
     # Loading arguments.
-    arg_parser.add_argument("-i,--input", metavar='N', type=int, nargs='+', help='an integer for the accumulator')
+    arg_parser.add_argument(
+        "input",
+        metavar='INPUT',
+        type=str,
+        nargs='+',
+        default=None,
+        help='Specify the input type. The default is to use stdin as the input. The input should be specified as a file path.'
+    )
+    
+    arg_parser.add_argument(
+        "-o",
+        "--output",
+        metavar='OUTPUT',
+        type=str,
+        nargs='?',
+        default=None,
+        help='Specify the output type. The default is to use stdout as the output. The output should be specified as a path to a file.'
+    )
+
+    arg_parser.add_argument(
+        "-m",
+        "--mode",
+        type=str,
+        default=processingModes[0],
+        choices=processingModes,
+        help='Specifies how the output should be annotated.'
+    )
+
+    arg_parser.add_argument(
+        "-v",
+        "--verbose",
+        action='store_true',
+        default=False,
+        help='Enables logging of debug information.'
+    )
 
     # parser.print_help()
     # parser.add_argument('--sum', dest='accumulate', action='store_const',
