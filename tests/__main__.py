@@ -19,7 +19,7 @@
 
 # sys.path.append()
 import unittest, sys
-print sys.path
+# print sys.path
 # import tests
 from test_cli_args import *
 

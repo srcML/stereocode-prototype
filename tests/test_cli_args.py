@@ -20,5 +20,5 @@
 import unittest, sys, stereocode
 
 class TestCLIArgs(unittest.TestCase):    
-    def test_stuff(self):
+    def test_input(self):
         raise NotImplementedError("DAMN!")
