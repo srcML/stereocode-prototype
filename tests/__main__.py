@@ -18,7 +18,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # sys.path.append()
-import unittest
-import __init__
+import unittest, sys
+print sys.path
+# import tests
+from test_cli_args import *
+
 if __name__ == '__main__':
     unittest.main()
