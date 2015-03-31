@@ -26,6 +26,8 @@ processingModes = [
     "FuncList"
 ]
 
+# class Configuration
+
 def parse_cli_arguments(argumentString=None):
     """
     parse_cli_arguments - parse arguments from the command line. This returns
@@ -85,8 +87,7 @@ This program has several methods of operation:
         "input",
         metavar='INPUT',
         type=str,
-        nargs='+',
-        default=None,
+        nargs='*',
         help='Specify the input type. The default is to use stdin as the input. The input should be specified as a file path.'
     )
     
@@ -97,6 +98,7 @@ This program has several methods of operation:
         type=str,
         nargs='?',
         default=None,
+        dest="output",
         help='Specify the output type. The default is to use stdout as the output. The output should be specified as a path to a file.'
     )
 
@@ -106,6 +108,7 @@ This program has several methods of operation:
         type=str,
         default=processingModes[0],
         choices=processingModes,
+        dest="mode",
         help='Specifies how the output should be annotated.'
     )
 
@@ -114,12 +117,8 @@ This program has several methods of operation:
         "--verbose",
         action='store_true',
         default=False,
+        dest="debug",
         help='Enables logging of debug information.'
     )
-
-    # parser.print_help()
-    # parser.add_argument('--sum', dest='accumulate', action='store_const',
-    #                    const=sum, default=max,
-    #                    help='sum the integers (default: find the max)')
 
     return arg_parser.parse_args(argumentString.split() if argumentString != None else None)
