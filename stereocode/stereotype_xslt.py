@@ -17,8 +17,11 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-testSheet =  """
-<?xml version="1.0" encoding="utf-8"?>
+
+import lxml.etree as et, lxml
+
+xmlTestDoc = et.XML(
+    """<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:src="http://www.sdml.info/srcML/src"
@@ -29,4 +32,4 @@ testSheet =  """
         exclude-result-prefixes="src"
     version="1.0">
 </xsl:stylesheet>
-"""
+""")

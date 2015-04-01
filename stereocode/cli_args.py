@@ -99,7 +99,7 @@ This program has several methods of operation:
         nargs='?',
         default=None,
         dest="output",
-        help='Specify the output type. The default is to use stdout as the output. The output should be specified as a path to a file.'
+        help="Specify the output type. The default is to use stdout as the output. The output should be specified as a path to a file."
     )
 
     arg_parser.add_argument(
@@ -127,6 +127,23 @@ This program has several methods of operation:
         default=False,
         dest="enableTiming",
         help='Outputs execution timing information.'
+    )
+
+    arg_parser.add_argument(
+        "--histogram",
+        action='store_true',
+        default=False,
+        dest="computeHistogram",
+        help="Output counts of all occurrences of each type stereotype. Setting this outputs a count for each time a "
+            +"stereotype occurs, and not for each combination of stereotypes."
+    )
+
+    arg_parser.add_argument(
+        "--unique-histogram",
+        action='store_true',
+        default=False,
+        dest="computeUniqueHistogram",
+        help="Output counts of all occurrences of each combination of stereotypes applied to a function."
     )
 
     return arg_parser.parse_args(argumentString.split() if argumentString != None else None)

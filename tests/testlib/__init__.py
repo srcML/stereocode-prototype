@@ -1,5 +1,5 @@
 ##
-# @file test_cli_args.py
+# @file __init__.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -17,16 +17,5 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import unittest, sys
-from stereocode import *
-
-class TestCLIArgs(unittest.TestCase):
-    def test_default_parsed_arguments(self):
-        result = parse_cli_arguments("")
-
-        self.assertTrue(isinstance(result.input, list), "Didn't get expected type.")
-        self.assertEqual(result.output, None, "Didn't get expected type.")
-        self.assertEqual(result.mode,processingModes[0], "Didn't get expected type.")
-        self.assertFalse(result.debug, "Didn't get expected type.")
-        self.assertFalse(result.enableTiming, "Didn't get expected type.")
-
+from xslt_decorators import *
+from xslt_util import *

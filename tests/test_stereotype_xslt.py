@@ -18,9 +18,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-import unittest
+import unittest, lxml.etree as et, lxml
 from stereocode import *
+from testlib import *
 
 class TestStereotypeXslt(unittest.TestCase):
-    def test_basicXslt(self):
-        raise NotImplementedError("Not implemented yet!")
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_basicXslt(self, tree):
+        print et.tostring(tree)
+        # raise NotImplementedError("Not implemented yet!")
