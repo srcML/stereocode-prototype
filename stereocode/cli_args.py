@@ -121,4 +121,12 @@ This program has several methods of operation:
         help='Enables logging of debug information.'
     )
 
+    arg_parser.add_argument(
+        "-t",
+        action='store_true',
+        default=False,
+        dest="enableTiming",
+        help='Outputs execution timing information.'
+    )
+
     return arg_parser.parse_args(argumentString.split() if argumentString != None else None)

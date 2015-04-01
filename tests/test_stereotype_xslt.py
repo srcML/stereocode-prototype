@@ -1,5 +1,5 @@
 ##
-# @file __main__.py
+# @file test_stereotype_xslt.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -17,8 +17,10 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import unittest, sys
-from test_cli_args import *
-from test_stereotype_xslt import *
-if __name__ == '__main__':
-    unittest.main()
+
+import unittest
+from stereocode import *
+
+class TestStereotypeXslt(unittest.TestCase):
+    def test_basicXslt(self):
+        raise NotImplementedError("Not implemented yet!")

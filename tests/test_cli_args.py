@@ -28,3 +28,5 @@ class TestCLIArgs(unittest.TestCase):
         self.assertEqual(result.output, None, "Didn't get expected type.")
         self.assertEqual(result.mode,processingModes[0], "Didn't get expected type.")
         self.assertFalse(result.debug, "Didn't get expected type.")
+        self.assertFalse(result.enableTiming, "Didn't get expected type.")
+        

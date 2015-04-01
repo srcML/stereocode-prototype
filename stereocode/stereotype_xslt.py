@@ -1,5 +1,5 @@
 ##
-# @file __main__.py
+# @file stereotype_xslt.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -17,8 +17,16 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import unittest, sys
-from test_cli_args import *
-from test_stereotype_xslt import *
-if __name__ == '__main__':
-    unittest.main()
+testSheet =  """
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:src="http://www.sdml.info/srcML/src"
+    xmlns:cpp="http://www.sdml.info/srcML/cpp"
+    xmlns:set="http://exslt.org/sets"
+    xmlns:exsl="http://exslt.org/common"
+    xmlns:str="http://exslt.org/strings"
+        exclude-result-prefixes="src"
+    version="1.0">
+</xsl:stylesheet>
+"""
