@@ -29,8 +29,49 @@ class TestStereotypeXslt(unittest.TestCase):
             "matchesWithAStereotype":2,
             "functionInfo":
             [
-                ("match1", ["property", "collaborator"]),
-                ("match2", ["unclassified"])
+                ("match1", ["get", "collaborator"]),
+                ("match2", ["nonconstget"])
             ]
+        })
 
+    @srcMLifyCode("tests/test_data/stereotype/command.cpp")
+    def test_commandTest(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 4,
+            "functionInfo":
+            [
+                ("sort", ["command", "stateless"]),
+                ("f", ["command"]),
+                ("f2", ["stateless"]),
+                ("f3", ["command"]),
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/stereotype/empty.cpp")
+    def test_empty(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 7,
+            "functionInfo":
+            [
+                ("n1", ["collaborator", "empty"]),
+                ("n2", ["collaborator", "empty"]),
+                ("n3", ["collaborator", "empty"]),
+                ("n5", ["collaborator", "empty"]),
+                ("n6", ["empty"]),
+                ("n7", ["empty"]),
+                ("n8", ["empty"]),
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/stereotype/command-collaborator.cpp")
+    def test_empty(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 2,
+            "functionInfo":
+            [
+                ("findWhite", ["unclassified"]),
+                ("findWhite", ["unclassified"]),
+             
+            ]
         })

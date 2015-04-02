@@ -51,6 +51,9 @@ def executeAndTestTransform(unitTestInstance, xmlDocument, xsltDocument, expecte
         )
         
         for testData in zip(matches, expectedData["functionInfo"]):
+
+            nameResult = testData[0].xpath("src:name/src:name[last()]/text()", namespaces=xmlNamespaces)
+            unitTestInstance.assertEqual(testData[1][0], nameResult[0], "Incorrect function name. Expected: {0} Actual: {1}".format(testData[1][0], nameResult[0]))
             unitTestInstance.assertIsNotNone(testData[0], "Invalid matched stereotype function.")
             stereotypeMatch = stereotypeExtractingRe.search(testData[0].getprevious().text)
             if stereotypeMatch == None:
@@ -63,7 +66,7 @@ def executeAndTestTransform(unitTestInstance, xmlDocument, xsltDocument, expecte
                 unitTestInstance.assertSetEqual(
                     set(testData[1][1]),
                     set(methodStereotypes),
-                    "Mismatched between expected and actual stereotypes. Expected: {0}. Actual: {1}.".format(testData[1][1], methodStereotypes)
+                    "Mismatched between expected and actual stereotypes. Expected: {0}. Actual: {1}. FunctionName: {2}".format(testData[1][1], methodStereotypes, nameResult[0])
                 )
     except:
         print "Failed to test stereotype data"
