@@ -18,18 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-import lxml.etree as et, lxml
+import lxml.etree as et, lxml, os, os.path
+_currentDirectory = os.path.dirname(os.path.abspath(__file__))
+_xsltFile = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
 
-xmlTestDoc = et.XML(
-    """<?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:src="http://www.sdml.info/srcML/src"
-    xmlns:cpp="http://www.sdml.info/srcML/cpp"
-    xmlns:set="http://exslt.org/sets"
-    xmlns:exsl="http://exslt.org/common"
-    xmlns:str="http://exslt.org/strings"
-        exclude-result-prefixes="src"
-    version="1.0">
-</xsl:stylesheet>
-""")
+xmlTestDoc = et.XSLT(et.parse(_xsltFile))

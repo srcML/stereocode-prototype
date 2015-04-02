@@ -25,5 +25,6 @@ from testlib import *
 class TestStereotypeXslt(unittest.TestCase):
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
     def test_basicXslt(self, tree):
-        print et.tostring(tree)
+        transformedDocument = executeTransform(tree, xmlTestDoc)
+        print et.tostring(transformedDocument)
         # raise NotImplementedError("Not implemented yet!")

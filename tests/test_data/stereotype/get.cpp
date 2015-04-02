@@ -1,11 +1,15 @@
-int x() {
-    return 0;
+int foo() {
+    return var;
 }
 
-void not_getter() {
+void foo() {
     return;
 }
 
-obj* y::x() {
+obj* y::match1() const {
     return *ptr;
+}
+
+int y::match2() const {
+    return ptr;
 }
