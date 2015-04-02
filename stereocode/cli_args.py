@@ -146,4 +146,12 @@ This program has several methods of operation:
         help="Output counts of all occurrences of each combination of stereotypes applied to a function."
     )
 
+    arg_parser.add_argument(
+        "--report",
+        action='store_true',
+        default=False,
+        dest="generateReport",
+        help="Generate a report about an archive that was transformed."
+    )
+
     return arg_parser.parse_args(argumentString.split() if argumentString != None else None)

@@ -72,6 +72,5 @@ class TestStereotypeXslt(unittest.TestCase):
             [
                 ("findWhite", ["unclassified"]),
                 ("findWhite", ["unclassified"]),
-             
             ]
         })
