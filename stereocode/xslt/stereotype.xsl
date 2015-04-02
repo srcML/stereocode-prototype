@@ -1429,7 +1429,33 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
 <xsl:template match="src:function" mode="empty"/>
 
+<!-- annotate function declarations that are defined in the definition file and are in a class -->
+<xsl:template match="src:function_decl[ancestor::src:class and not(src:isvirtual(.))]">
 
+  <!-- linked method definition -->
+  <xsl:variable name="definition" select="src:get_definition(.)"/>
+
+  <!-- annotate if we found it -->
+  <xsl:choose>
+    <xsl:when test="string-length($definition)=0">
+
+      <!-- insert comment about unable to find definition -->
+      <src:comment type="block">/** Unable to find definition for <xsl:value-of select="src:function_fullname(.)"/> */</src:comment>
+      <xsl:value-of select="$eol"/>
+
+      <!-- identity copy of function declaration -->
+      <xsl:apply-templates select="." mode="identity"/>
+    </xsl:when>
+
+    <xsl:otherwise>
+      <!-- insert the stereotype into the declaration using the definition -->
+      <xsl:apply-templates select="." mode="insert_stereotype">
+  <xsl:with-param name="definition" select="$definition"/>
+      </xsl:apply-templates>
+    </xsl:otherwise>
+  </xsl:choose>
+
+</xsl:template>
     <!--
         Section responsible for actually applying all of the stereotypes and annotating
         the source code with a comment.
