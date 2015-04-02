@@ -10,6 +10,6 @@ obj* y::match1() const {
     return *ptr;
 }
 
-int y::match2() const {
+int y::match2() {
     return ptr;
 }

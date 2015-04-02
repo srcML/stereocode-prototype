@@ -22,4 +22,4 @@ import lxml.etree as et, lxml, os, os.path
 _currentDirectory = os.path.dirname(os.path.abspath(__file__))
 _xsltFile = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
 
-xmlTestDoc = et.XSLT(et.parse(_xsltFile))
+stereocodeDoc = et.XSLT(et.parse(_xsltFile))

@@ -25,6 +25,12 @@ from testlib import *
 class TestStereotypeXslt(unittest.TestCase):
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
     def test_basicXslt(self, tree):
-        transformedDocument = executeTransform(tree, xmlTestDoc)
-        print et.tostring(transformedDocument)
-        # raise NotImplementedError("Not implemented yet!")
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype":2,
+            "functionInfo":
+            [
+                ("match1", ["property", "collaborator"]),
+                ("match2", ["unclassified"])
+            ]
+
+        })
