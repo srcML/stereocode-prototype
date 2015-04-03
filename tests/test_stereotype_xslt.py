@@ -260,8 +260,8 @@ class TestStereotypeXslt(unittest.TestCase):
 
 
     # 
-    @srcMLifyCode("tests/test_data/NTupleChiSqFCN.cpp")
-    def test_NTupleChiSqFCN(self, tree):
-        quickDumpFunctionStereotypeInfo(tree, stereocodeDoc)
+    # @srcMLifyCode("tests/test_data/NTupleChiSqFCN.cpp")
+    # def test_NTupleChiSqFCN(self, tree):
+    #     quickDumpFunctionStereotypeInfo(tree, stereocodeDoc)
 
 
