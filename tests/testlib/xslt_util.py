@@ -33,7 +33,9 @@ def executeTransform(xmlDocument, xsltDocument):
 def executeAndTestTransform(unitTestInstance, xmlDocument, xsltDocument, expectedData):
     try:
         resultingDoc = executeTransform(xmlDocument, xsltDocument)
-        
+        if len(xsltDocument.error_log) >0:
+            print xsltDocument.error_log
+        # print dir(xsltDocument)
     except:
         print "Failed to execute transformation"
         raise
@@ -70,11 +72,58 @@ def executeAndTestTransform(unitTestInstance, xmlDocument, xsltDocument, expecte
                 )
     except:
         print "Failed to test stereotype data"
-        print "transformed document"
-        print et.tostring(resultingDoc)
+        # print "transformed document"
+        # print et.tostring(resultingDoc)
 
-        print "\n\n\nMatches: "
-        for m in matches:
-            print et.tostring(m)
+        # print "\n\n\nMatches: "
+        # for m in matches:
+        #     print et.tostring(m)
         raise
-    pass
+
+
+def quickDumpFunctionStereotypeInfo(xmlDocument, xsltDocument,):
+
+    try:
+        resultingDoc = executeTransform(xmlDocument, xsltDocument)
+        print et.tostring(resultingDoc)
+        if len(xsltDocument.error_log) >0:
+            print xsltDocument.error_log
+    except:
+        print "Failed to execute transformation"
+        raise
+
+    matches = []
+    try:
+        matches = resultingDoc.xpath(
+            "//src:function[preceding-sibling::*[1][self::src:comment]]",
+            namespaces=xmlNamespaces
+        )
+        print "Number of Functions located: {0}".format(len(matches))
+        
+        # for testData in zip(matches, expectedData["functionInfo"]):
+
+        #     nameResult = testData[0].xpath("src:name/src:name[last()]/text()", namespaces=xmlNamespaces)
+        #     unitTestInstance.assertEqual(testData[1][0], nameResult[0], "Incorrect function name. Expected: {0} Actual: {1}".format(testData[1][0], nameResult[0]))
+        #     unitTestInstance.assertIsNotNone(testData[0], "Invalid matched stereotype function.")
+        #     stereotypeMatch = stereotypeExtractingRe.search(testData[0].getprevious().text)
+        #     if stereotypeMatch == None:
+        #         unitTestInstance.assertIsNone(
+        #             testData[1],
+        #             "This may indicate an invalid match. Stereotype has invalid comment before itself that is not recognized as a stereotype: {0} ".format(testData[0].getprevious().text)
+        #         )
+        #     else:
+        #         methodStereotypes = [x.lower() for x in stereotypeMatch.group("stereotypes").strip().split(" ")]
+        #         unitTestInstance.assertSetEqual(
+        #             set(testData[1][1]),
+        #             set(methodStereotypes),
+        #             "Mismatched between expected and actual stereotypes. Expected: {0}. Actual: {1}. FunctionName: {2}".format(testData[1][1], methodStereotypes, nameResult[0])
+        #         )
+    except:
+        print "Failed to test stereotype data"
+        # print "transformed document"
+        # print et.tostring(resultingDoc)
+
+        # print "\n\n\nMatches: "
+        # for m in matches:
+        #     print et.tostring(m)
+        raise

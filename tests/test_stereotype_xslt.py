@@ -57,15 +57,15 @@ class TestStereotypeXslt(unittest.TestCase):
                 ("n2", ["collaborator", "empty"]),
                 ("n3", ["collaborator", "empty"]),
                 ("n5", ["collaborator", "empty"]),
-                ("n6", ["empty"]),
-                ("n7", ["empty"]),
-                ("n8", ["empty"]),
+                ("n6", ["collaborator", "empty"]),
+                ("n7", ["collaborator", "empty"]),
+                ("n8", [ "empty"]),
             ]
         })
 
 
     @srcMLifyCode("tests/test_data/stereotype/command-collaborator.cpp")
-    def test_empty(self, tree):
+    def test_CommandCollaborator(self, tree):
         executeAndTestTransform(self, tree, stereocodeDoc, {
             "matchesWithAStereotype": 2,
             "functionInfo":
@@ -74,3 +74,194 @@ class TestStereotypeXslt(unittest.TestCase):
                 ("findWhite", ["unclassified"]),
             ]
         })
+
+
+
+
+    @srcMLifyCode("tests/test_data/xslt_functions/writeto.cpp")
+    def test_writTo(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 6,
+            "functionInfo":
+            [
+                ("updateGuess1", ["collaborator"]),
+                ("updateGuess2", ["set", "collaborator"]),
+                ("updateGuess3", ["collaborational-command","collaborator"]),
+                ("updateGuess4", ["collaborational-command", "collaborator"]),
+                ("updateGuess5", ["collaborator"]),
+                ("updateGuess6", ["collaborational-command", "collaborator"]),
+
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/xslt_functions/file.cpp")
+    def test_filecpp(self, tree):
+        """
+        Not sure what this is testing exactly.
+        """
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 6,
+            "functionInfo":
+            [
+                ("append", ["collaborator"]),
+                ("read", ["collaborator"]),
+                ("compareItems", ["collaborator"]),
+                ("newItem", ["nonconstget", "collaborator"]),
+                ("readLink", ["collaborational-property", "collaborator"])
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/stereotype/newset.cpp")
+    def test_newSetStereotypeTest(self, tree):
+        """
+        Not sure what this is testing exactly.
+        """
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 1,
+            "functionInfo":
+            [
+                ("f", ["set"])
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/stereotype/problem_1.cpp")
+    def test_problemOneTest(self, tree):
+        """
+        Not sure what this is testing exactly.
+        """
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 2,
+            "functionInfo":
+            [
+                ("findWhite", ["unclassified"]),
+                ("findWhite", ["unclassified"])
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/stereotype/problem_2.cpp")
+    def test_problemTwoTest(self, tree):
+        """
+        Not sure what this is testing exactly.
+        """
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 1,
+            "functionInfo":
+            [
+                ("isLeap", ['command', 'collaborator'])
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/xslt_functions/t1.cpp")
+    def test_t1(self, tree):
+        """
+        Not sure what this is testing exactly.
+        """
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 1,
+            "functionInfo":
+            [
+                ("foo", ['set', 'collaborator'])
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/stereotype/factory.cpp")
+    def test_factoryOne(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 1,
+            "functionInfo":
+            [
+                ("clone", ['property', 'collaborator', 'factory', 'stateless'])
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/stereotype/factory_2.cpp")
+    def test_factoryTwo(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 1,
+            "functionInfo":
+            [
+                ("clone", ['collaborator', 'factory', 'stateless'])
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/xslt_functions/quantlib_fix.cpp")
+    def test_quantlibFix(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 9,
+            "functionInfo":
+            [
+                ("code", ["non-void-command","collaborator"]),
+                ("date", ["non-void-command", "collaborator"]),
+                ("nextDate", ["non-void-command", "collaborator"]),
+                ("nextDate", ["non-void-command", "collaborator"]),
+                ("nextCode", ["non-void-command", "collaborator"]),
+                ("nextCode", ["non-void-command", "collaborator"]),
+                ("testJuValues", ["command", "collaborator"]),
+                ("testFdValues", ["command", "collaborator"]),
+                ("suite", ["non-void-command","collaborator","factory"])
+                
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/to_fix_3.cpp")
+    def test_toFixThree(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/to_fix_4.cpp")
+    def test_toFixFour(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 19,
+            "functionInfo":
+            [
+                ("t_action", ["get"]),
+                ("t_action", ["get"]),
+                ("FindVertex", ["get", "collaborator"]),
+                ("checkForImage", ["collaborator"]),
+                ("createNTupleToFile", ["non-void-command", "collaborator"]),
+                ("registerNTuple", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                ("SetValue", ["unclassified"]),
+                ("getTargetProjector", ["property","collaborator","factory"]),
+                ("initPlot", ["command"]),
+                ("drawLines", ["command", "collaborator"]),
+                ("reset", ["command"]),
+                ("run", ["collaborator"]),
+                ("setFamily", ["unclassified"]),
+                ("saveToFile", ['nonconstget', 'collaborator']),
+                ("findWhite", ["nonconstget"]),
+                ("findWhite", ["unclassified"]),
+                ("endPlot", ["set"]),
+                ("checkWidth", ["collaborator"]),
+            ]
+        })
+
+
+    # 
+    @srcMLifyCode("tests/test_data/NTupleChiSqFCN.cpp")
+    def test_NTupleChiSqFCN(self, tree):
+        quickDumpFunctionStereotypeInfo(tree, stereocodeDoc)
+
+

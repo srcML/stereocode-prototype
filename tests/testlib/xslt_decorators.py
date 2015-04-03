@@ -42,7 +42,7 @@ def srcMLifyCode(fileToProcess, language=LANGUAGE_CXX):
                 print "-" * 80
                 print "An error occurred within: %s"% func.__name__
                 print "-" * 80
-                print "srcML:\n%s" % et.tostring(srcMLXmlDoc)
+                # print "srcML:\n%s" % et.tostring(srcMLXmlDoc)
                 raise
         return run
     return decorationFunc
