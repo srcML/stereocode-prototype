@@ -265,3 +265,11 @@ class TestStereotypeXslt(unittest.TestCase):
     #     quickDumpFunctionStereotypeInfo(tree, stereocodeDoc)
 
 
+
+    # @srcMLifyCode("tests/test_data/xslt_functions/ns_collecting_test.cpp")
+    # def test_NsTest(self, tree):
+    #     executeAndTestTransform(self, tree, stereocodeDoc, {
+    #         "matchesWithAStereotype": 0,
+    #         "functionInfo":
+    #         [ ]
+    #     }, True)

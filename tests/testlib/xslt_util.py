@@ -30,12 +30,15 @@ def executeTransform(xmlDocument, xsltDocument):
     """
     return xsltDocument(xmlDocument)
 
-def executeAndTestTransform(unitTestInstance, xmlDocument, xsltDocument, expectedData):
+def executeAndTestTransform(unitTestInstance, xmlDocument, xsltDocument, expectedData, printTrasformedDoc=False):
     try:
         resultingDoc = executeTransform(xmlDocument, xsltDocument)
-        if len(xsltDocument.error_log) >0:
-            print xsltDocument.error_log
-        # print dir(xsltDocument)
+        if len(xsltDocument.error_log) > 0:
+            print "Error Log entries:"
+            for entry in xsltDocument.error_log:
+                print """    Line: {0} Col: {1} Domain: {2} Level: {3} Level Name: {4} Type: {5} Type Name: {6} Message: {7}""".format(entry.line, entry.column, entry.domain, entry.level, entry.level_name, entry.type, entry.type_name, entry.message)
+        if printTrasformedDoc:
+            print et.tostring(resultingDoc)
     except:
         print "Failed to execute transformation"
         raise
