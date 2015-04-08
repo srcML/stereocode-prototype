@@ -51,7 +51,7 @@ To identify the stereotype Collaborator one of the following statements needs to
 To identify the stereotype Creator::Factory the following conditions need to be satisfied: 
   • returns an object created in the method’s body
      -->
-
+     <!-- <xsl:variable name="extension_test" select="src:function1('aaaaa')"/> -->
 <!--    <xsl:variable name="anon_namespace">
     <xsl:text>::&lt;anonymous-ns&gt;</xsl:text>
   </xsl:variable>
@@ -136,6 +136,12 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <xsl:variable name="more_ignorable_calls" select="''"/>
   <xsl:variable name="ignorable_calls" select="str:split(concat('assert static_cast const_cast dynamic_cast reinterpret_cast ', $more_ignorable_calls))"/>
 
+
+  <!-- definition filename, i.e., .cpp filename -->
+  <xsl:param name="definition_filename"/>
+
+  <!-- definition file, i.e., .cpp file -->
+  <xsl:variable name="definition_file" select="document($definition_filename)"/>
 
 
   <!--
@@ -1434,6 +1440,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:foreach select="$allnamespaces">
       <xsl:message><xsl:value-of select="."/></xsl:message>
     </xsl:foreach> -->
+    <!-- <xsl:message><xsl:value-of select="$extension_test"/></xsl:message> -->
   </xsl:template>
 
   <!-- default identity copy -->

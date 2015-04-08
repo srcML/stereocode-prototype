@@ -266,10 +266,29 @@ class TestStereotypeXslt(unittest.TestCase):
 
 
 
-    # @srcMLifyCode("tests/test_data/xslt_functions/ns_collecting_test.cpp")
-    # def test_NsTest(self, tree):
-    #     executeAndTestTransform(self, tree, stereocodeDoc, {
-    #         "matchesWithAStereotype": 0,
-    #         "functionInfo":
-    #         [ ]
-    #     }, True)
+    # @srcMLifyCode("../hippodraw_archive.cpp.xml")
+    def test_Hippos(self):
+
+        print "Processing Hippo Draw"
+
+# with memory_buffer() as buff:
+        # with writable_archive(writable_archive_settings(default_language=language), filename="../hippodraw_archive.ann.xml") as archive_writer:
+        #     u = archive_writer.create_unit()
+        #     u.parse(filename=fileToProcess)
+        #     archive_writer.write(u)
+        print "Loading document"
+        hippoDrawDoc = et.fromstringlist(open("/home/brian/Projects/srcTools/stereocode/hippodraw_archive.cpp.xml", "r"))
+        print "loaded document"
+        transformedHippoDocument = executeTransform(hippoDrawDoc, stereocodeDoc)
+        print "Transformations applied"
+        generateTestReport(transformedHippoDocument, "hippodrawReport")
+        print "Report Generated"
+        transformedHippoDocument.write("/home/brian/Projects/srcTools/stereocode/hippodraw_archive.cpp.ann.xml")
+        print "Writing document"
+        # srcMLXmlDoc = et.XML(str(buff))
+        # func(self, srcMLXmlDoc)
+        # executeAndTestTransform(self, tree, stereocodeDoc, {
+        #     "matchesWithAStereotype": 0,
+        #     "functionInfo":
+        #     [ ]
+        # }, True)

@@ -20,6 +20,21 @@
 
 import lxml.etree as et, lxml, os, os.path
 _currentDirectory = os.path.dirname(os.path.abspath(__file__))
-_xsltFile = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
 
+# _ns = et.FunctionNamespace(None)
+
+# class MyExt:
+#     def function1(self, ctxt, arg):
+#         return '1' + arg
+#     def function2(self, ctxt, arg):
+#         return '2' + arg
+#     def function3(self, ctxt, arg):
+#         return '3' + arg
+
+# ext_module = MyExt()
+# functions = ('function1', 'function2')
+# extensions = et.Extension( ext_module, functions, ns="http://www.sdml.info/srcML/src" )
+
+# stereocodeDoc = et.XSLT(et.parse(_xsltFile), extensions=extensions)
+_xsltFile = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
 stereocodeDoc = et.XSLT(et.parse(_xsltFile))

@@ -2,3 +2,7 @@ launch_stereocode.py
 run_tests.py
 *.pyc
 hippodraw_archive.cpp.xml
+hippodrawReport/
+hippodraw_archive.cpp.ann.xml
+hippodraw_archive.cpp.xml
+previous_hippo_draw.xml
