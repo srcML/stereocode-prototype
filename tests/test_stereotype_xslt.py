@@ -266,29 +266,56 @@ class TestStereotypeXslt(unittest.TestCase):
 
 
 
-    # @srcMLifyCode("../hippodraw_archive.cpp.xml")
-    def test_Hippos(self):
+    # def test_Hippos(self):
 
-        print "Processing Hippo Draw"
+    #     print "Processing Hippo Draw"
 
-# with memory_buffer() as buff:
-        # with writable_archive(writable_archive_settings(default_language=language), filename="../hippodraw_archive.ann.xml") as archive_writer:
-        #     u = archive_writer.create_unit()
-        #     u.parse(filename=fileToProcess)
-        #     archive_writer.write(u)
-        print "Loading document"
-        hippoDrawDoc = et.fromstringlist(open("/home/brian/Projects/srcTools/stereocode/hippodraw_archive.cpp.xml", "r"))
-        print "loaded document"
-        transformedHippoDocument = executeTransform(hippoDrawDoc, stereocodeDoc)
-        print "Transformations applied"
-        generateTestReport(transformedHippoDocument, "hippodrawReport")
-        print "Report Generated"
-        transformedHippoDocument.write("/home/brian/Projects/srcTools/stereocode/hippodraw_archive.cpp.ann.xml")
-        print "Writing document"
-        # srcMLXmlDoc = et.XML(str(buff))
-        # func(self, srcMLXmlDoc)
-        # executeAndTestTransform(self, tree, stereocodeDoc, {
-        #     "matchesWithAStereotype": 0,
-        #     "functionInfo":
-        #     [ ]
-        # }, True)
+    #     # with memory_buffer() as buff:
+    #     # with writable_archive(writable_archive_settings(default_language=language), filename="../hippodraw_archive.ann.xml") as archive_writer:
+    #     #     u = archive_writer.create_unit()
+    #     #     u.parse(filename=fileToProcess)
+    #     #     archive_writer.write(u)
+    #     print "Loading document"
+    #     hippoDrawDoc = et.fromstringlist(open("/home/brian/Projects/srcTools/stereocode/hippodraw_archive.cpp.xml", "r"))
+    #     print "loaded document"
+    #     transformedHippoDocument = executeTransform(hippoDrawDoc, stereocodeDoc)
+    #     print "Transformations applied"
+    #     generateTestReport(transformedHippoDocument, "hippodrawReport")
+    #     print "Report Generated"
+    #     transformedHippoDocument.write("/home/brian/Projects/srcTools/stereocode/hippodraw_archive.cpp.ann.xml")
+    #     print "Writing document"
+
+
+    def test_hippoDrawRefactorings(self):
+        # generateStereotypeReportFromDoc
+
+        print "Testing refactorings"
+        currentHippoDrawDoc = et.fromstringlist(open("hippodraw_archive.cpp.xml", "r"))
+        transformedHippoDocument = executeTransform(currentHippoDrawDoc, stereocodeDoc)
+
+
+        expectedHippoDrawDoc = et.fromstringlist(open("previous_hippo_draw.xml", "r"))
+
+        expectedResults = generateStereotypeReportFromDoc(expectedHippoDrawDoc)
+        actualResults = generateStereotypeReportFromDoc(transformedHippoDocument)
+        self.assertEqual(
+            len(expectedResults),
+            len(actualResults),
+            "Incorrect # of results between actual and expected. Expected: {0} Actual: {1}".format(len(expectedResults), len(actualResults))
+        )
+        hasMismatchedStereotypes = False
+        for dataToTest in zip(expectedResults, actualResults):
+            if dataToTest[0][0] != dataToTest[1][0] or dataToTest[0][1] != dataToTest[1][1] or dataToTest[0][2] != dataToTest[1][2]:
+                hasMismatchedStereotypes = True
+                print """Expected:
+                {0}
+                {1}
+                {2}
+
+                Actual:
+                {3}
+                {4}
+                {5}""".format(**dataToTest)
+
+        self.assertFalse(hasMismatchedStereotypes, "Stereotype mismatched See Output")
+

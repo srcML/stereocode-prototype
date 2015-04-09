@@ -168,8 +168,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:variable name="raw1" select="normalize-space($raw0)"/>
 
     <xsl:variable name="raw2" select="str:replace($raw1, 'std::', '')"/>
-
-    <xsl:variable name="raw3" select="str:replace(str:replace(str:replace($raw2, 'hippodraw::', ''), 'numeric::', ''), 'boost::python::', '')"/>
+<!-- str:replace(str:replace(str:replace($raw2, 'hippodraw::', ''), 'numeric::', ''), 'boost::python::', '') -->
+    <xsl:variable name="raw3" select="$raw2"/>
 
     <xsl:variable name="raw4" select="concat($raw3, '||', $function/src:specifier[.='const'])"/>
 
@@ -227,8 +227,10 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
     <!-- method definition -->
     <xsl:variable name="defn" select="($definition_file//src:function | $declaration/ancestor::src:unit//src:function)
-              [$function_name=str:replace(src:strip-space(src:name), 'hippodraw::', '')]
+              [$function_name=src:strip-space(src:name)]
               "/>
+
+              <!-- [$function_name=str:replace(src:strip-space(src:name), 'hippodraw::', '')] -->
 
     <xsl:variable name="defn2" select="$defn[$function_signature=src:function_signature(.)]
               "/>

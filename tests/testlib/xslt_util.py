@@ -293,7 +293,34 @@ def generateTestReport(processedArchive, reportFolder):
         reportOutputStrm.write( reportEntry[0])
         reportOutputStrm.write(", "  + reportEntry[1] + "\n")
     reportOutputStrm.close()
-    # print functionDeclStereotypeHistogram
-    # print functionDefnStereotypeHistogram
-    # sys.stdout.flush()
+
+
+
+def generateStereotypeReportFromDoc(processedArchive):
+
+    # Extension function helpers
+    helperModule = ExtFunctions()
+    functions = {'unitIsCPPFile':'unitIsCPPFile', 'funcHasStereotype':'funcHasStereotype'}
+    extensions = et.Extension(helperModule, functions)
+    namespaces = {'src':'http://www.sdml.info/srcML/src', 'cpp':'http://www.sdml.info/srcML/cpp'}
+    evaluator = et.XPathEvaluator(processedArchive, namespaces=namespaces, extensions=extensions)
+
+    # Listing all C++ files within the archive.
+    cppFileListing = evaluator("/src:unit/src:unit[unitIsCPPFile(.)]")
+
+    functionSigAndStereotype = []
+    for unit in cppFileListing:
+        elementEvaluator = et.XPathElementEvaluator(unit, namespaces=namespaces, extensions=extensions)
+        listOfFunctions = elementEvaluator(".//src:function[funcHasStereotype(.)]")
+
+        for func in listOfFunctions:
+            stereotypes = _getStereotype(func)
+            stereotypes = sorted(stereotypes)
+
+            stereotypeKey = " ".join(stereotypes)
+            funcEvaluator = et.XPathElementEvaluator(func, namespaces=namespaces, extensions=extensions)
+            functionSigAndStereotype.append( (_getNormalizedFunctionSig(func), stereotypeKey, unit.get("filename")) )
+
+    return functionSigAndStereotype
+
 
