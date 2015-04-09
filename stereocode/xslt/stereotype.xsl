@@ -51,53 +51,6 @@ To identify the stereotype Collaborator one of the following statements needs to
 To identify the stereotype Creator::Factory the following conditions need to be satisfied: 
   • returns an object created in the method’s body
      -->
-     <!-- <xsl:variable name="extension_test" select="src:function1('aaaaa')"/> -->
-<!--    <xsl:variable name="anon_namespace">
-    <xsl:text>::&lt;anonymous-ns&gt;</xsl:text>
-  </xsl:variable>
-  
-  <func:function name="src:compute_qualified_ns_prefix">
-    <xsl:param name="current_ns"/>
-
-    <xsl:choose>
-      <xsl:when test="ancestor::src:namespace[last()]">
-        <xsl:variable name="current_ns_name" select="src:get_ns_name(.)"/>
-        <func:function select="concat(
-          src:compute_qualified_ns_prefix(
-            ancestor::src:namespace[last()]
-          ), $current_ns_name)"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="''"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </func:function>
-
-  <func:function name="src:build_ns_names">
-    <xsl:param name="ns_list"/>
-    <xsl:for-each select="$ns_list">
-      <xsl:message>
-        <xsl:value-of select="src:get_ns_name(.)"/>
-      </xsl:message>
-    </xsl:for-each>
-  </func:function> -->
-
-<!--   <func:function name="src:get_ns_name">
-    <xsl:param name="current_ns"/>
-
-    <xsl:choose>
-      <xsl:when test="$current_ns[src:name]">
-        <func:result select="src:name[last()]/text()"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="$anon_namespace"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </func:function>  -->
-
-<!--   <xsl:variable name="allnamespaces" select="src:build_ns_names(//src:namespace)"/> -->
-  
-
   <!--
     Global/Constant Variables
   -->
@@ -112,8 +65,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:text>
 </xsl:text>
   </xsl:variable>
-
-  <!-- <xsl:variable name="types" select="str:split('unsigned float wchar_t signed short int double char long string')"/> -->
 
   <!--
       Definition of native types.  Additional types can be declared in
@@ -1438,11 +1389,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- copy any element which does not contain a function -->
   <xsl:template match="@*|node()">
     <xsl:copy-of select="."/>
-<!--     <xsl:message>Attempting to output namespaces</xsl:message>
-    <xsl:foreach select="$allnamespaces">
-      <xsl:message><xsl:value-of select="."/></xsl:message>
-    </xsl:foreach> -->
-    <!-- <xsl:message><xsl:value-of select="$extension_test"/></xsl:message> -->
   </xsl:template>
 
   <!-- default identity copy -->
