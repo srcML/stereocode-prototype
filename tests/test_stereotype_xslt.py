@@ -286,36 +286,36 @@ class TestStereotypeXslt(unittest.TestCase):
     #     print "Writing document"
 
 
-    def test_hippoDrawRefactorings(self):
-        # generateStereotypeReportFromDoc
+    # def test_hippoDrawRefactorings(self):
+    #     # generateStereotypeReportFromDoc
 
-        print "Testing refactorings"
-        currentHippoDrawDoc = et.fromstringlist(open("hippodraw_archive.cpp.xml", "r"))
-        transformedHippoDocument = executeTransform(currentHippoDrawDoc, stereocodeDoc)
+    #     print "Testing refactorings"
+    #     currentHippoDrawDoc = et.fromstringlist(open("hippodraw_archive.cpp.xml", "r"))
+    #     transformedHippoDocument = executeTransform(currentHippoDrawDoc, stereocodeDoc)
 
 
-        expectedHippoDrawDoc = et.fromstringlist(open("previous_hippo_draw.xml", "r"))
+    #     expectedHippoDrawDoc = et.fromstringlist(open("previous_hippo_draw.xml", "r"))
 
-        expectedResults = generateStereotypeReportFromDoc(expectedHippoDrawDoc)
-        actualResults = generateStereotypeReportFromDoc(transformedHippoDocument)
-        self.assertEqual(
-            len(expectedResults),
-            len(actualResults),
-            "Incorrect # of results between actual and expected. Expected: {0} Actual: {1}".format(len(expectedResults), len(actualResults))
-        )
-        hasMismatchedStereotypes = False
-        for dataToTest in zip(expectedResults, actualResults):
-            if dataToTest[0][0] != dataToTest[1][0] or dataToTest[0][1] != dataToTest[1][1] or dataToTest[0][2] != dataToTest[1][2]:
-                hasMismatchedStereotypes = True
-                print """Expected:
-                {0}
-                {1}
-                {2}
+    #     expectedResults = generateStereotypeReportFromDoc(expectedHippoDrawDoc)
+    #     actualResults = generateStereotypeReportFromDoc(transformedHippoDocument)
+    #     self.assertEqual(
+    #         len(expectedResults),
+    #         len(actualResults),
+    #         "Incorrect # of results between actual and expected. Expected: {0} Actual: {1}".format(len(expectedResults), len(actualResults))
+    #     )
+    #     hasMismatchedStereotypes = False
+    #     for dataToTest in zip(expectedResults, actualResults):
+    #         if dataToTest[0][0] != dataToTest[1][0] or dataToTest[0][1] != dataToTest[1][1] or dataToTest[0][2] != dataToTest[1][2]:
+    #             hasMismatchedStereotypes = True
+    #             print """Expected:
+    #             {0}
+    #             {1}
+    #             {2}
 
-                Actual:
-                {3}
-                {4}
-                {5}""".format(**dataToTest)
+    #             Actual:
+    #             {3}
+    #             {4}
+    #             {5}""".format(**dataToTest)
 
-        self.assertFalse(hasMismatchedStereotypes, "Stereotype mismatched See Output")
+    #     self.assertFalse(hasMismatchedStereotypes, "Stereotype mismatched See Output")
 
