@@ -18,9 +18,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-import unittest, lxml.etree as et, lxml
+import unittest, lxml.etree as et, lxml, os, os.path
 from stereocode import *
 from testlib import *
+
+DataFolderName = ".stereocoe"
 
 class TestStereotypeXslt(unittest.TestCase):
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
@@ -257,6 +259,9 @@ class TestStereotypeXslt(unittest.TestCase):
                 ("checkWidth", ["collaborator"]),
             ]
         })
+
+
+
 
 
     # 

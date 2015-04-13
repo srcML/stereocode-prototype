@@ -17,8 +17,25 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import unittest, sys
+import unittest, sys, lxml.etree as et, lxml, os, os.path
 from test_cli_args import *
 from test_stereotype_xslt import *
+from stereocode import *
+from testlib import *
+
 if __name__ == '__main__':
+
+    # Handling special test cases that are run after the initial test suite so that they can
+    # test a larger mount of projects.
+
+    # Walking all of the directories and re-srcml-ing
+    # each of the files from within an all archive, then
+    # re-running stereocode on it and testing the result
+    # to see if the stereotypes are the same or different.
+    for root, dirs, files in os.walk("/home/brian/Projects/stereotypes/AllArchives"):
+        dirs = [d for d in dirs if d != DataFolderName]
+
+        for name in files:
+            currentName = os.path.join(root, name)
+            print currentName
     unittest.main()
