@@ -25,6 +25,9 @@ from testlib import *
 
 if __name__ == '__main__':
 
+    print 80 * "-"
+    print "Testing against previous stereotypes"
+    print 80 * "-"
     # Handling special test cases that are run after the initial test suite so that they can
     # test a larger mount of projects.
 
@@ -32,10 +35,16 @@ if __name__ == '__main__':
     # each of the files from within an all archive, then
     # re-running stereocode on it and testing the result
     # to see if the stereotypes are the same or different.
+    testTracker = CodeBaseTestDataTracker()
     for root, dirs, files in os.walk("/home/brian/Projects/stereotypes/AllArchives"):
         dirs = [d for d in dirs if d != DataFolderName]
 
         for name in files:
             currentName = os.path.join(root, name)
-            print currentName
+            print "Processing: ", currentName
+            testTracker.runTest(currentName)
+            # print currentName
+
+    # Running other parts of the test suite.
+    sys.stdout.flush()
     unittest.main()

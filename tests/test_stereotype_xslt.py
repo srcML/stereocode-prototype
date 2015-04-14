@@ -22,7 +22,7 @@ import unittest, lxml.etree as et, lxml, os, os.path
 from stereocode import *
 from testlib import *
 
-DataFolderName = ".stereocoe"
+
 
 class TestStereotypeXslt(unittest.TestCase):
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
