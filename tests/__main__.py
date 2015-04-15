@@ -36,14 +36,14 @@ if __name__ == '__main__':
     # re-running stereocode on it and testing the result
     # to see if the stereotypes are the same or different.
     testTracker = CodeBaseTestDataTracker()
-    for root, dirs, files in os.walk("/home/brian/Projects/stereotypes/AllArchives"):
-        dirs = [d for d in dirs if d != DataFolderName]
 
-        for name in files:
-            currentName = os.path.join(root, name)
-            print "Processing: ", currentName
-            testTracker.runTest(currentName)
-            # print currentName
+    filesToProcess = [f for f in os.listdir("archive_test_data") if os.path.isfile(os.path.join("archive_test_data", f))]
+    root = "archive_test_data"
+    for name in filesToProcess:
+        currentName = os.path.join(root, name)
+        # print "Processing: ", currentName
+        testTracker.runTest(currentName)
+        # print currentName
 
     # Running other parts of the test suite.
     sys.stdout.flush()

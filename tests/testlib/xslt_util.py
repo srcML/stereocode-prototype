@@ -166,13 +166,22 @@ class FunctionSignatureExtractor(ContentHandler):
     def __init__(self):
         self.continueReading = True
         self.text = []
+        self.isComment = False
 
     def startElementNS(self, qname, name, attributes):
         # print name
         if qname[1] == "block":
             self.continueReading = False
+        elif qname[1] == "comment":
+            self.isComment = True
+
+    def endElementNS(self, qname, name):
+        if qname[1] == "comment":
+            self.isComment = False
 
     def characters(self, data):
+        if self.isComment:
+            return
         if self.continueReading:
             nextText = data.strip()
             if nextText != "":
@@ -324,3 +333,11 @@ def generateStereotypeReportFromDoc(processedArchive):
     return functionSigAndStereotype
 
 
+def buildHistogram(functionList):
+    histogram = dict()
+    for func in functionList:
+        if func[1] in histogram:
+            histogram[func[1]] += 1
+        else:
+            histogram[func[1]] = 1
+    return histogram
