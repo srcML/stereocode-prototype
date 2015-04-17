@@ -17,8 +17,9 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import stereocode, lxml, lxml.etree as et, re, os, os.path, shutil, sys, cStringIO, lxml.sax as lsax
+import stereocode, lxml, lxml.etree as et, re, os, os.path, shutil, sys, StringIO, lxml.sax as lsax
 from xml.sax.handler import ContentHandler
+import xml.sax as sax
 
 # from operator import itemgetter, attrgetter, methodcaller
 xmlNamespaces = dict(src="http://www.sdml.info/srcML/src", cpp="http://www.sdml.info/srcML/cpp")
@@ -341,3 +342,137 @@ def buildHistogram(functionList):
         else:
             histogram[func[1]] = 1
     return histogram
+
+STATE_UNIT_SEARCH = "Looking For Unit With FileName"
+STATE_STEREOTYPE_REDOC_SEARCH = "Looking For Stereotype"
+STATE_READING_COMMENT = "Reading Comment"
+STATE_EXPECTING_FUNCTION = "Expecting function"
+STATE_READING_FUNCTION = "Reading function Name"
+
+
+# Tag Name Constants
+unitTag = "unit"
+commentTag = "comment"
+functionTag = "function"
+blockTag = "block"
+escapeTag = "escape"
+
+# Attribute constants
+filenameAttr = "filename"
+
+class FastStereotypeExtractor(sax.handler.ContentHandler):
+    def __init__(self):
+        self.currentFileName = ""
+        self.docLocator = None
+        self.currentBuffer = StringIO.StringIO()
+        self.currentStereotypeStr = ""
+        self.functionStereotypeInfo = []
+        self.state = STATE_UNIT_SEARCH
+        self.readingFunctionNameDepth = 0
+
+    def setDocumentLocator(self, locator):
+        self.docLocator = locator
+
+    def startElement(self, name, attrs):
+        if self.state == STATE_UNIT_SEARCH:
+            if name == "unit":
+                if filenameAttr in attrs:
+                    self.currentFileName = attrs[filenameAttr]
+                    self.state = STATE_STEREOTYPE_REDOC_SEARCH
+            else:
+                raise Exception("Didn't locate expected element current Element Information. Name: {0} qName: {1} Attrs: {2}".format(name, qname, attrs))
+
+
+        elif self.state == STATE_STEREOTYPE_REDOC_SEARCH:
+            if name == commentTag or name == "src:comment":
+                self.state = STATE_READING_COMMENT
+            
+        elif self.state == STATE_READING_COMMENT:
+            if name == escapeTag:
+                return
+            raise Exception("No tags should be encountered while reading comment because comment only consists of text with no children. Node Encountered: {0}".format(name))
+        elif self.state == STATE_EXPECTING_FUNCTION:
+
+            if name == functionTag:
+                self.state = STATE_READING_FUNCTION
+            elif name == commentTag or name == "src:comment":
+                self.state = STATE_STEREOTYPE_REDOC_SEARCH
+            else:
+                raise Exception("Stereotype is missing function definition. Tag Name: {1} File: {0} Line #: {2}".format(self.currentFileName, name, self.docLocator.getLineNumber()))
+
+        elif self.state == STATE_READING_FUNCTION:
+            if self.readingFunctionNameDepth == 0 and name == blockTag:
+                self.state = STATE_STEREOTYPE_REDOC_SEARCH
+                self.functionStereotypeInfo.append((self.currentBuffer.getvalue(), self.currentStereotypeStr, self.currentFileName))
+                # Renewing buffer for next use.
+                self.currentBuffer.close()    
+                self.currentBuffer = StringIO.StringIO()
+                return
+            self.readingFunctionNameDepth += 1
+
+
+        else:
+            raise Exception("Invalid/unknown state: {0}".format(self.state))
+
+    def endElement(self, name):
+        if self.state == STATE_UNIT_SEARCH:
+            if name != "unit":
+                raise Exception("Invalid transition. Didn't locate a unit correctly")
+
+        elif self.state == STATE_STEREOTYPE_REDOC_SEARCH:
+            if name == "unit":
+                self.state = STATE_UNIT_SEARCH
+
+        elif self.state == STATE_READING_COMMENT:
+            if name == escapeTag:
+                return
+            if name != commentTag and name != "src:comment":
+                raise Exception("Invalid Transition didn't get expected end of comment. Tag: {0}".format(name))
+
+
+            # Extract comment text, test to see if it's a stereotype
+            # redocumentation comment transition states and
+            # renew the buffer.
+            commentStr = self.currentBuffer.getvalue()
+            stereotypeMatch = stereotypeExtractingRe.search(commentStr)
+            if stereotypeMatch == None:
+                self.state = STATE_STEREOTYPE_REDOC_SEARCH
+            else:
+                self.currentStereotypeStr = " ".join(sorted([x.lower() for x in stereotypeMatch.group("stereotypes").strip().split(" ")]))
+                self.state = STATE_EXPECTING_FUNCTION
+            # Renewing buffer for next use.
+            self.currentBuffer.close()    
+            self.currentBuffer = StringIO.StringIO()
+
+        elif self.state == STATE_EXPECTING_FUNCTION:
+            pass
+        elif self.state == STATE_READING_FUNCTION:
+            self.readingFunctionNameDepth -= 1
+        else:
+            raise Exception("Invalid/unknown state: {0}".format(self.state))
+
+
+    def characters(self, content):
+        if self.state == STATE_UNIT_SEARCH:
+            pass
+        elif self.state == STATE_STEREOTYPE_REDOC_SEARCH:
+            pass
+        elif self.state == STATE_READING_COMMENT:
+            self.currentBuffer.write(content)
+        elif self.state == STATE_EXPECTING_FUNCTION:
+            pass
+        elif self.state == STATE_READING_FUNCTION:
+            outputStr = content.strip()
+            if len(outputStr) > 0:
+                self.currentBuffer.write(outputStr + " ")
+        else:
+            raise Exception("Invalid/unknown state: {0}".format(self.state))
+        # if self.isReadingComment:
+
+        # elif self.isReadingFunction: 
+
+
+def extractStereotypesFromDocument(pathToDoc):
+    handler = FastStereotypeExtractor()
+    sax.parse(pathToDoc, handler)
+    return handler.functionStereotypeInfo

@@ -36,5 +36,5 @@ _currentDirectory = os.path.dirname(os.path.abspath(__file__))
 # extensions = et.Extension( ext_module, functions, ns="http://www.sdml.info/srcML/src" )
 
 # stereocodeDoc = et.XSLT(et.parse(_xsltFile), extensions=extensions)
-_xsltFile = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
-stereocodeDoc = et.XSLT(et.parse(_xsltFile))
+stereocodeXsltFilePath = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
+stereocodeDoc = et.XSLT(et.parse(stereocodeXsltFilePath))
