@@ -375,12 +375,12 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
 
     def startElement(self, name, attrs):
         if self.state == STATE_UNIT_SEARCH:
-            if name == "unit":
+            if name == "unit" or name == "macro-list":
                 if filenameAttr in attrs:
                     self.currentFileName = attrs[filenameAttr]
                     self.state = STATE_STEREOTYPE_REDOC_SEARCH
             else:
-                raise Exception("Didn't locate expected element current Element Information. Name: {0} qName: {1} Attrs: {2}".format(name, qname, attrs))
+                raise Exception("Didn't locate expected element current Element Information. Name: {0} Attrs: {1}".format(name, attrs))
 
 
         elif self.state == STATE_STEREOTYPE_REDOC_SEARCH:
@@ -393,7 +393,7 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
             raise Exception("No tags should be encountered while reading comment because comment only consists of text with no children. Node Encountered: {0}".format(name))
         elif self.state == STATE_EXPECTING_FUNCTION:
 
-            if name == functionTag:
+            if name == functionTag or name =="friend":
                 self.state = STATE_READING_FUNCTION
             elif name == commentTag or name == "src:comment":
                 self.state = STATE_STEREOTYPE_REDOC_SEARCH
@@ -416,7 +416,7 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
 
     def endElement(self, name):
         if self.state == STATE_UNIT_SEARCH:
-            if name != "unit":
+            if name != "unit" and name != "macro-list":
                 raise Exception("Invalid transition. Didn't locate a unit correctly")
 
         elif self.state == STATE_STEREOTYPE_REDOC_SEARCH:

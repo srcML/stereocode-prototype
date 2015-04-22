@@ -35,14 +35,14 @@ class StereotypeDocData:
         self.testResultErrorText = []
 
 DataFolderName = "archive_test_data/reports"
-
+CodeOutputFolderName = "archive_test_data/reports/Code"
 
 class CodeBaseTestDataTracker:
     def __init__(self):
         self.testData = []
         self.data = None
 
-    def runTest(self, testFile):
+    def runTest(self, testFile, knownMacros):
         if os.stat(testFile).st_size == 0:
             os.remove(testFile)
             return
@@ -56,12 +56,92 @@ class CodeBaseTestDataTracker:
         print "Processing Document: {0}: {1}".format(len(self.testData), testFile) 
         print 80 * "~"
         sys.stdout.flush()
-        print "Testing"
+        # print "Testing"
+
+        print "  Reprocessing with srcML into srcML"
+        sys.stdout.flush()
+
+        functionTemplateFix = """<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:src="http://www.sdml.info/srcML/src"
+>
+<xsl:output omit-xml-declaration="no"/>
+
+<xsl:template match="node() | @*">
+    <xsl:copy>
+        <xsl:apply-templates select="node() | @*"/>
+    </xsl:copy>
+</xsl:template>
+
+<xsl:template match="src:function[src:template][src:comment]">
+    <xsl:apply-templates select="src:comment"/>
+    <xsl:copy>
+        <xsl:apply-templates select="child::node()[not(self::src:comment)]"/>
+    </xsl:copy>
+    
+
+</xsl:template>
+
+</xsl:stylesheet>"""
+        
+        outputDocumentPathFilePrefix = os.path.split(testFile)[1]
+        resrcMLedOutputFilePath = os.path.join(DataFolderName, outputDocumentPathFilePrefix + ".tempfile.xml")
+        templateFixFilePath = os.path.join(DataFolderName, outputDocumentPathFilePrefix + ".templateFix.xml")
+        stereotypedOutputDocPath = os.path.join(DataFolderName, outputDocumentPathFilePrefix + ".stereotyped.xml")
+        extractFileNameSet = set(
+            # ["SAXPrint_Handler.cpp"]
+        )
+        counter = 0
+        with readable_archive(readable_archive_settings(), filename=testFile) as reader:
+            writableSettings = writable_archive_settings(default_language=LANGUAGE_CXX, macros=knownMacros)
+            writableSettings.parser_options |= OPTION_CPPIF_CHECK
+            with writable_archive(writableSettings, filename=resrcMLedOutputFilePath) as outputArch:
+                currentUnit = reader.read()
+                while currentUnit != None:
+                    if (counter % 500) == 0:
+                        print "    Processed file count: ", counter
+                        sys.stdout.flush()
+                    # print currentUnit.filename
+                    outputUnit = outputArch.create_unit(filename=currentUnit.filename)
+                    source_code=currentUnit.unparse()
+                    if currentUnit.filename in  extractFileNameSet:
+                        print "  Processing problematic markup: ", currentUnit.filename
+                        problematicMarkupFileName = os.path.join(CodeOutputFolderName, currentUnit.filename)
+                        tempStrm = open(problematicMarkupFileName, "w")
+                        tempStrm.write(source_code)
+                        tempStrm.close()
+                        with writable_archive(writable_archive_settings(default_language=LANGUAGE_CXX, macros=knownMacros), filename=problematicMarkupFileName+".xml") as codeOutputArch:
+                            codeOutputUnit = codeOutputArch.create_unit(filename=currentUnit.filename)
+                            codeOutputUnit.parse(source_code=source_code)
+                            codeOutputArch.write(codeOutputUnit)
+
+                    outputUnit.parse(source_code=source_code)
+                    outputArch.write(outputUnit)
+                    currentUnit = reader.read()
+                    counter += 1
+            print "    Total Processed File Count: ", counter
+
+        # Loading current document for processing
+        print "  Transforming Document"
+        sys.stdout.flush()
+        p = et.XMLParser(huge_tree=True)
+        tree = et.parse(resrcMLedOutputFilePath, parser=p)
+        parseStyleSheetTest = et.XSLT(et.XML(functionTemplateFix))
+        transformedTree = parseStyleSheetTest(tree)
+        for entry in parseStyleSheetTest.error_log:
+            print entry
+        # print "\n".join(parseStyleSheetTest.error_log)
+        treeStrm = open(templateFixFilePath, "w")
+        transformedTree.write(treeStrm)
+        treeStrm.close()
+
         # Loading current document for processing
         print "  Loading Initial Document"
         sys.stdout.flush()
 
-        oldStereotypedFunctionInfo = extractStereotypesFromDocument(testFile)
+        oldStereotypedFunctionInfo = extractStereotypesFromDocument(templateFixFilePath)
         self.data.initialStereotypeInfo = oldStereotypedFunctionInfo
         self.data.initialHistogram = buildHistogram(oldStereotypedFunctionInfo)
         
@@ -82,29 +162,19 @@ class CodeBaseTestDataTracker:
     <xsl:template match="//src:comment"/>
 </xsl:stylesheet>
         """
-        print "  Reprocessing with srcML into srcML"
-        sys.stdout.flush()
 
-        outputDocumentPathFilePrefix = os.path.split(testFile)[1]
-        resrcMLedOutputFilePath = os.path.join(DataFolderName, outputDocumentPathFilePrefix + ".tempfile.xml")
-        stereotypedOutputDocPath = os.path.join(DataFolderName, outputDocumentPathFilePrefix + ".stereotyped.xml")
-
-        with readable_archive(readable_archive_settings(), filename=testFile) as reader:
-            with writable_archive(writable_archive_settings(default_language=LANGUAGE_CXX), filename=resrcMLedOutputFilePath) as outputArch:
-                currentUnit = reader.read()
-                while currentUnit != None:
-                    # print currentUnit.filename
-                    outputUnit = outputArch.create_unit(filename=currentUnit.filename)
-                    outputUnit.parse(source_code=currentUnit.unparse())
-                    outputArch.write(outputUnit)
-                    currentUnit = reader.read()
 
         print "  Removing Comments and Redocumenting source code"
         sys.stdout.flush()
-        # resrcMLedCodeBuffer = memory_buffer()
-        with readable_archive(readable_archive_settings(xsltransformations=[xsltransform(xslt=removeCommentsXslt),xsltransform(filename=stereocode.stereocodeXsltFilePath)]), filename=resrcMLedOutputFilePath) as reader:
+        xsltInputBuffer = memory_buffer()
+        xsltInputBuffer.load_from_string(removeCommentsXslt)
+        with readable_archive(readable_archive_settings(xsltransformations=[xsltransform(buffer=xsltInputBuffer), xsltransform(filename=stereocode.stereocodeXsltFilePath)]), filename=templateFixFilePath) as reader:
+            print "!!! Opened Reader!!!"
+            sys.stdout.flush()
             with writable_archive(writable_archive_settings(), filename=stereotypedOutputDocPath) as outputArchive:
+                print "!!! Opened Writer!!!"
                 reader.xslt.apply(outputArchive)
+                sys.stdout.flush()
 
         print "  Extracting new stereotype information from document"
         sys.stdout.flush()
@@ -226,7 +296,6 @@ class CodeBaseTestDataTracker:
                 currentFunctionSigSet = set([x[0] for x in self.data.currentStereotypeInfo])
                 if len(currentFunctionSigSet) != len(self.data.currentStereotypeInfo):
                     reportStrm.write("WARNING: two functions with the same name within the same file.")
-                    # raise Exception("Error not all function signatures are unique within transformed document.")
 
             # Testing for non-unique function signatures.
             missingOrExtraFunctions = list(initialFunctionSigSet - currentFunctionSigSet)
@@ -284,20 +353,47 @@ class CodeBaseTestDataTracker:
         
         os.remove(stereotypedOutputDocPath)
         os.remove(resrcMLedOutputFilePath)
-        
+        os.remove(templateFixFilePath)
 
 
 
     def outputMissingFunctions(self, reportStrm):
-        reportStrm.write("Missing Function Report")
+        invalidCharacterReplacement = "?"
+        reportStrm.write("Missing Function Report\n")
 
         # Missing Function Report.
         initialFunctionSigSet = set([x[0] for x in self.data.initialStereotypeInfo])
         currentFunctionSigSet = set([x[0] for x in self.data.currentStereotypeInfo])
-        missingFunctiions = list(initialFunctionSigSet- currentFunctionSigSet)
-        for f in missingFunctiions:
+        missingFunctions = list(initialFunctionSigSet - currentFunctionSigSet)
+        for f in missingFunctions:
             try:
                 reportStrm.write("  {0}\n".format(f))
             except UnicodeError as e:
-                print "Encountered UnicodeError Performing replacement with ~ character."
-                reportStrm.write("  " + " ".join([c if ord(c)< 128 else "~" for c in f]))
+                # print "Encountered UnicodeError Performing replacement with ~ character."
+                reportStrm.write("  " + " ".join([c if ord(c)< 128 else invalidCharacterReplacement for c in f]))
+
+        #Sorting out which functions are missing from which archive.
+        functionsNotFound = []
+        extraFunctionsFound = []
+        for f in missingFunctions:
+            if f in initialFunctionSigSet:
+                functionsNotFound.append(f)
+            else:
+                extraFunctionsFound.append(f)
+
+        reportStrm.write("Missed Functions. Count: {0}\n".format(len(functionsNotFound)))
+        for f in functionsNotFound:
+            try:
+                reportStrm.write("  {0}\n".format(f))
+            except UnicodeError as e:
+                # print "Encountered UnicodeError Performing replacement with ~ character."
+                reportStrm.write("  " + " ".join([c if ord(c)< 128 else invalidCharacterReplacement for c in f]))
+
+
+        reportStrm.write("Extra Functions Located. Count: {0}\n".format(len(extraFunctionsFound)))
+        for f in extraFunctionsFound:
+            try:
+                reportStrm.write("  {0}\n".format(f))
+            except UnicodeError as e:
+                # print "Encountered UnicodeError Performing replacement with ~ character."
+                reportStrm.write("  " + " ".join([c if ord(c)< 128 else invalidCharacterReplacement for c in f]))

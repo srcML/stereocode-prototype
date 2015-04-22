@@ -37,13 +37,23 @@ if __name__ == '__main__':
     # to see if the stereotypes are the same or different.
     testTracker = CodeBaseTestDataTracker()
 
-    filesToProcess = [f for f in os.listdir("archive_test_data") if os.path.isfile(os.path.join("archive_test_data", f))]
-    root = "archive_test_data"
-    for name in filesToProcess:
-        currentName = os.path.join(root, name)
-        # print "Processing: ", currentName
-        testTracker.runTest(currentName)
-        # print currentName
+    testTracker.runTest("/home/brian/Projects/srcTools/stereocode/archive_test_data/ACE___5.6.1___ACEOnly___ACE_wrappers___annotated___all.ann.xml",
+        [
+            ("ACEXML_ENV_ARG_DECL_NOT_USED", "src:macro"),
+            ("ACE_ALLOC_HOOK_DEFINE","src:macro"),
+            ("ACE_END_VERSIONED_NAMESPACE_DECL", "src:macro"),
+            ("ACE_BEGIN_VERSIONED_NAMESPACE_DECL", "src:macro"),
+            ("ACE_RCSID", "src:macro"),
+            ("ACE_TSS_TYPE", "src:type")
+        ]
+    )
+    # filesToProcess = [f for f in os.listdir("archive_test_data") if os.path.isfile(os.path.join("archive_test_data", f))]
+    # root = "archive_test_data"
+    # for name in filesToProcess:
+    #     currentName = os.path.join(root, name)
+    #     # print "Processing: ", currentName
+    #     testTracker.runTest(currentName)
+    #     # print currentName
 
     # Running other parts of the test suite.
     sys.stdout.flush()
