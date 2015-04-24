@@ -169,15 +169,11 @@ class CodeBaseTestDataTracker:
         xsltInputBuffer = memory_buffer()
         xsltInputBuffer.load_from_string(removeCommentsXslt)
         with readable_archive(readable_archive_settings(xsltransformations=[xsltransform(buffer=xsltInputBuffer), xsltransform(filename=stereocode.stereocodeXsltFilePath)]), filename=templateFixFilePath) as reader:
-            print "!!! Opened Reader!!!"
-            sys.stdout.flush()
-            with writable_archive(writable_archive_settings(), filename=stereotypedOutputDocPath) as outputArchive:
-                print "!!! Opened Writer!!!"
+            with writable_archive(writable_archive_settings(xml_encoding="UTF-8"), filename=stereotypedOutputDocPath) as outputArchive:
                 reader.xslt.apply(outputArchive)
-                sys.stdout.flush()
 
-        print "  Extracting new stereotype information from document"
-        sys.stdout.flush()
+        print >> sys.stderr, "  Extracting new stereotype information from document"
+
         newStereotypeInfo = extractStereotypesFromDocument(stereotypedOutputDocPath)
 
         self.data.currentStereotypeInfo = newStereotypeInfo
