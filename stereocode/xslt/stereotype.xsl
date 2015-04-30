@@ -106,12 +106,12 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:param name="function"/>
 
     <xsl:choose>
-      <xsl:when test="$function/src:parameter_list/src:param">
+      <xsl:when test="$function/src:parameter_list/src:parameter">
   <!--
   <xsl:message><xsl:copy-of select="$function/src:name"/>:  <xsl:copy-of select="$function/src:parameter_list/src:param/src:decl/src:type//text()"/></xsl:message>
   -->
     <xsl:variable name="raw0">
-      <xsl:for-each select="$function/src:parameter_list/src:param/src:decl/src:type">
+      <xsl:for-each select="$function/src:parameter_list/src:parameter/src:decl/src:type">
         <xsl:copy-of select="."/><xsl:text>|</xsl:text>
       </xsl:for-each>
     </xsl:variable>
@@ -336,7 +336,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   -->
   <func:function name="src:param_name">
 
-    <func:result select="src:final_name(src:function()/src:parameter_list/src:param/src:decl/src:name)"/>
+    <func:result select="src:final_name(src:function()/src:parameter_list/src:parameter/src:decl/src:name)"/>
 
   </func:function>
 
@@ -345,7 +345,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   -->
   <func:function name="src:param_type_name">
 
-    <func:result select="src:all_type_names(src:function()/src:parameter_list/src:param/src:decl/src:type/src:name)"/>
+    <func:result select="src:all_type_names(src:function()/src:parameter_list/src:parameter/src:decl/src:type/src:name)"/>
 
   </func:function>
 
@@ -1353,7 +1353,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       the source code with a comment.
   -->
   <!-- annotate function declaration/definition with passed definition  -->
-  <xsl:template match="src:function[src:name/src:operator[.='::'] or ancestor::src:class or ancestor::src:struct] ">
+  <xsl:template match="src:function[src:name/src:operator[.='::'] or ancestor::src:class or ancestor::src:struct]">
     <!-- calculate stereotype -->
     <xsl:variable name="stereotype">
       <xsl:apply-templates select="." mode="stereotype_list"/>
@@ -1369,16 +1369,16 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <!-- insert indentation -->
     <xsl:value-of select="$indent"/>
 
-    <!-- copy of function declaration -->
+    <!-- copy of function -->
     <xsl:copy-of select="."/>
 
   </xsl:template>
 
+
+
   <!-- classifies stereotypes using criteria from stereotypes.xsl -->
   <xsl:template match="src:function" mode="stereotype_list">
-
     <xsl:variable name="raw_stereotype"><xsl:apply-templates select="." mode="stereotype"/></xsl:variable>
-
     <xsl:choose>
       <xsl:when test="$raw_stereotype!=''"><xsl:value-of select="$raw_stereotype"/></xsl:when>
       <xsl:otherwise>unclassified </xsl:otherwise>
@@ -1391,10 +1391,9 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:copy-of select="."/>
   </xsl:template>
 
-  <!-- default identity copy -->
+  <!-- default function copy -->
   <xsl:template match="*[.//src:function]">
     <xsl:copy>
-
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>

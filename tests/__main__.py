@@ -36,8 +36,10 @@ if __name__ == '__main__':
     # re-running stereocode on it and testing the result
     # to see if the stereotypes are the same or different.
     testTracker = CodeBaseTestDataTracker()
-
-    testTracker.runTest("/home/brian/Projects/srcTools/stereocode/archive_test_data/ACE___5.6.1___ACEOnly___ACE_wrappers___annotated___all.ann.xml",
+    # inputFile = "/home/brian/Projects/srcTools/stereocode/archive_test_data/reports/Code/actual__CDR_Stream_0_possibleBug.cpp.xml"
+    testTracker.runTest(
+        # inputFile,
+        "/home/brian/Projects/srcTools/stereocode/archive_test_data/ACE___5.6.1___ACEOnly___ACE_wrappers___annotated___all.ann.xml",
         [
             ("ACEXML_ENV_ARG_DECL_NOT_USED", "src:macro"),
             ("ACE_ALLOC_HOOK_DEFINE","src:macro"),
@@ -57,4 +59,4 @@ if __name__ == '__main__':
 
     # Running other parts of the test suite.
     sys.stdout.flush()
-    unittest.main()
+    # unittest.main()

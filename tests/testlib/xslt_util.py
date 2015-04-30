@@ -369,6 +369,10 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
         self.functionStereotypeInfo = []
         self.state = STATE_UNIT_SEARCH
         self.readingFunctionNameDepth = 0
+        self.functionLineNumber = 0
+        self.unitLineNumber = 0
+        self.skippingComment = False
+        self.archiveLineNumber = 0
 
     def setDocumentLocator(self, locator):
         self.docLocator = locator
@@ -379,6 +383,7 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
                 if filenameAttr in attrs:
                     self.currentFileName = attrs[filenameAttr]
                     self.state = STATE_STEREOTYPE_REDOC_SEARCH
+                    self.unitLineNumber = self.docLocator.getLineNumber()
             else:
                 raise Exception("Didn't locate expected element current Element Information. Name: {0} Attrs: {1}".format(name, attrs))
 
@@ -394,16 +399,29 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
         elif self.state == STATE_EXPECTING_FUNCTION:
 
             if name == functionTag or name =="friend":
+                self.functionLineNumber = self.docLocator.getLineNumber() - self.unitLineNumber
+                self.archiveLineNumber = self.docLocator.getLineNumber()
                 self.state = STATE_READING_FUNCTION
+                self.skippingComment = False
             elif name == commentTag or name == "src:comment":
                 self.state = STATE_STEREOTYPE_REDOC_SEARCH
             else:
-                raise Exception("Stereotype is missing function definition. Tag Name: {1} File: {0} Line #: {2}".format(self.currentFileName, name, self.docLocator.getLineNumber()))
+                raise Exception("Stereotype is missing function definition. Tag Name: {1} File: {0}:{3} Line #: {2}".format(self.currentFileName, name, self.docLocator.getLineNumber(), self.docLocator.getLineNumber() - self.unitLineNumber))
 
         elif self.state == STATE_READING_FUNCTION:
+            if name == commentTag:
+                self.skippingComment = True
             if self.readingFunctionNameDepth == 0 and name == blockTag:
                 self.state = STATE_STEREOTYPE_REDOC_SEARCH
-                self.functionStereotypeInfo.append((self.currentBuffer.getvalue(), self.currentStereotypeStr, self.currentFileName))
+                self.functionStereotypeInfo.append(
+                    (
+                        " ".join(self.currentBuffer.getvalue().split()),
+                        self.currentStereotypeStr,
+                        self.currentFileName,
+                        self.functionLineNumber,
+                        self.archiveLineNumber
+                    )
+                )
                 # Renewing buffer for next use.
                 self.currentBuffer.close()    
                 self.currentBuffer = StringIO.StringIO()
@@ -447,6 +465,8 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
         elif self.state == STATE_EXPECTING_FUNCTION:
             pass
         elif self.state == STATE_READING_FUNCTION:
+            if name == commentTag:
+                self.skippingComment = False
             self.readingFunctionNameDepth -= 1
         else:
             raise Exception("Invalid/unknown state: {0}".format(self.state))
@@ -462,9 +482,11 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
         elif self.state == STATE_EXPECTING_FUNCTION:
             pass
         elif self.state == STATE_READING_FUNCTION:
-            outputStr = content.strip()
+            if self.skippingComment:
+                return
+            outputStr = content
             if len(outputStr) > 0:
-                self.currentBuffer.write(outputStr + " ")
+                self.currentBuffer.write(outputStr)
         else:
             raise Exception("Invalid/unknown state: {0}".format(self.state))
         # if self.isReadingComment:
