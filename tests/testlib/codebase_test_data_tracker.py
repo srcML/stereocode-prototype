@@ -21,7 +21,14 @@ import sys, stereocode, lxml.etree as et, lxml, os, os.path
 from xslt_util import *
 from srcml.xslt import *
 from srcml import *
+
+
 class StereotypeDocData:
+    """
+        Stores data related to the execution of a test as well 
+        as does some final testing associated with the stored
+        information.
+    """
     def __init__(self):
         self.filename = ""
         self.directory = ""
@@ -30,10 +37,16 @@ class StereotypeDocData:
         self.currentHistogram = dict()
         self.initialStereotypeInfo = []
         self.currentStereotypeInfo = []
-        # self.processedFunctionCount = 0
-        # self.mismatchedFunctionStereotype = []
         self.testResultErrorText = []
         self.mismatchStereotypeResults = []
+        self.expectedFunctionCount = 0
+        self.locatedFunctionCount = 0
+        self.xsltTransformationError = []
+        self.expectedFileCount = 0
+        self.actualFileCount = 0
+
+    def evaluateTest(self, outputStrm):
+        raise NotImplementedError("Not Implemented yet still working on it.")
 
 DataFolderName = "archive_test_data/reports"
 CodeOutputFolderName = "archive_test_data/reports/Code"
@@ -43,7 +56,7 @@ class CodeBaseTestDataTracker:
         self.testData = []
         self.data = None
 
-    def runTest(self, testFile, knownMacros):
+    def runTest(self, testFile, knownMacros, expectedFunctionCount, expectedFileCount):
         if os.stat(testFile).st_size == 0:
             os.remove(testFile)
             return
@@ -52,21 +65,20 @@ class CodeBaseTestDataTracker:
         self.data.filename = testFile
         self.data.directory =  os.path.dirname(testFile)
         self.testData.append(self.data)
+        self.data.expectedFunctionCount = expectedFunctionCount
+        self.data.expectedFileCount = expectedFileCount
 
-        print 80 * "~"
-        print "Processing Document: {0}: {1}".format(len(self.testData), testFile) 
-        print 80 * "~"
-        sys.stdout.flush()
-        # print "Testing"
-
-        print "  Reprocessing with srcML into srcML"
-        sys.stdout.flush()
+        print >> sys.stderr, 80 * "~"
+        print >> sys.stderr, "Processing Document: {0}: {1}".format(len(self.testData), testFile) 
+        print >> sys.stderr, 80 * "~"
+        print >> sys.stderr, "  Reprocessing with srcML into srcML"
 
         functionTemplateFix = """<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:src="http://www.sdml.info/srcML/src"
+    xmlns:cpp="http://www.sdml.info/srcML/cpp"
 >
 <xsl:output omit-xml-declaration="no"/>
 
@@ -100,6 +112,12 @@ class CodeBaseTestDataTracker:
             # "Protocol.h":0,
             # "SSL_Context.cpp":0
             # "CDR_Stream.cpp":0
+            # "OS_NS_netdb.cpp":0
+            # "UUID.cpp":0
+            # "Multihomed_INET_Addr.cpp":0
+            # "MMAP_Memory_Pool.cpp":0
+            # "portalfact.cpp":0
+            "QP_models.h":0
             }
         )
         extractedNamesPostStereotypedDict = dict(extractFileNameDict)
@@ -111,16 +129,14 @@ class CodeBaseTestDataTracker:
                 currentUnit = reader.read()
                 while currentUnit != None:
                     if (counter % 500) == 0:
-                        print "    Processed file count: ", counter
-                        sys.stdout.flush()
-                    # print currentUnit.filename
+                        print >> sys.stderr, "    Processed file count: ", counter
                     outputUnit = outputArch.create_unit(filename=currentUnit.filename)
                     source_code=currentUnit.unparse()
                     if currentUnit.filename in  extractFileNameDict:
                         temp = os.path.splitext(currentUnit.filename)
                         outputFileName = "{0}_{1}{2}".format(temp[0], extractFileNameDict[currentUnit.filename], temp[1])
                         extractFileNameDict[currentUnit.filename] += 1
-                        print "  Processing problematic markup: ", outputFileName
+                        print >> sys.stderr, "  Processing problematic markup: ", outputFileName
                         problematicMarkupFileName = os.path.join(CodeOutputFolderName, outputFileName)
                         tempStrm = open(problematicMarkupFileName, "w")
                         tempStrm.write(source_code)
@@ -134,25 +150,26 @@ class CodeBaseTestDataTracker:
                     outputArch.write(outputUnit)
                     currentUnit = reader.read()
                     counter += 1
-            print "    Total Processed File Count: ", counter
-
+            print >> sys.stderr, "    Total Processed File Count: ", counter
+        self.data.actualFileCount = counter
         # Loading current document for processing
-        print "  Transforming Document"
-        sys.stdout.flush()
+        print >> sys.stderr, "  Transforming Document"
+
         p = et.XMLParser(huge_tree=True)
         tree = et.parse(resrcMLedOutputFilePath, parser=p)
         parseStyleSheetTest = et.XSLT(et.XML(functionTemplateFix))
         transformedTree = parseStyleSheetTest(tree)
-        for entry in parseStyleSheetTest.error_log:
-            print entry
-        # print "\n".join(parseStyleSheetTest.error_log)
+        if len(parseStyleSheetTest.error_log) > 0:
+            for entry in parseStyleSheetTest.error_log:
+                print >> sys.stderr, entry
+            self.data.xsltTransformationError = parseStyleSheetTest.error_log
+
         treeStrm = open(templateFixFilePath, "w")
         transformedTree.write(treeStrm)
         treeStrm.close()
 
         # Loading current document for processing
-        print "  Loading Initial Document"
-        sys.stdout.flush()
+        print >> sys.stderr, "  Loading Initial Document"
 
         oldStereotypedFunctionInfo = extractStereotypesFromDocument(templateFixFilePath)
         self.data.initialStereotypeInfo = oldStereotypedFunctionInfo
@@ -192,7 +209,7 @@ class CodeBaseTestDataTracker:
                         temp = os.path.splitext(currentUnit.filename)
                         outputFileName = "actual__{0}_{1}{2}".format(temp[0], extractedNamesPostStereotypedDict[currentUnit.filename], temp[1])
                         extractedNamesPostStereotypedDict[currentUnit.filename] += 1
-                        print "  Outputting Reporcessed source code file: ", outputFileName
+                        print >> sys.stderr, "  Outputting Reporcessed source code file: ", outputFileName
                         problematicMarkupFileName = os.path.join(CodeOutputFolderName, outputFileName)
                         currentUnit.unparse(filename=problematicMarkupFileName)
                         outputXmlStrm = open(problematicMarkupFileName + ".xml", "w")
@@ -222,8 +239,7 @@ class CodeBaseTestDataTracker:
         self.data.currentStereotypeInfo = newStereotypeInfo
         self.data.currentHistogram = buildHistogram(newStereotypeInfo)
 
-        print "  Analyzing Stereotype document"
-        sys.stdout.flush()
+        print >> sys.stderr,"  Analyzing Stereotype document"
 
 
         # Comparing Expected and actual to see if they
@@ -233,8 +249,6 @@ class CodeBaseTestDataTracker:
 
         reportStrm = open(reportFilePath, "w")
         reportStrm.write("Function Counts\n  Expected: {0}\n Actual: {1}\n".format(len(self.data.initialStereotypeInfo), len(self.data.currentStereotypeInfo)))
-        # if len(self.data.initialStereotypeInfo) != len(self.data.currentStereotypeInfo):
-        #     self.data.testResultErrorText.append("Mismatched number of stereotyped functions.")
 
         reportStrm.write("Histogram Comparison\n")
         reportStrm.write("Total # of Unique stereotype Combinations: \n")
@@ -372,90 +386,9 @@ Actual:
           Line in Arch: {10}
 """.format(stereotypeCmp[0], *[x for y in stereotypeCmp[1:] for x in y]))
             else:
-                print "  Good NEWS! No mismatched stereotypes!"
+                print >> sys.stderr, "  Good NEWS! No mismatched stereotypes!"
         else:
             print >> sys.stderr, "WARNING: Didn't locate all functions correctly."
-
-        # if len(initialFunctionSigSet) != len(self.data.initialStereotypeInfo):
-        #     raise Exception("WARNING INITIAL STEREOTYPE HAS NON UNIQUE FUNCTION NAME!")
-        #     temp = []
-        #     currentFilename = self.data.initialStereotypeInfo[0][2]
-        #     for funcInfo in self.data.initialStereotypeInfo:
-        #         if currentFilename != funcInfo[2]:
-        #             currentFilename = funcInfo[2]
-        #         temp.append((funcInfo[2] + " " + funcInfo[0], funcInfo[1], funcInfo[2]))
-        #     self.data.initialStereotypeInfo = temp
-        #     initialFunctionSigSet = set([x[0] for x in self.data.initialStereotypeInfo])
-        #     if len(initialFunctionSigSet) != len(self.data.initialStereotypeInfo):
-        #         reportStrm.write("WARNING: two functions with the same name within the same file.")
-        #         # raise Exception("Error not all function signatures are unique within initial document.")
-
-        # if len(currentFunctionSigSet) != len(self.data.currentStereotypeInfo):
-        #     raise Exception("WARNING INITIAL STEREOTYPE HAS NON UNIQUE FUNCTION NAME!")
-        #     temp = []
-        #     currentFilename = self.data.currentStereotypeInfo[0][2]
-        #     for funcInfo in self.data.currentStereotypeInfo:
-        #         if currentFilename != funcInfo[2]:
-        #             currentFilename = funcInfo[2]
-        #         temp.append((funcInfo[2] + " " + funcInfo[0], funcInfo[1], funcInfo[2]))
-        #     self.data.currentStereotypeInfo = temp
-        #     currentFunctionSigSet = set([x[0] for x in self.data.currentStereotypeInfo])
-        #     if len(currentFunctionSigSet) != len(self.data.currentStereotypeInfo):
-        #         reportStrm.write("WARNING: two functions with the same name within the same file.")
-
-#             # Testing for non-unique function signatures.
-#             missingOrExtraFunctions = list(initialFunctionSigSet - currentFunctionSigSet)
-#             if len(missingOrExtraFunctions) != 0:
-#                 hasMissingFunctions = True
-#                 self.outputMissingFunctions(reportStrm)
-
-#             if not hasMissingFunctions:
-#                 functionDataIndex = 0
-#                 for functionData in zip(self.data.initialStereotypeInfo, self.data.currentStereotypeInfo):
-
-#                     # Testing Expected Vs. Actual
-#                     if functionData[0][0] != functionData[1][0]:
-#                         errMsg = """Mismatched function names @Index:{6}:
-#   Expected Function Name: {0}
-#   Actual Function Name: {1}
-
-#   Expected Stereotype: {2}
-#   Actual Stereotype: {3}
-
-#   Expected File: {4}
-#   Actual File: {5}
-#   """.format(
-#     functionData[0][0], functionData[1][0],
-#     functionData[0][1], functionData[1][1],
-#     functionData[0][2], functionData[1][2],
-#     functionDataIndex
-# )
-#                         self.data.testResultErrorText.append(errMsg)
-#                         reportStrm.write(errMsg)
-#                         continue
-
-#                     if functionData[0][1] != functionData[1][1]:
-#                         errMsg = """Mismatched function Stereotypes @Index:{6}:
-#   Expected Function Name: {0}
-#   Actual Function Name: {1}
-
-#   Expected Stereotype: {2}
-#   Actual Stereotype: {3}
-
-#   Expected File: {4}
-#   Actual File: {5}
-#   """.format(
-#     functionData[0][0], functionData[1][0],
-#     functionData[0][1], functionData[1][1],
-#     functionData[0][2], functionData[1][2],
-#     functionDataIndex
-# )
-#                         self.data.testResultErrorText.append(errMsg)
-#                         reportStrm.write(errMsg)
-#                     functionDataIndex += 0
-
-#             else:
-#                 reportStrm.write("Unable to output functions with incorrect stereotypes due to previous errors.")
         
         # os.remove(stereotypedOutputDocPath)
         os.remove(resrcMLedOutputFilePath)
@@ -471,14 +404,6 @@ Actual:
         initialFunctionSigSet = set([x[0] for x in self.data.initialStereotypeInfo])
         currentFunctionSigSet = set([x[0] for x in self.data.currentStereotypeInfo])
         missingFunctions = list(initialFunctionSigSet - currentFunctionSigSet)
-
-
-        # for f in missingFunctions:
-        #     try:
-        #         reportStrm.write("  {0}\n".format(f))
-        #     except UnicodeError as e:
-        #         # print "Encountered UnicodeError Performing replacement with ~ character."
-        #         reportStrm.write("  " + " ".join([c if ord(c)< 128 else invalidCharacterReplacement for c in f]))
 
         #Sorting out which functions are missing from which archive.
         functionsNotFound = []
@@ -519,3 +444,6 @@ Actual:
             except UnicodeError as e:
                 reportStrm.write(" ".join([c if ord(c)< 128 else invalidCharacterReplacement for c in f[0]]))
             reportStrm.write(": Stereotypes: {0} FileName: {1}:{2} Archive Line#: {3}\n".format(*f[1:]))
+
+    def computeFinalTests(self):
+        raise NotImplementedError()

@@ -37,18 +37,85 @@ if __name__ == '__main__':
     # to see if the stereotypes are the same or different.
     testTracker = CodeBaseTestDataTracker()
     # inputFile = "/home/brian/Projects/srcTools/stereocode/archive_test_data/reports/Code/actual__CDR_Stream_0_possibleBug.cpp.xml"
+    # testTracker.runTest(
+    #     # inputFile,
+    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/ACE___5.6.1___ACEOnly___ACE_wrappers___annotated___all.ann.xml",
+    #     [
+    #         ("ACEXML_ENV_ARG_DECL_NOT_USED", "src:macro"),
+    #         ("ACE_ALLOC_HOOK_DEFINE","src:macro"),
+    #         ("ACE_END_VERSIONED_NAMESPACE_DECL", "src:macro"),
+    #         ("ACE_BEGIN_VERSIONED_NAMESPACE_DECL", "src:macro"),
+    #         ("ACE_RCSID", "src:macro"),
+    #         ("ACE_TSS_TYPE", "src:type")
+    #     ]
+    #       1000,
+    #     1700
+    # )
+
+    # testTracker.runTest(
+    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/ACE___ACE___annotated___all.ann.xml",
+    #     [
+    #         ("ACEXML_ENV_ARG_DECL_NOT_USED", "src:macro"),
+    #         ("ACE_ALLOC_HOOK_DEFINE","src:macro"),
+    #         ("ACE_END_VERSIONED_NAMESPACE_DECL", "src:macro"),
+    #         ("ACE_BEGIN_VERSIONED_NAMESPACE_DECL", "src:macro"),
+    #         ("ACE_RCSID", "src:macro"),
+    #         ("ACE_STATIC_SVC_DEFINE", "src:macro"),
+    #         ("ACE_PREALLOCATE_OBJECT", "src:macro"),
+    #         ("ACE_PREALLOCATE_ARRAY", "src:macro"),
+    #         ("ACE_DELETE_PREALLOCATED_ARRAY", "src:macro"),
+    #         ("ACE_DELETE_PREALLOCATED_OBJECT", "src:macro"),
+    #         ("ACE_APPLICATION_PREALLOCATED_OBJECT_DEFINITIONS", "src:macro"),
+    #         ("ACE_APPLICATION_PREALLOCATED_ARRAY_DEFINITIONS", "src:macro"),
+    #         ("ACE_TSS_TYPE", "src:type")
+    #     ]
+    #     1000,
+    #     1700
+    # )
+
+    # testTracker.runTest(
+    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/ATM___annotated___all.ann.xml",
+    #     [
+    #     ],
+    #       1000,
+    #     1700
+    #)
+
+    #testTracker.runTest(
+    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/CEL___cel-src-1.2.1___annotated___all.ann.xml",
+    #     [
+    #         ("CEL_IMPLEMENT_FACTORY_ALT", "src:macro"),
+    #         ("CS_IMPLEMENT_PLUGIN", "src:macro")
+    #     ],
+    #     10000,
+    #     360
+    # )
+
+    # testTracker.runTest(
+    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/C++Fuzzy___Source___annotated___all.ann.xml",
+    #     [
+    #         # ("CEL_IMPLEMENT_FACTORY_ALT", "src:macro"),
+    #     ],
+    #     10000,
+    #     360
+    # )
+
+
     testTracker.runTest(
-        # inputFile,
-        "/home/brian/Projects/srcTools/stereocode/archive_test_data/ACE___5.6.1___ACEOnly___ACE_wrappers___annotated___all.ann.xml",
+        "/home/brian/Projects/srcTools/stereocode/archive_test_data/CGAL___CGAL-3.4___annotated___all.ann.xml",
         [
-            ("ACEXML_ENV_ARG_DECL_NOT_USED", "src:macro"),
-            ("ACE_ALLOC_HOOK_DEFINE","src:macro"),
-            ("ACE_END_VERSIONED_NAMESPACE_DECL", "src:macro"),
-            ("ACE_BEGIN_VERSIONED_NAMESPACE_DECL", "src:macro"),
-            ("ACE_RCSID", "src:macro"),
-            ("ACE_TSS_TYPE", "src:type")
-        ]
+            ("CGAL_BEGIN_NAMESPACE", "src:macro"),
+            ("CGAL_END_NAMESPACE", "src:macro"),
+            ("CGAL_double", "src:macro"),
+            ("CGAL_int", "src:macro")
+
+        ],
+        10000,
+        360
     )
+
+    # 
+
     # filesToProcess = [f for f in os.listdir("archive_test_data") if os.path.isfile(os.path.join("archive_test_data", f))]
     # root = "archive_test_data"
     # for name in filesToProcess:
