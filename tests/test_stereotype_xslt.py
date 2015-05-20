@@ -86,8 +86,8 @@ class TestStereotypeXslt(unittest.TestCase):
             "matchesWithAStereotype": 6,
             "functionInfo":
             [
-                ("updateGuess1", ["collaborator"]),
-                ("updateGuess2", ["set", "collaborator"]),
+                ("updateGuess1", ["collaborational-command", "collaborator"]),
+                ("updateGuess2", ["collaborational-command", "collaborator"]),
                 ("updateGuess3", ["collaborational-command","collaborator"]),
                 ("updateGuess4", ["collaborational-command", "collaborator"]),
                 ("updateGuess5", ["collaborator"]),
@@ -106,11 +106,11 @@ class TestStereotypeXslt(unittest.TestCase):
             "matchesWithAStereotype": 6,
             "functionInfo":
             [
-                ("append", ["collaborator"]),
-                ("read", ["collaborator"]),
-                ("compareItems", ["collaborator"]),
-                ("newItem", ["nonconstget", "collaborator"]),
-                ("readLink", ["collaborational-property", "collaborator"])
+                ("append", ["collaborator", 'stateless']),
+                ("read", ['collaborational-command', 'collaborator']),
+                ("compareItems", ['collaborational-command', 'collaborator']),
+                ("newItem", ["collaborator"]),
+                ("readLink", ['collaborational-property', "collaborator"])
             ]
         })
 
@@ -166,7 +166,7 @@ class TestStereotypeXslt(unittest.TestCase):
             "matchesWithAStereotype": 1,
             "functionInfo":
             [
-                ("foo", ['set', 'collaborator'])
+                ("foo", ['collaborational-command', 'collaborator'])
             ]
         })
 
@@ -242,19 +242,19 @@ class TestStereotypeXslt(unittest.TestCase):
                 ("t_action", ["get"]),
                 ("FindVertex", ["get", "collaborator"]),
                 ("checkForImage", ["collaborator"]),
-                ("createNTupleToFile", ["non-void-command", "collaborator"]),
+                ("createNTupleToFile", ["collaborator"]),
                 ("registerNTuple", ["collaborator"]),
                 ("setLabelAt", ["command"]),
                 ("SetValue", ["unclassified"]),
                 ("getTargetProjector", ["property","collaborator","factory"]),
                 ("initPlot", ["command"]),
                 ("drawLines", ["command", "collaborator"]),
-                ("reset", ["command"]),
+                ("reset", ["unclassified"]),
                 ("run", ["collaborator"]),
                 ("setFamily", ["unclassified"]),
                 ("saveToFile", ['nonconstget', 'collaborator']),
                 ("findWhite", ["nonconstget"]),
-                ("findWhite", ["unclassified"]),
+                ("findWhite", ["stateless"]),
                 ("endPlot", ["set"]),
                 ("checkWidth", ["collaborator"]),
             ]

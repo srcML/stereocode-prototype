@@ -23,7 +23,7 @@ import xml.sax as sax
 from srcml import *
 
 # from operator import itemgetter, attrgetter, methodcaller
-xmlNamespaces = dict(src="http://www.sdml.info/srcML/src", cpp="http://www.sdml.info/srcML/cpp")
+xmlNamespaces = dict(src="http://www.srcML.org/srcML/src", cpp="http://www.srcML.org/srcML/cpp")
 stereotypeExtractingRe = re.compile(r"@stereotype (?P<stereotypes>[^\*]*)")
 # print >> sys.stderr, stereotypeExtractingRe.pattern
 
@@ -189,7 +189,7 @@ def generateTestReport(processedArchive, reportFolder):
     helperModule = ExtFunctions()
     functions = {'unitIsCPPFile':'unitIsCPPFile', 'funcHasStereotype':'funcHasStereotype'}
     extensions = et.Extension(helperModule, functions)
-    namespaces = {'src':'http://www.sdml.info/srcML/src', 'cpp':'http://www.sdml.info/srcML/cpp'}
+    namespaces = {'src':'http://www.srcML.org/srcML/src', 'cpp':'http://www.srcML.org/srcML/cpp'}
     evaluator = et.XPathEvaluator(processedArchive, namespaces=namespaces, extensions=extensions)
 
 
@@ -293,7 +293,7 @@ def generateStereotypeReportFromDoc(processedArchive):
     helperModule = ExtFunctions()
     functions = {'unitIsCPPFile':'unitIsCPPFile', 'funcHasStereotype':'funcHasStereotype'}
     extensions = et.Extension(helperModule, functions)
-    namespaces = {'src':'http://www.sdml.info/srcML/src', 'cpp':'http://www.sdml.info/srcML/cpp'}
+    namespaces = {'src':'http://www.srcML.org/srcML/src', 'cpp':'http://www.srcML.org/srcML/cpp'}
     evaluator = et.XPathEvaluator(processedArchive, namespaces=namespaces, extensions=extensions)
 
     # Listing all C++ files within the archive.

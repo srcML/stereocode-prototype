@@ -26,9 +26,9 @@ from srcml import *
 
 if __name__ == '__main__':
 
-    print 80 * "-"
-    print "Testing against previous stereotypes"
-    print 80 * "-"
+    # print 80 * "-"
+    # print "Testing against previous stereotypes"
+    # print 80 * "-"
     # Handling special test cases that are run after the initial test suite so that they can
     # test a larger mount of projects.
 
