@@ -89,10 +89,10 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
 
   <!-- definition filename, i.e., .cpp filename -->
-  <xsl:param name="definition_filename"/>
+  <!-- <xsl:param name="definition_filename"/> -->
 
   <!-- definition file, i.e., .cpp file -->
-  <xsl:variable name="definition_file" select="document($definition_filename)"/>
+  <!-- <xsl:variable name="definition_file" select="document($definition_filename)"/> -->
 
 
   <!--
@@ -156,51 +156,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       <func:result select="src:strip-space($declaration/src:name)"/>
     </xsl:if>
 
-  </func:function>
-
-
-  <!--
-    Remove namespace prefix of hippodraw:: from methods
-
-    @TODO: Check if this function is actually used.
-    @TODO: Fix this function so that it can scan for namespaces instead
-    of just using hippodraw::
-
-  -->
-  <func:function name="src:get_definition">
-    <xsl:param name="declaration"/>
-
-    <!-- full method name -->
-    <xsl:variable name="function_name" select="src:function_fullname($declaration)"/>
-
-    <!-- full signature -->
-    <xsl:variable name="function_signature" select="src:function_signature($declaration)"/>
-
-    <!-- method definition -->
-    <xsl:variable name="defn" select="($definition_file//src:function | $declaration/ancestor::src:unit//src:function)
-              [$function_name=src:strip-space(src:name)]
-              "/>
-
-              <!-- [$function_name=str:replace(src:strip-space(src:name), 'hippodraw::', '')] -->
-
-    <xsl:variable name="defn2" select="$defn[$function_signature=src:function_signature(.)]
-              "/>
-    <xsl:choose>
-      <xsl:when test="count($defn2)=1">
-        <func:result select="$defn2"/>
-      </xsl:when>
-
-      <xsl:otherwise>
-        <xsl:variable name="defn3" select="$declaration/ancestor::unit/descendant::src:function
-              [$function_name=src:strip-space(src:name)]
-              "/>
-
-        <xsl:variable name="defn4" select="$defn3[$function_signature=src:function_signature(.)]
-              "/>
-
-        <func:result select="''"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </func:function>
 
   <!--
@@ -1321,33 +1276,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     </xsl:choose>
   </xsl:template>
 
-  <!-- annotate function declarations that are defined in the definition file and are in a class -->
-  <xsl:template match="src:function_decl[ancestor::src:class and not(src:isvirtual(.))]">
-
-    <!-- linked method definition -->
-    <xsl:variable name="definition" select="src:get_definition(.)"/>
-
-    <!-- annotate if we found it -->
-    <xsl:choose>
-      <xsl:when test="string-length($definition)=0">
-
-        <!-- insert comment about unable to find definition -->
-        <src:comment type="block">/** Unable to find definition for <xsl:value-of select="src:function_fullname(.)"/> */</src:comment>
-        <xsl:value-of select="$eol"/>
-
-        <!-- identity copy of function declaration -->
-        <xsl:apply-templates select="." mode="identity"/>
-      </xsl:when>
-
-      <xsl:otherwise>
-        <!-- insert the stereotype into the declaration using the definition -->
-        <xsl:apply-templates select="." mode="insert_stereotype">
-    <xsl:with-param name="definition" select="$definition"/>
-        </xsl:apply-templates>
-      </xsl:otherwise>
-    </xsl:choose>
-
-  </xsl:template>
   <!--
       Section responsible for actually applying all of the stereotypes and annotating
       the source code with a comment.
@@ -1373,11 +1301,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
-<!--     <xsl:apply-templates select="@*|node()"/>
-    <xsl:copy-of select="."/> -->
-
   </xsl:template>
-
 
 
   <!-- classifies stereotypes using criteria from stereotypes.xsl -->
@@ -1401,7 +1325,5 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
-
-
 
 </xsl:stylesheet>

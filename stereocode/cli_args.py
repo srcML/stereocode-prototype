@@ -58,6 +58,12 @@ def parse_cli_arguments(argumentString=None):
             string formatting.
 
         * Should this work with a URI?!?!?
+
+    Optional CLI arguments:
+        * Namespace file - For giving a list of known namespaces.
+        * Basic types file - a file for listing the names of basic types which are to be used while processing
+            stereotyes.
+        * 
     """
 
     # Loading Help documentation.

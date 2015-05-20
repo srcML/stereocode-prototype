@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # each of the files from within an all archive, then
     # re-running stereocode on it and testing the result
     # to see if the stereotypes are the same or different.
-    # testTracker = CodeBaseTestDataTracker()
+    testTracker = CodeBaseTestDataTracker()
     # inputFile = "/home/brian/Projects/srcTools/stereocode/archive_test_data/reports/Code/actual__CDR_Stream_0_possibleBug.cpp.xml"
     # testTracker.runTest(
     #     # inputFile,
@@ -279,7 +279,7 @@ if __name__ == '__main__':
     #     643
     # )
 
-    # 
+    
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Ivf++___ivfplusplus___ivf-1.0.0___annotated___all.ann.xml",
     #     [],
