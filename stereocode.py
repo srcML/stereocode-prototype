@@ -40,46 +40,38 @@ from stereocode import *
 
 
 if __name__ == "__main__":
-    config = parse_cli_arguments()
+    # Loading configuration and displaying things correctly.
+    try:
+        config = parse_cli_arguments()
+    except cli_error as e:
+        print >> sys.stderr, "Encountered an error from the command line", str(e)
+        sys.exit(0)
 
-#     arg_parser = argparse.ArgumentParser(
-#         prog="stereocode",
-#         description = 
-# """Annotate functions/methods with special different stereotypes.
-# The expected input to is a srcML archive.
+    # Using the configuration options in order to set things up for actually executing
+    # stereocode.
+
+    knownNamespaces = []
+
+    # Reading in namespace names from file if necessary.
+    if config.has_ns_pefix_file:
+        knownNamespaces = config.ns_prefix_stream.read_lines()
+        # TODO: Post processing on possible namespace prefixes.
+        raise NotImplementedError("Namespace prefix support isn't implemented yet.")
+
+    """
+    Things that need to be figured out.
+    1) What's the report going to contain?
+    2) When producing the necessary output for things like
+        histograms or reports can this be done all at the same time?
+    3) What's the most efficient way to remove redocumentation from an archive?
+    4) How much of this can be done with SAX?
+    """
+    # if config.has_ns_file
+    if config.no_redoc:
+        print "Handling the situation where we process an input file."
+    elif config.remove_redoc:
+        print "Removing redoc from source code."
+    else:
+        print "Performing redocumentation on input. This is the easiest case."
 
 
-# This program has several methods of operation:
-#     1) Source Code Re-documentation. Annotate the current source code itself with a
-#         comment containing @stereotype followed by the stereotypes of that function.
-#     2) XML Attribute Annotation. Each <function> is annotated with stereotype XML 
-#         attribute that contains a comma separated list of stereotypes associated
-#         with that method.
-#     3) Function List. Creates a new archive containing an XML archive containing
-#         a list of all function signatures by file paired with stereotype
-#         information.
-# """
-#     )
-#     arg_parser.add_argument("-i,--input", metavar='N', type=int, nargs='+', help='an integer for the accumulator')
-
-    # parser.print_help()
-    # parser.add_argument('--sum', dest='accumulate', action='store_const',
-    #                    const=sum, default=max,
-    #                    help='sum the integers (default: find the max)')
-
-    # args = arg_parser.parse_args()
-    # if 
-
-    # print args.accumulate(args.integers)
-
-    # sys.argv
-
-    # logging.basicConfig(level=logging.INFO)
-    # logger = logging.getLogger(__name__)
-    # logger.debug("Starting to processing arguments")
-
-    # Configuring argument parsing.
-    # 
-
-    # logger.debug("Completed argument processing")
-    #raise NotImplementedError("Haven't started implemented this just yet.")
