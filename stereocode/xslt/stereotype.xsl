@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:src="http://www.sdml.info/srcML/src" 
-    xmlns:cpp="http://www.sdml.info/srcML/cpp"
+    xmlns:src="http://www.srcML.org/srcML/src" 
+    xmlns:cpp="http://www.srcML.org/srcML/cpp"
     xmlns:set="http://exslt.org/sets"
     xmlns:exsl="http://exslt.org/common"
     xmlns:str="http://exslt.org/strings"
@@ -1360,7 +1360,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     </xsl:variable>
 
     <!-- insert stereotype comment -->
-    <comment xmlns="http://www.sdml.info/srcML/src" type="block">/** @stereotype <xsl:value-of select="$stereotype"/>*/</comment>
+    <comment xmlns="http://www.srcML.org/srcML/src" type="block">/** @stereotype <xsl:value-of select="$stereotype"/>*/</comment>
     <xsl:value-of select="$eol"/>
 
     <!-- calculate the indent currently on the declaration so we can duplicate it on the comment -->
@@ -1370,7 +1370,11 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:value-of select="$indent"/>
 
     <!-- copy of function -->
-    <xsl:copy-of select="."/>
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+<!--     <xsl:apply-templates select="@*|node()"/>
+    <xsl:copy-of select="."/> -->
 
   </xsl:template>
 

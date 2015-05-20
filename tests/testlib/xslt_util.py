@@ -20,10 +20,12 @@
 import stereocode, lxml, lxml.etree as et, re, os, os.path, shutil, sys, StringIO, lxml.sax as lsax
 from xml.sax.handler import ContentHandler
 import xml.sax as sax
+from srcml import *
 
 # from operator import itemgetter, attrgetter, methodcaller
 xmlNamespaces = dict(src="http://www.sdml.info/srcML/src", cpp="http://www.sdml.info/srcML/cpp")
 stereotypeExtractingRe = re.compile(r"@stereotype (?P<stereotypes>[^\*]*)")
+# print >> sys.stderr, stereotypeExtractingRe.pattern
 
 def executeTransform(xmlDocument, xsltDocument):
     """
@@ -338,9 +340,16 @@ escapeTag = "escape"
 
 # Attribute constants
 filenameAttr = "filename"
+class StereotypeLocationTagError(Exception):
+    def __init__(self, text, filename, lineNumber, archiveLineNumber):
+        super(Exception, self).__init__(text)
+        self.filename = filename
+        self.lineNumber = lineNumber
+        self.archiveLineNumber = archiveLineNumber
 
 class FastStereotypeExtractor(sax.handler.ContentHandler):
     def __init__(self):
+        self.inputFilePath = ""
         self.currentFileName = ""
         self.docLocator = None
         self.currentBuffer = StringIO.StringIO()
@@ -364,7 +373,7 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
                     self.state = STATE_STEREOTYPE_REDOC_SEARCH
                     self.unitLineNumber = self.docLocator.getLineNumber()
             else:
-                raise Exception("Didn't locate expected element current Element Information. Name: {0} Attrs: {1}".format(name, attrs))
+                raise Exception("Didn't locate expected element current Element Information. Name: {0} Attrs: {1}".format(name, attrs), self.currentFileName)
 
 
         elif self.state == STATE_STEREOTYPE_REDOC_SEARCH:
@@ -374,7 +383,7 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
         elif self.state == STATE_READING_COMMENT:
             if name == escapeTag:
                 return
-            raise Exception("No tags should be encountered while reading comment because comment only consists of text with no children. Node Encountered: {0}".format(name))
+            raise Exception("No tags should be encountered while reading comment because comment only consists of text with no children. Node Encountered: {0}".format(name), self.currentFileName)
         elif self.state == STATE_EXPECTING_FUNCTION:
 
             if name == functionTag or name =="friend":
@@ -385,7 +394,12 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
             elif name == commentTag or name == "src:comment":
                 self.state = STATE_STEREOTYPE_REDOC_SEARCH
             else:
-                raise Exception("Stereotype is missing function definition. Tag Name: {1} File: {0}:{3} Line #: {2}".format(self.currentFileName, name, self.docLocator.getLineNumber(), self.docLocator.getLineNumber() - self.unitLineNumber))
+                raise StereotypeLocationTagError(
+                    "Stereotype is missing function definition. Tag Name: {1} File: {0}:{3} Line #: {2}".format(self.currentFileName, name, self.docLocator.getLineNumber(), self.docLocator.getLineNumber() - self.unitLineNumber),
+                    self.currentFileName,
+                    self.docLocator.getLineNumber(),
+                    self.docLocator.getLineNumber() - self.unitLineNumber
+                )
 
         elif self.state == STATE_READING_FUNCTION:
             if name == commentTag:
@@ -424,7 +438,7 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
             if name == escapeTag:
                 return
             if name != commentTag and name != "src:comment":
-                raise Exception("Invalid Transition didn't get expected end of comment. Tag: {0}".format(name))
+                raise Exception("Invalid Transition didn't get expected end of comment. Tag: {0}".format(name), self.currentFileName)
 
 
             # Extract comment text, test to see if it's a stereotype
@@ -468,12 +482,46 @@ class FastStereotypeExtractor(sax.handler.ContentHandler):
                 self.currentBuffer.write(outputStr)
         else:
             raise Exception("Invalid/unknown state: {0}".format(self.state))
-        # if self.isReadingComment:
 
-        # elif self.isReadingFunction: 
+def reprocessAndExtractDocument(inputFilePath, outputDirectory, erroringFileName, knownMacros, outputFilePrefix = ""):
+    """
+    This is called when there's an error with one of the stereotypes. This function recovers
+    the file that caused the error and outputs that file into archive_test_data/reports/Code
+    with the supplied file name. The extraction is done using srcml.
+    """
+    counter = 0
+    assert inputFilePath != "", "Incorrect file name"
+    extractedFileMarkUpDict = dict()
+    # archive_test_data/reports/Code
+    with readable_archive(readable_archive_settings(), filename=inputFilePath) as reader:
+        currentUnit = reader.read()
+        while currentUnit != None:
+            if currentUnit.filename == erroringFileName:
+                temp = os.path.splitext(currentUnit.filename)
+                if currentUnit.filename in extractedFileMarkUpDict:
+                    extractedFileMarkUpDict[currentUnit.filename] += 1
+                else:
+                    extractedFileMarkUpDict[currentUnit.filename] = 0
+                outputFileName = "{3}{0}_{1}{2}".format(temp[0], extractedFileMarkUpDict[currentUnit.filename], temp[1], outputFilePrefix)
+                print >> sys.stderr, "  Processing problematic markup: ", outputFileName
+                problematicMarkupFileName = os.path.join(outputDirectory, outputFileName)
+                tempStrm = open(problematicMarkupFileName, "w")
+                source_code = currentUnit.unparse()
+                tempStrm.write(source_code)
+                tempStrm.close()
+                with writable_archive(writable_archive_settings(xml_encoding="UTF-8", default_language=LANGUAGE_CXX, macros=knownMacros), filename=problematicMarkupFileName+".xml") as codeOutputArch:
+                    codeOutputUnit = codeOutputArch.create_unit(filename=currentUnit.filename)
+                    codeOutputUnit.parse(source_code=source_code)
+                    codeOutputArch.write(codeOutputUnit)
+                    return 
+            currentUnit = reader.read()
+            counter += 1
+        raise Exception("Unable to locate specified file name: {0}".format(erroringFileName))
+
 
 
 def extractStereotypesFromDocument(pathToDoc):
     handler = FastStereotypeExtractor()
+    handler.inputFilePath = pathToDoc
     sax.parse(pathToDoc, handler)
     return handler.functionStereotypeInfo

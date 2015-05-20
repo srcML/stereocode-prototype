@@ -48,6 +48,15 @@ class StereotypeDocData:
     def evaluateTest(self, outputStrm):
         raise NotImplementedError("Not Implemented yet still working on it.")
 
+    def cleanUpExtraData(self):
+        self.initialHistogram = None
+        self.currentHistogram = None
+        self.initialStereotypeInfo = None
+        self.currentStereotypeInfo = None
+        self.mismatchStereotypeResults = None
+
+
+
 DataFolderName = "archive_test_data/reports"
 CodeOutputFolderName = "archive_test_data/reports/Code"
 
@@ -56,7 +65,7 @@ class CodeBaseTestDataTracker:
         self.testData = []
         self.data = None
 
-    def runTest(self, testFile, knownMacros, expectedFunctionCount, expectedFileCount):
+    def runTest(self, testFile, knownMacros, expectedFunctionCount, expectedFileCount, enabledParserOptions=OPTION_CPPIF_CHECK):
         if os.stat(testFile).st_size == 0:
             os.remove(testFile)
             return
@@ -77,8 +86,10 @@ class CodeBaseTestDataTracker:
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:src="http://www.sdml.info/srcML/src"
-    xmlns:cpp="http://www.sdml.info/srcML/cpp"
+    xmlns:src="http://www.srcML.org/srcML/src"
+    xmlns:cpp="http://www.srcML.org/srcML/cpp"
+    xmlns:regexp="http://exslt.org/regular-expressions"
+    extension-element-prefixes="regexp"
 >
 <xsl:output omit-xml-declaration="no"/>
 
@@ -88,7 +99,7 @@ class CodeBaseTestDataTracker:
     </xsl:copy>
 </xsl:template>
 
-<xsl:template match="src:function[src:template][src:comment]">
+<xsl:template match="src:function[src:template][src:comment[regexp:test(string(.), '@stereotype [^\*]*')]]">
     <xsl:apply-templates select="src:comment"/>
     <xsl:copy>
         <xsl:apply-templates select="child::node()[not(self::src:comment)]"/>
@@ -98,6 +109,7 @@ class CodeBaseTestDataTracker:
 </xsl:template>
 
 </xsl:stylesheet>"""
+# .format(stereotypeExtractingRe.pattern)
         
         outputDocumentPathFilePrefix = os.path.split(testFile)[1]
         resrcMLedOutputFilePath = os.path.join(DataFolderName, outputDocumentPathFilePrefix + ".tempfile.xml")
@@ -117,21 +129,27 @@ class CodeBaseTestDataTracker:
             # "Multihomed_INET_Addr.cpp":0
             # "MMAP_Memory_Pool.cpp":0
             # "portalfact.cpp":0
-            "QP_models.h":0
+            # "QP_models.h":0
+            # "propgrid.cpp":0
+            # "metar_main.cxx":0
+            # "CanvasView.cxx":0
             }
         )
         extractedNamesPostStereotypedDict = dict(extractFileNameDict)
         counter = 0
         with readable_archive(readable_archive_settings(), filename=testFile) as reader:
             writableSettings = writable_archive_settings(default_language=LANGUAGE_CXX, macros=knownMacros)
-            writableSettings.parser_options |= OPTION_CPPIF_CHECK | OPTION_XML_DECL
+            if enabledParserOptions != None:
+                writableSettings.parser_options |= enabledParserOptions
+
             with writable_archive(writableSettings, filename=resrcMLedOutputFilePath) as outputArch:
                 currentUnit = reader.read()
                 while currentUnit != None:
                     if (counter % 500) == 0:
                         print >> sys.stderr, "    Processed file count: ", counter
                     outputUnit = outputArch.create_unit(filename=currentUnit.filename)
-                    source_code=currentUnit.unparse()
+                    source_code = currentUnit.unparse()
+
                     if currentUnit.filename in  extractFileNameDict:
                         temp = os.path.splitext(currentUnit.filename)
                         outputFileName = "{0}_{1}{2}".format(temp[0], extractFileNameDict[currentUnit.filename], temp[1])
@@ -145,24 +163,29 @@ class CodeBaseTestDataTracker:
                             codeOutputUnit = codeOutputArch.create_unit(filename=currentUnit.filename)
                             codeOutputUnit.parse(source_code=source_code)
                             codeOutputArch.write(codeOutputUnit)
-
                     outputUnit.parse(source_code=source_code)
                     outputArch.write(outputUnit)
                     currentUnit = reader.read()
                     counter += 1
             print >> sys.stderr, "    Total Processed File Count: ", counter
+
+        assert counter == expectedFileCount, "Didn't receive the correct # of files from archive."
         self.data.actualFileCount = counter
         # Loading current document for processing
-        print >> sys.stderr, "  Transforming Document"
+        print >> sys.stderr, "  Loading Document for transformation"
 
         p = et.XMLParser(huge_tree=True)
         tree = et.parse(resrcMLedOutputFilePath, parser=p)
+        print >> sys.stderr, "  Transforming for function template fix document"
+
         parseStyleSheetTest = et.XSLT(et.XML(functionTemplateFix))
         transformedTree = parseStyleSheetTest(tree)
+
+
         if len(parseStyleSheetTest.error_log) > 0:
             for entry in parseStyleSheetTest.error_log:
                 print >> sys.stderr, entry
-            self.data.xsltTransformationError = parseStyleSheetTest.error_log
+            self.data.xsltTransformationError = [str(x) for x in parseStyleSheetTest.error_log]
 
         treeStrm = open(templateFixFilePath, "w")
         transformedTree.write(treeStrm)
@@ -171,14 +194,20 @@ class CodeBaseTestDataTracker:
         # Loading current document for processing
         print >> sys.stderr, "  Loading Initial Document"
 
-        oldStereotypedFunctionInfo = extractStereotypesFromDocument(templateFixFilePath)
+        try:
+            oldStereotypedFunctionInfo = extractStereotypesFromDocument(templateFixFilePath)
+        except StereotypeLocationTagError as e:
+            reprocessAndExtractDocument(templateFixFilePath,CodeOutputFolderName, e.filename, knownMacros, "initial_")
+            raise e
         self.data.initialStereotypeInfo = oldStereotypedFunctionInfo
         self.data.initialHistogram = buildHistogram(oldStereotypedFunctionInfo)
+
+
         
         removeCommentsXslt = """<?xml version="1.0" encoding="utf-8"?>
         <xsl:stylesheet version="1.0"
         xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-        xmlns:src="http://www.sdml.info/srcML/src"
+        xmlns:src="http://www.srcML.org/srcML/src"
         xmlns:regexp="http://exslt.org/regular-expressions"
         >
  <xsl:output omit-xml-declaration="no"/>
@@ -193,13 +222,23 @@ class CodeBaseTestDataTracker:
 </xsl:stylesheet>
         """
 
-
+        # xsltInputBuffer = memory_buffer()
+        # xsltInputBuffer.load_from_string(removeCommentsXslt)
+        # with readable_archive(readable_archive_settings(xsltransformations=[xsltransform(buffer=xsltInputBuffer), xsltransform(filename=stereocode.stereocodeXsltFilePath)]), filename=templateFixFilePath) as reader:
+        #     with writable_archive(writable_archive_settings(), filename=stereotypedOutputDocPath) as outputArchive:
+        #         reader.xslt.apply(outputArchive)
+        # result = transform(doc, a="/a/b/text()", )
+        # profile = result.xslt_profile
+        # print profile
 
         removeCommentsDoc = et.XSLT(et.XML(removeCommentsXslt))
         print >> sys.stderr, "  Loading archive for additional processing"
         documentToTransform = et.parse(templateFixFilePath)
         print >> sys.stderr, "  Removing Comments and Redocumenting source code"
-        transformedDocument = stereocode.stereocodeDoc(removeCommentsDoc(documentToTransform))
+        docWithNoComments = removeCommentsDoc(documentToTransform)
+        # print >>sys.stderr, removeCommentsDoc.xslt_profile
+        print >> sys.stderr, "  Redocumenting with stereocode."
+        transformedDocument = stereocode.stereocodeDoc(docWithNoComments)
         transformedDocument.write(stereotypedOutputDocPath)
 
         if any([(x[1] > 0) for x in extractFileNameDict.items()]):
@@ -234,7 +273,12 @@ class CodeBaseTestDataTracker:
 
         print >> sys.stderr, "  Extracting new stereotype information from document"
 
-        newStereotypeInfo = extractStereotypesFromDocument(stereotypedOutputDocPath)
+        
+        try:
+            newStereotypeInfo = extractStereotypesFromDocument(stereotypedOutputDocPath)
+        except StereotypeLocationTagError as e:
+            reprocessAndExtractDocument(stereotypedOutputDocPath, CodeOutputFolderName, e.filename, knownMacros, "actual_")
+            raise e
 
         self.data.currentStereotypeInfo = newStereotypeInfo
         self.data.currentHistogram = buildHistogram(newStereotypeInfo)
@@ -346,6 +390,8 @@ class CodeBaseTestDataTracker:
         if len(self.data.currentStereotypeInfo) >= len(self.data.initialStereotypeInfo):
             for currentData in initialFunctionBySig.items():
                 if currentData[0] not in currentFunctionBySig:
+                    reprocessAndExtractDocument(templateFixFilePath, CodeOutputFolderName, currentData[1][2], knownMacros, "initial_")
+                    reprocessAndExtractDocument(stereotypedOutputDocPath, CodeOutputFolderName, currentData[1][2], knownMacros, "actual_")
                     raise Exception("Invalid function signature located. Signature: {0}  stereotype: {1} File: {2} Line In File: {3} Line in Arch: {4}".format(*currentData[1]))
                 if currentData[1][1] != initialFunctionBySig[currentData[0]][1]:
                     self.data.mismatchStereotypeResults.append((currentData[1], currentData[1], initialFunctionBySig[currentData[0]]))
