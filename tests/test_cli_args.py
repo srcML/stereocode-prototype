@@ -31,6 +31,24 @@ class TestCLIArgs(unittest.TestCase):
         self.assertFalse(result.verbose_output, "Didn't get expected value.")
         self.assertFalse(result.output_timings, "Didn't get expected value.")
 
+        self.assertFalse(result.output_histogram, "Didn't get expected value.")
+        self.assertIsNone(result.histogram_stream, "Didn't get expected value.")
+
+        self.assertFalse(result.output_unique_histogram, "Didn't get expected value.")
+        self.assertIsNone(result.unique_histogram_stream, "Didn't get expected value.")
+
+        self.assertFalse(result.output_report, "Didn't get expected value.")
+        self.assertIsNone(result.report_stream, "Didn't get expected value.")
+
+        # self.assertTrue(result.extract_ns_from_archive, "Didn't get expected value.")
+        self.assertIsNone(result.report_stream, "Didn't get expected value.")
+
+        self.assertFalse(result.has_ns_pefix_file, "Didn't get expected values")
+        self.assertIsNone(result.ns_pefix_file_stream, "Didn't get expected value.")
+
+        self.assertFalse(result.no_redoc, "Didn't get expected value.")
+        self.assertFalse(result.remove_redoc, "Didn't get expected value.")
+        
     # def test_help(self):
     #     result = parse_cli_arguments("-h")
         # print 
@@ -40,10 +58,12 @@ class TestCLIArgs(unittest.TestCase):
         # self.assertFalse(result.debug, "Didn't get expected type.")
         # self.assertFalse(result.enableTiming, "Didn't get expected type.")
 
-    def test_input(self):
+    # testing input file.
+    def test_input_from_console(self):
         config = parse_cli_arguments("", False)
         self.assertEqual(config.input_stream.__class__, sys.stdin.__class__, "Didn't get correct object for input")
 
+    @cleanup_files("xmlTestFile.xml")
     def test_input_from_file(self):
         outputFileName = "xmlTestFile.xml"
         xmlFileContent = """<?xml version="1.0" encoding="UTF-8"?>
@@ -68,14 +88,88 @@ class TestCLIArgs(unittest.TestCase):
         self.assertTrue(config.remove_redoc, "Didn't correctly set remove redocumentation value")
 
 
+    # Testing mode
     def test_mode_ReDocSrc(self):
         config = parse_cli_arguments("-m ReDocSrc", False)
-        self.assertEqual(config.mode, MODE_REDOCUMENT_SOURCE, "Didn't correctly mode")
+        self.assertEqual(config.mode, MODE_REDOCUMENT_SOURCE, "Didn't correctly set mode")
 
     def test_mode_attrRedoc(self):
         config = parse_cli_arguments("-m XmlAttr", False)
-        self.assertEqual(config.mode, MODE_ADD_XML_ATTR, "Didn't correctly mode")
+        self.assertEqual(config.mode, MODE_ADD_XML_ATTR, "Didn't correctly set mode")
 
     def test_mode_FuncList(self):
         config = parse_cli_arguments("-m FuncList", False)
-        self.assertEqual(config.mode, MODE_FUNCTION_LIST, "Didn't correctly mode")
+        self.assertEqual(config.mode, MODE_FUNCTION_LIST, "Didn't correctly set mode")
+
+    # testing verbose
+    def test_verbose(self):
+        config = parse_cli_arguments("-v", False)
+        self.assertTrue(config.verbose_output, "Didn't correctly set verbose")
+
+    # Testing timings
+    def test_timings(self):
+        config = parse_cli_arguments("-t", False)
+        self.assertTrue(config.output_timings, "Didn't correctly set timings")
+
+    # No redocumentation testing
+    @cleanup_files("no_redoc_temp.txt")
+    def test_no_redoc(self):
+        no_redoc_temp ="no_redoc_temp.txt"
+        strm = open(no_redoc_temp, "w")
+        strm.close()
+        config = parse_cli_arguments("-n --histogram no_redoc_temp.txt", False)
+        self.assertTrue(config.no_redoc, "Didn't correctly set no_redoc")
+
+
+    # Testing histogram
+    @cleanup_files("h_temp.txt")
+    def test_histogram(self):
+        config = parse_cli_arguments("--histogram h_temp.txt", False)
+        self.assertTrue(config.output_histogram, "Didn't correctly set histogram")
+        self.assertEqual(config.histogram_stream.__class__, file, "Didn't get correct object type for input. Actual: {0} Expected: {1}".format(config.histogram_stream.__class__.__name__, file))
+
+    # Testing unique histogram
+    @cleanup_files("uh_temp.txt")
+    def test_unique_histogram(self):
+        config = parse_cli_arguments("--unique-histogram uh_temp.txt", False)
+        self.assertTrue(config.output_unique_histogram, "Didn't correctly set unique histogram")
+        self.assertEqual(config.unique_histogram_stream.__class__, file, "Didn't get correct object type for input. Actual: {0} Expected: {1}".format(config.unique_histogram_stream.__class__.__name__, file))
+
+    # Testing report
+    @cleanup_files("r_temp.txt")
+    def test_report(self):
+        config = parse_cli_arguments("--report r_temp.txt", False)
+        self.assertTrue(config.output_report, "Didn't correctly set report")
+        self.assertEqual(config.report_stream.__class__, file, "Didn't get correct object type for input. Actual: {0} Expected: {1}".format(config.report_stream.__class__.__name__, file))
+
+    # Testing namespace file name
+    @cleanup_files("ns_file.txt")
+    def test_namespace(self):
+        ns_file = "ns_file.txt"
+        temp = open(ns_file, "w")
+        temp.close()
+        config = parse_cli_arguments("--ns-file ns_file.txt", False)
+        self.assertTrue(config.has_ns_pefix_file, "Didn't correctly open file.")
+        self.assertEqual(config.ns_pefix_file_stream.__class__, file, "Didn't get correct object type for input. Actual: {0} Expected: {1}".format(config.ns_pefix_file_stream.__class__.__name__, file))
+
+    @expect_exception(cli_error)
+    def test_namespace_missing_file(self):
+        config = parse_cli_arguments("--ns-file does_not_exist.txt", False)
+
+
+    @expect_exception(cli_error)
+    def test_no_redoc_remove_redoc(self):
+        config = parse_cli_arguments("--no-redoc --remove-redoc", False)
+
+    @expect_exception(cli_error)
+    def test_ns_file_remove_redoc(self):
+        config = parse_cli_arguments("--ns-file ns_list.txt --remove-redoc", False)
+        
+
+    @expect_exception(cli_error)
+    def test_no_redoc_nothing_to_be_done(self):
+        config = parse_cli_arguments("--no-redoc", False)
+
+    @expect_exception(cli_error)
+    def test_no_redoc_on_function_list(self):
+        config = parse_cli_arguments("--no-redoc -m FuncList", False)

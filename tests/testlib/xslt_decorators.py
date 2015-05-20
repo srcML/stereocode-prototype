@@ -69,3 +69,26 @@ def expect_exception(exception_type, extra_test=None):
                     extra_test(self, e)
         return instance_extraction
     return exception_test
+
+
+def cleanup_files(*files_to_cleanup):
+    """
+    Deletes a file after a test completes. Failure or no failure.
+    """
+    def cleanup_func(func):
+
+        def delete_files():
+            for f in files_to_cleanup:
+                if os.path.exists(f):
+                    os.remove(f)
+
+        def make_call(*args):
+            delete_files()
+            try:
+                func(*args)
+            except:
+                delete_files()
+                raise
+            delete_files()
+        return make_call
+    return cleanup_func

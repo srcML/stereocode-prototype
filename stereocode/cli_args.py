@@ -17,7 +17,7 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import sys, os.path, logging, argparse
+import sys, os.path, logging, argparse, traceback
 
 
 MODE_REDOCUMENT_SOURCE = "ReDocSrc"
@@ -50,10 +50,9 @@ class configuration(object):
         self._unique_histogram_strm = kwargs["unique_histogram_stream"]
         self._report_strm = kwargs["report_stream"]
         self._no_redoc = kwargs["no_redocumentation"]
-        self._extract_ns = kwargs["extract_ns_from_archive"]
-        self._ns_pefix_file_strm = kwargs["ns_prefix_file"]
+        # self._extract_ns = kwargs["extract_ns_from_archive"]
+        self._ns_pefix_file_strm = kwargs["ns_prefix_stream"]
         self._remove_redoc = kwargs["remove_redoc"]
-
 
     @property
     def mode(self):
@@ -99,9 +98,9 @@ class configuration(object):
     def report_stream(self):
         return self._report_strm
 
-    @property
-    def extract_ns_from_archive(self):
-        return self._extract_ns
+    # @property
+    # def extract_ns_from_archive(self):
+    #     return self._extract_ns
     
     @property
     def has_ns_pefix_file(self):
@@ -127,8 +126,8 @@ class cli_error(Exception):
     there is a violation of a precondition of one of the arguments so that
     the help message can be displayed and output.
     """
-    def __init__(self, cli_argument_name, message, value=None, **kwargs):
-        super(cli_error, self).__init__(cli_argument_name, message, value, **kwargs)
+    def __init__(self, cli_argument_name, message, value=None, *nargs):
+        super(cli_error, self).__init__(cli_argument_name, message, value, *nargs)
         self.cli_name = cli_argument_name
         self.error_message = message
 
@@ -239,6 +238,7 @@ This program has several methods of operation:
 
     arg_parser.add_argument(
         "-t",
+        "--enable-timing",
         action='store_true',
         default=False,
         dest="enableTiming",
@@ -268,10 +268,9 @@ This program has several methods of operation:
     arg_parser.add_argument(
         "-n",
         "--no-redoc",
-        metavar='NO_REDOC',
-        type=str,
-        default=None,
-        dest="computeUniqueHistogram",
+        action='store_true',
+        default=False,
+        dest="noRedoc",
         help="Doesn't recompute stereotypes for an input archive, but instead simply loads the input file and assumes that the archive was redocumented in the specified mode."
     )
 
@@ -293,13 +292,13 @@ This program has several methods of operation:
         help="Specify possible namespace prefixes for functions. This allows for namespace that are defined within macros to be specified and prevents free functions from being mistaken as member functions. The namespaces are specified using their prefix for a function, one per line. For example std:: would be a the standard namespace prefix."
     )
 
-    arg_parser.add_argument(
-        "--no-ns-pre-extract",
-        action='store_true',
-        default=False,
-        dest="noExtractNs",
-        help="Prevents the pre-extraction of namespaces from the input archive. This is used to identify member functions."
-    )
+    # arg_parser.add_argument(
+    #     "--no-ns-pre-extract",
+    #     action='store_true',
+    #     default=False,
+    #     dest="noExtractNs",
+    #     help="Prevents the pre-extraction of namespaces from the input archive. This is used to identify member functions."
+    # )
 
     arg_parser.add_argument(
         "--remove-redoc",
@@ -325,47 +324,106 @@ This program has several methods of operation:
     unique_histogram_stream = None
     report_stream = None
     no_redocumentation = False
-    extract_ns_from_archive = True
-    ns_prefix_file = None
+    ns_prefix_stream = None
     remove_redoc = False
 
     args = arg_parser.parse_args(argument_string.split() if argument_string != None else None)
-
-    # Handling mode configuration restrictions.
-    # MODE_REDOCUMENT_SOURCE = "ReDocSrc"
-    # MODE_ADD_XML_ATTR = "XmlAttr"
-    # MODE_FUNCTION_LIST = "FuncList"
+    no_redocumentation = args.noRedoc
     remove_redoc = args.removeRedocumentation
-    if args.mode == MODE_REDOCUMENT_SOURCE:
-        mode = args.mode
-    elif args.mode == MODE_ADD_XML_ATTR:
-        mode = args.mode
-    elif args.mode == MODE_FUNCTION_LIST:
-        precondition_test(not remove_redoc, "--mode,--remove-redoc", "Can't remove redocumentation from a function list.", args.mode)
-        mode = args.mode
-    else:
-        # This is for who ever wants to add more processing modes later on
-        # This serves to let who ever comes along next that they need to
-        # implemented configuration logic.
-        raise NotImplementedError("Mode hasn't been implemented yet. {0}".format(args.mode))
+    mode = args.mode
+
+    # setting trivial configuration options.
+    output_verbose = args.debug
+    output_timings = args.enableTiming
 
 
-    # Do this last so that I know that everything else is configured already.
+    # Computing constraints between multiple possible parameters
+    # ----------------------------------------------------------------------------
+    #       Constraints that involve more than one CLI argument
+    # ----------------------------------------------------------------------------
+    if remove_redoc:
+        precondition_test(mode != MODE_FUNCTION_LIST, "--mode,--remove-redoc", "Can't remove redocumentation from a function list.", args.mode)
+        precondition_test(not no_redocumentation, "--no-redoc,--remove-redoc", "Invalid option combination.", None)
+        precondition_test(args.namespaceFileName is None, "--ns-file,--remove-redoc", "can't use namespaces file when removing documentation", None)
+
+    if no_redocumentation:
+        precondition_test(mode != MODE_FUNCTION_LIST, "--no-redoc,--mode", "Information can't be extracted from a function list", None)
+        precondition_test(
+            args.generateReport is not None or
+            args.computeUniqueHistogram is not None or
+            args.computeHistogram is not None,
+            "--no-redoc,--report,--histogram,--unique-histogram",
+            "When processing a file with no redocumentation option set you must set at least one of the following options: --report, --hisogram, --unique-histogram.",
+            None
+        )
+
+    # ----------------------------------------------------------------------------    
+    # Do this last so that I know that everything else is configured already before
+    # messing with streams, what I'm trying to avoid is not closing the
+    # streams in the event of an error.
+
+
     # Configuring input and output streams.
-    if args.input is None:
-        input_from = sys.stdin
-    else:
-        precondition_test(os.path.exists(str(args.input)), "--input", "Provided input doesn't exist.", args.input)
-        precondition_test(os.path.isfile(str(args.input)), "--input", "Provided input isn't a file.", args.input)
-        input_from = open(args.input, "r")
+    try:
+        if args.computeHistogram is not None:
+            try:
+                histogram_stream = open(args.computeHistogram, "w")
+            except Exception as e:
+                raise cli_error("--histogram", "Failed to open histogram file writing", args.computeHistogram, e)
 
-    if args.output is None:
-        output_to = sys.stdout
-    else:
-        try:
-            output_to = open(args.output, "w")
-        except Exception as e:
-            raise cli_error("--output", "Failed to open output file writing", e)
+        if args.computeUniqueHistogram is not None:
+            try:
+                unique_histogram_stream = open(args.computeUniqueHistogram, "w")
+            except Exception as e:
+                raise cli_error("--unique-histogram", "Failed to open unique histogram file writing", args.computeUniqueHistogram, e)
+
+        if args.namespaceFileName is not None:
+            try:
+                precondition_test(os.path.exists(args.namespaceFileName), "--ns-file", "Provided input doesn't exist.", args.namespaceFileName)
+                precondition_test(os.path.isfile(args.namespaceFileName), "--ns-file", "Provided input isn't a file.", args.namespaceFileName)
+                ns_prefix_stream = open(args.namespaceFileName, "r")
+            except Exception as e:
+                raise cli_error("--ns-file", "Failed to open namespace file for reading", args.namespaceFileName, e)
+
+        if args.generateReport is not None:
+            try:
+                report_stream = open(args.generateReport, "w")
+            except Exception as e:
+                raise cli_error("--report", "Failed to open report file writing", args.generateReport, e)
+
+
+        if args.output is None:
+            output_to = sys.stdout
+        else:
+            try:
+                output_to = open(args.output, "w")
+            except Exception as e:
+                raise cli_error("--output", "Failed to open output file writing", args.output, e)
+
+        if args.input is None:
+            input_from = sys.stdin
+        else:
+            precondition_test(os.path.exists(args.input), "--input", "Provided input doesn't exist.", args.input)
+            precondition_test(os.path.isfile(args.input), "--input", "Provided input isn't a file.", args.input)
+            input_from = open(args.input, "r")
+
+    except Exception as e:
+        if histogram_stream is not None:
+            histogram_stream.close()
+
+        if unique_histogram_stream is not None:
+            unique_histogram_stream.close()
+
+        if report_stream is not None:
+            report_stream.close()
+
+        if ns_prefix_stream is not None:
+            ns_prefix_stream.close()
+
+        if args.output is not None:
+            if output_to is not None:
+                output_to.close()
+        raise e
 
     
 
@@ -382,7 +440,7 @@ This program has several methods of operation:
         unique_histogram_stream = unique_histogram_stream,
         report_stream = report_stream,
         no_redocumentation = no_redocumentation,
-        extract_ns_from_archive = extract_ns_from_archive,
-        ns_prefix_file = ns_prefix_file,
+        # extract_ns_from_archive = extract_ns_from_archive,
+        ns_prefix_stream = ns_prefix_stream,
         remove_redoc = remove_redoc
     )
