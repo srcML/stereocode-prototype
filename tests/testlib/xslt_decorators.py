@@ -17,7 +17,7 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import  lxml, lxml.etree as et, os.path
+import  lxml, lxml.etree as et, os.path, unittest
 from srcml import *
 
 def srcMLifyCode(fileToProcess, language=LANGUAGE_CXX):
@@ -47,3 +47,25 @@ def srcMLifyCode(fileToProcess, language=LANGUAGE_CXX):
         return run
     return decorationFunc
 
+import unittest
+
+def expect_exception(exception_type, extra_test=None):
+    """
+    This is used as a decorator of a test that check if a particular type of
+    exception was thrown. If no exception is throw the test is failed in by the
+    decorator but if the test raises an exception of the incorrect type 
+    that exception is raised again so that the error is visible.
+    """
+    def exception_test(func):
+        def instance_extraction(self):
+            try:
+                func(self)
+                self.assertTrue(False, "Didn't catch expected exception from function: {0}".format(func.__name__))
+            except Exception as e:
+                if not isinstance(e, exception_type):
+                    raise
+                self.assertTrue(isinstance(e, exception_type), "Incorrect exception returned. Expected type: {0}. Actual Type: {1}".format(exception_type.__name__, e.__class__.__name__))
+                if extra_test is not None:
+                    extra_test(self, e)
+        return instance_extraction
+    return exception_test

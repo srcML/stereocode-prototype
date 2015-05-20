@@ -87,14 +87,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <xsl:variable name="more_ignorable_calls" select="''"/>
   <xsl:variable name="ignorable_calls" select="str:split(concat('assert static_cast const_cast dynamic_cast reinterpret_cast ', $more_ignorable_calls))"/>
 
-
-  <!-- definition filename, i.e., .cpp filename -->
-  <!-- <xsl:param name="definition_filename"/> -->
-
-  <!-- definition file, i.e., .cpp file -->
-  <!-- <xsl:variable name="definition_file" select="document($definition_filename)"/> -->
-
-
   <!--
     Functions
   -->
@@ -107,9 +99,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
     <xsl:choose>
       <xsl:when test="$function/src:parameter_list/src:parameter">
-  <!--
-  <xsl:message><xsl:copy-of select="$function/src:name"/>:  <xsl:copy-of select="$function/src:parameter_list/src:param/src:decl/src:type//text()"/></xsl:message>
-  -->
     <xsl:variable name="raw0">
       <xsl:for-each select="$function/src:parameter_list/src:parameter/src:decl/src:type">
         <xsl:copy-of select="."/><xsl:text>|</xsl:text>
