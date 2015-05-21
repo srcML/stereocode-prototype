@@ -46,3 +46,19 @@ class TestInfoExtractor(unittest.TestCase):
     @gen_managed_file("info_extractor_test_invalid_archive.xml", """<?xml version="1.0" encoding="UTF-8"?><AArdvark></AArdvark>""")
     def test_invalid_archive(self, filename):
         run_info_extractor(filename, [])
+
+    @gen_managed_file("test_class_name_tracking.xml", """<?xml version="1.0" encoding="ISO-8859-1"?>
+<unit xmlns="http://www.srcML.org/srcML/src" >
+
+<unit language="C++" xmlns:cpp="http://www.srcML.org/srcML/cpp" filename="filename">
+<class> <name>thingy1</name> <block></block></class>
+<class> <name>thingy2</name> <block><class> <name>thingy3</name> <block></block></class></block></class>
+<class> <name>thingy4</name> <block><class> <name>thingy5</name> <block></block></class></block></class>
+
+</unit>
+</unit>""")
+    def test_class_name_tracking(self, filename):
+        handler = info_extractor([],)
+        parse(filename, handler)
+        self.assertEqual(0, len(handler.cls_ns_stack), "didn't correctly clear stack.")
+        # run_info_extractor(filename, [])

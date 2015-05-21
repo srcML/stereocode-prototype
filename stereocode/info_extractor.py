@@ -21,6 +21,7 @@
 from xml.sax.handler import *
 from xml.sax import *
 from cli_args import MODE_REDOCUMENT_SOURCE, MODE_ADD_XML_ATTR
+import cStringIO, sys
 
 class extractor_base(object):
     """
@@ -60,10 +61,12 @@ _TAG_interface = "interface"
 _TAG_annotation_defn = "annotation_defn"
 _TAG_name = "name"
 _TAG_function = "function"
+_TAG_block = "block"
 
 # attributes
 _ATTR_stereotype = "stereotype"
 _ATTR_filename = "filename"
+_ATTR_type = "type"
 
 # Exceptions
 class extractor_error(Exception):
@@ -96,6 +99,10 @@ class info_extractor(handler.ContentHandler):
         self.cls_ns_stack = []
         self.state = STATE_START
         self.configuration_mode = mode
+        self.current_stereotype = None
+        self.current_function_name = None
+        self.buffer = cStringIO.StringIO()
+        self.read_content = False 
 
     def _call_on_unit(self, unit_filename):
         self.current_unit_name = unit_filename
@@ -145,6 +152,21 @@ class info_extractor(handler.ContentHandler):
             self.state = STATE_PROCESSING_LOOP
 
         elif self.state == STATE_PROCESSING_LOOP:
+            if (name == _TAG_class or
+                name == _TAG_struct or
+                name == _TAG_interface or
+                name == _TAG_annotation_defn or
+                name == _TAG_union):
+                self.state = STATE_READING_TYPE_NAME
+
+            elif name == _TAG_function:
+                if _ATTR_stereotype in _attrs:
+                    self.current_stereotype = attrs[_ATTR_stereotype]
+                    self.state = STATE_READING_FUNCTION_SIGNATURE
+            elif name == _TAG_comment:
+                if _ATTR_type in attrs:
+                    if attrs[_ATTR_type] == "block":
+                        self.state = STATE_READING_COMMENT
             pass
 
         elif self.state == STATE_READING_COMMENT:
@@ -157,7 +179,15 @@ class info_extractor(handler.ContentHandler):
             pass
 
         elif self.state == STATE_READING_TYPE_NAME:
-            pass
+
+            if name == _TAG_name:
+                self.read_content = True
+
+            if name == _TAG_block:
+                self.cls_ns_stack.append(self.buffer.getvalue())
+                self.buffer.close()
+                self.buffer = cStringIO.StringIO()
+                self.state = STATE_PROCESSING_LOOP
 
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
@@ -170,7 +200,13 @@ class info_extractor(handler.ContentHandler):
             assert name == _TAG_unit, "Expecting to encounter an end of unit tag: Encountered: {0}".format(name)
 
         elif self.state == STATE_PROCESSING_LOOP:
-            pass
+
+            if (name == _TAG_class or
+                name == _TAG_struct or
+                name == _TAG_interface or
+                name == _TAG_annotation_defn or
+                name == _TAG_union):
+                self.cls_ns_stack.pop()
 
         elif self.state == STATE_READING_COMMENT:
             pass
@@ -182,7 +218,8 @@ class info_extractor(handler.ContentHandler):
             pass
 
         elif self.state == STATE_READING_TYPE_NAME:
-            pass
+            if name == _TAG_name:
+                self.read_content = False
 
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
@@ -207,7 +244,8 @@ class info_extractor(handler.ContentHandler):
             pass
 
         elif self.state == STATE_READING_TYPE_NAME:
-            pass
+            if self.read_content:
+                self.buffer.write(content)
 
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
