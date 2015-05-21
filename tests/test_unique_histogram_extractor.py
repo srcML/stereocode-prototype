@@ -1,5 +1,5 @@
 ##
-# @file test_run_stereocode.py
+# @file test_unique_histogram.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -23,9 +23,9 @@ from testlib import *
 
 
 
-class TestRunStereocode(unittest.TestCase):
+class TestUniqueHistogramExtractor(unittest.TestCase):
 
-    def test_run_stereocode(self):
+    def test_UniqueHistogramExtractor(self):
         # return NotImplemented
-        # raise NotImplementedError()
         pass
+        # raise NotImplementedError()

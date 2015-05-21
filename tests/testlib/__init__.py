@@ -20,3 +20,4 @@
 from xslt_decorators import *
 from xslt_util import *
 from codebase_test_data_tracker import *
+from test_decorators import *

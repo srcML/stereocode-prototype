@@ -1,5 +1,5 @@
 ##
-# @file test_run_stereocode.py
+# @file test_report_extractor.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -23,9 +23,8 @@ from testlib import *
 
 
 
-class TestRunStereocode(unittest.TestCase):
+class TestReportExtractor(unittest.TestCase):
 
-    def test_run_stereocode(self):
-        # return NotImplemented
+    def test_ReportExtractor(self):
         # raise NotImplementedError()
         pass

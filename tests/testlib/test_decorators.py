@@ -1,5 +1,5 @@
 ##
-# @file test_run_stereocode.py
+# @file test_decorators.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -17,15 +17,24 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import unittest, lxml.etree as et, lxml, os, os.path
-from stereocode import *
-from testlib import *
+import os
 
+def gen_managed_file(filename, content):
+    def run(func):
+        def delete_files():
+            if os.path.exists(filename):
+                os.remove(filename)
 
-
-class TestRunStereocode(unittest.TestCase):
-
-    def test_run_stereocode(self):
-        # return NotImplemented
-        # raise NotImplementedError()
-        pass
+        def make_call(self):
+            delete_files()
+            try:
+                temp_strm = open(filename, "w")
+                temp_strm.write(content)
+                temp_strm.close()
+                func(self, filename)
+            except:
+                delete_files()
+                raise
+            delete_files()
+        return make_call
+    return run
