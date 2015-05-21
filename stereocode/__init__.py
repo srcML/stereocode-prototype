@@ -19,3 +19,4 @@
 
 from cli_args import *
 from stereotype_xslt import *
+from run_stereocode import *

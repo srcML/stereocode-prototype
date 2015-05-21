@@ -20,6 +20,7 @@
 import unittest, sys, lxml.etree as et, lxml, os, os.path
 from test_cli_args import *
 from test_stereotype_xslt import *
+from test_run_stereocode import *
 from stereocode import *
 from testlib import *
 from srcml import *

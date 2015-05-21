@@ -1,6 +1,5 @@
-#!/usr/bin/python
 ##
-# @file stereocode.py
+# @file test_run_stereocode.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -18,25 +17,13 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import unittest, lxml.etree as et, lxml, os, os.path
+from stereocode import *
+from testlib import *
 
 
-__doc__ = """
 
-The main file that's used for executing stereocode from the command line.
-    * This file handles the following:
-    1) Command-line parameter handling
-    2) I/O interfacing with an archive/file/Collection of source code files/pipes
-        then handing that off to srcML to be annotated/processed.
-    3) Outputting to either the command line, file or archive as desired.
+class TestRunStereocode(unittest.TestCase):
 
-
-"""
-
-
-import srcml, sys, os, os.path, logging, argparse
-from stereocode import run_stereocode
-
-if __name__ == "__main__":
-    run_stereocode()
-
-
+    def test_run_stereocode(self):
+        # return NotImplemented
