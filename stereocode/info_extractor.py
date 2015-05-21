@@ -101,6 +101,7 @@ class info_extractor(handler.ContentHandler):
         self.configuration_mode = mode
         self.current_stereotype = None
         self.current_function_name = None
+        self.current_function_signature = None
         self.buffer = cStringIO.StringIO()
         self.read_content = False 
 
@@ -173,7 +174,8 @@ class info_extractor(handler.ContentHandler):
             pass
 
         elif self.state == STATE_EXPECTING_FUNCTION:
-            pass
+            if name != _TAG_function:
+                self.raise_error_message("Stereotype isn't next to a function. Tag encountered: {0}".format(name))
 
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
             pass
@@ -209,13 +211,22 @@ class info_extractor(handler.ContentHandler):
                 self.cls_ns_stack.pop()
 
         elif self.state == STATE_READING_COMMENT:
-            pass
+            if name == _TAG_comment:
+                comment_text = self.buffer.getvalue()
+                self.buffer.close()
+                self.buffer = cStringIO.StringIO()
+                if "@stereotype" in comment_text:
+                    self.state = STATE_EXPECTING_FUNCTION
+                else:
+                    self.state = STATE_PROCESSING_LOOP
 
         elif self.state == STATE_EXPECTING_FUNCTION:
             pass
 
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
-            pass
+                if name == _TAG_block:
+                    self._call_on_function(self.current_stereotype, self.current_function_name, self.current_function_signature)
+                    self.state = STATE_PROCESSING_LOOP
 
         elif self.state == STATE_READING_TYPE_NAME:
             if name == _TAG_name:
