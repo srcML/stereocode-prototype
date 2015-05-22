@@ -21,7 +21,10 @@
 from xml.sax.handler import *
 from xml.sax import *
 from cli_args import MODE_REDOCUMENT_SOURCE, MODE_ADD_XML_ATTR
-import cStringIO, sys
+import cStringIO, sys, re
+
+
+
 
 class extractor_base(object):
     """
@@ -32,24 +35,34 @@ class extractor_base(object):
         super(extractor_base, self).__init__()
 
 
+    def start_document(self):
+        pass
+
+    def end_document(self):
+        pass
+
     def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
         pass
 
     def on_unit(self, filename, document_locator, info):
         pass
 
-STATE_START = "Starting State"
-STATE_UNIT_SEARCH = "Looking For Unit"
+STATE_START = "STATE_START"
+STATE_UNIT_SEARCH = "STATE_UNIT_SEARCH"
 
-STATE_PROCESSING_LOOP = "Scanning loop and gathering info"
+STATE_PROCESSING_LOOP = "STATE_PROCESSING_LOOP"
 
-STATE_READING_COMMENT = "Reading comment"
+STATE_READING_COMMENT = "STATE_READING_COMMENT"
 
-STATE_EXPECTING_FUNCTION = "Expecting to encounter function or related tag."
-STATE_READING_FUNCTION_SIGNATURE = "Reading Function Signature"
+STATE_EXPECTING_FUNCTION = "STATE_EXPECTING_FUNCTION "
+STATE_READING_FUNCTION_SIGNATURE = "STATE_READING_FUNCTION_SIGNATURE"
 
-STATE_READING_TYPE_NAME = "Reading class name" # for when reading class, struct, union, attribute_defn or interfaces depending on the language.
+STATE_READING_TYPE_NAME = "STATE_READING_TYPE_NAME" # for when reading class, struct, union, attribute_defn or interfaces depending on the language.
 
+# Function Reading SubState
+FUNCSIG_STATE_READING_UPTHROUGH_TYPE = "FUNCSIG_STATE_READING_UPTHROUGH_TYPE"
+FUNCSIG_STATE_READING_FUNCTION_NAME = "FUNCSIG_STATE_READING_FUNCTION_NAME"
+FUNCSIG_STATE_READING_TILL_BLOCK = "FUNCSIG_STATE_READING_TILL_BLOCK"
 
 # Tag and attribute constants
 _TAG_unit = "unit"
@@ -62,11 +75,15 @@ _TAG_annotation_defn = "annotation_defn"
 _TAG_name = "name"
 _TAG_function = "function"
 _TAG_block = "block"
+_TAG_type = "type"
 
 # attributes
 _ATTR_stereotype = "stereotype"
 _ATTR_filename = "filename"
 _ATTR_type = "type"
+
+# Regular expression
+stereotypeExtractingRe = re.compile(r"@stereotype (?P<stereotypes>[^\*]*)")
 
 # Exceptions
 class extractor_error(Exception):
@@ -80,7 +97,7 @@ class extractor_error(Exception):
         self.message = message
 
 
-class info_extractor(handler.ContentHandler):
+class info_extractor(object, handler.ContentHandler):
     """
     A SAX parser for coordinating multiple SAX-like interfaces
     That would each require their own individual pass but are called from
@@ -91,19 +108,42 @@ class info_extractor(handler.ContentHandler):
     annotations were added to an archive.
     """
     def __init__(self, extractor_set, mode=MODE_REDOCUMENT_SOURCE):
-        # super(handler.ContentHandler, self).__init__()
+        super(info_extractor, self).__init__()
         self.extractors = extractor_set
         self.document_locator = None
         self.current_unit_name = None
         self.is_archive = False
         self.cls_ns_stack = []
-        self.state = STATE_START
+        self._state = STATE_START
         self.configuration_mode = mode
         self.current_stereotype = None
         self.current_function_name = None
         self.current_function_signature = None
         self.buffer = cStringIO.StringIO()
+        self.function_sig_buffer = None
         self.read_content = False 
+        self.function_sig_depth = 0
+        self.function_name_buffer = None
+        self._function_sig_state = FUNCSIG_STATE_READING_UPTHROUGH_TYPE
+
+
+    @property
+    def function_sig_state(self):
+        return self._function_sig_state
+    @function_sig_state.setter
+    def function_sig_state(self, value):
+        # print >> sys.stderr, "    Transitioning Function Signature State: Previous State: {0} Next State: {1}".format(self._state, value)
+        self._function_sig_state = value
+    
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        # print >> sys.stderr, "Transitioning State: Previous State: {0} Next State: {1}".format(self._state, value)
+        self._state = value
+    
 
     def _call_on_unit(self, unit_filename):
         self.current_unit_name = unit_filename
@@ -119,8 +159,13 @@ class info_extractor(handler.ContentHandler):
 
     def startDocument(self):
         self.state = STATE_START
+        for extractor in self.extractors:
+            extractor.start_document()
 
     def endDocument(self):
+        assert self.state == STATE_UNIT_SEARCH, "Didn't exit in correct state after parsing was complete. Current State: {0}".format(self.state)
+        for extractor in self.extractors:
+            extractor.end_document()
         self.state = STATE_START
 
     def setDocumentLocator(self, locator):
@@ -161,9 +206,14 @@ class info_extractor(handler.ContentHandler):
                 self.state = STATE_READING_TYPE_NAME
 
             elif name == _TAG_function:
-                if _ATTR_stereotype in _attrs:
-                    self.current_stereotype = attrs[_ATTR_stereotype]
+                if _ATTR_stereotype in attrs:
+                    self.current_stereotype = attrs[_ATTR_stereotype].split()
                     self.state = STATE_READING_FUNCTION_SIGNATURE
+                    self.function_name_buffer = cStringIO.StringIO()
+                    self.function_sig_depth = 0
+                    self.function_sig_state = FUNCSIG_STATE_READING_UPTHROUGH_TYPE
+
+
             elif name == _TAG_comment:
                 if _ATTR_type in attrs:
                     if attrs[_ATTR_type] == "block":
@@ -173,12 +223,29 @@ class info_extractor(handler.ContentHandler):
         elif self.state == STATE_READING_COMMENT:
             pass
 
+
         elif self.state == STATE_EXPECTING_FUNCTION:
             if name != _TAG_function:
                 self.raise_error_message("Stereotype isn't next to a function. Tag encountered: {0}".format(name))
+            self.state = STATE_READING_FUNCTION_SIGNATURE
+            self.function_name_buffer = cStringIO.StringIO()
+            self.function_sig_depth = 0
+            self.function_sig_state = FUNCSIG_STATE_READING_UPTHROUGH_TYPE
 
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
-            pass
+            self.function_sig_depth += 1
+            if self.function_sig_state == FUNCSIG_STATE_READING_UPTHROUGH_TYPE:
+                pass 
+            elif self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
+                pass
+            elif self.function_sig_state == FUNCSIG_STATE_READING_TILL_BLOCK:
+                if name == _TAG_block:
+                    if  self.function_sig_depth == 1:
+                        self.current_function_signature = self.buffer.getvalue()
+                        self.buffer.close()
+                        self.buffer = cStringIO.StringIO()
+                        self._call_on_function(self.current_stereotype, self.current_function_name.strip(), self.current_function_signature.strip())
+                        self.state = STATE_PROCESSING_LOOP
 
         elif self.state == STATE_READING_TYPE_NAME:
 
@@ -210,13 +277,25 @@ class info_extractor(handler.ContentHandler):
                 name == _TAG_union):
                 self.cls_ns_stack.pop()
 
+            elif name == _TAG_unit:
+                self.cls_ns_stack = []
+                self.state = STATE_UNIT_SEARCH
+
         elif self.state == STATE_READING_COMMENT:
             if name == _TAG_comment:
+
                 comment_text = self.buffer.getvalue()
+                # print >> sys.stderr, comment_text
                 self.buffer.close()
                 self.buffer = cStringIO.StringIO()
-                if "@stereotype" in comment_text:
+                if comment_text.find("@stereotype") != -1:
                     self.state = STATE_EXPECTING_FUNCTION
+
+                    stereotypeMatch = stereotypeExtractingRe.search(comment_text)
+                    if stereotypeMatch == None:
+                        self.raise_error_message("Invalid stereotype comment, located @stereotype within an existing comment but didn't locate stereotype information.")
+                    else:
+                        self.current_stereotype = [x.lower() for x in stereotypeMatch.group("stereotypes").strip().split(" ")]
                 else:
                     self.state = STATE_PROCESSING_LOOP
 
@@ -224,9 +303,31 @@ class info_extractor(handler.ContentHandler):
             pass
 
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
-                if name == _TAG_block:
-                    self._call_on_function(self.current_stereotype, self.current_function_name, self.current_function_signature)
-                    self.state = STATE_PROCESSING_LOOP
+            self.function_sig_depth -= 1
+            if self.function_sig_state == FUNCSIG_STATE_READING_UPTHROUGH_TYPE:
+                if name == _TAG_type:
+                    self.function_sig_state = FUNCSIG_STATE_READING_FUNCTION_NAME   
+            elif self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
+                if self.function_sig_depth == 0:
+                    if name == _TAG_name:
+                        self.current_function_name = self.function_name_buffer.getvalue() 
+                        self.function_name_buffer.close()
+                        self.function_name_buffer = None
+                        self.function_sig_state = FUNCSIG_STATE_READING_TILL_BLOCK
+                    else:
+                        self.raise_error_message("Encountered unexpected element while transitioning from reading function name to reading the rest of the function signature.")
+                    # self.current_function_signature = 
+            elif self.function_sig_state == FUNCSIG_STATE_READING_TILL_BLOCK:
+                pass
+                # if name == _TAG_block:
+                #     if  self.function_sig_depth == 1:
+                #         # TODO: Gather correct information here for the function signature.
+                #         self.current_function_signature = self.buffer.getvalue()
+                #         self.buffer.close()
+                #         self.buffer = cStringIO.StringIO()
+                #         self._call_on_function(self.current_stereotype, self.current_function_name, self.current_function_signature)
+                #         self.state = STATE_PROCESSING_LOOP
+
 
         elif self.state == STATE_READING_TYPE_NAME:
             if name == _TAG_name:
@@ -246,13 +347,15 @@ class info_extractor(handler.ContentHandler):
             pass
 
         elif self.state == STATE_READING_COMMENT:
-            pass
+            self.buffer.write(content)
 
         elif self.state == STATE_EXPECTING_FUNCTION:
             pass
 
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
-            pass
+            if self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
+                self.function_name_buffer.write(content)
+            self.buffer.write(content)
 
         elif self.state == STATE_READING_TYPE_NAME:
             if self.read_content:
