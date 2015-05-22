@@ -27,5 +27,5 @@ class TestRunStereocode(unittest.TestCase):
 
     def test_run_stereocode(self):
         # return NotImplemented
-        # raise NotImplementedError()
+        raise NotImplementedError()
         pass

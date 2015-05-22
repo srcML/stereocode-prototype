@@ -45,10 +45,81 @@ def run_stereocode(cli_arguments=None):
     3) What's the most efficient way to remove redocumentation from an archive?
     4) How much of this can be done with SAX?
     """
-    # if config.has_ns_file
+
+    extractors = []
+
+    # Loading extractors into a list so they can be more easily accessed.
+    if config.output_histogram:
+        extractors.append(histogram_extractor)
+    if config.output_unique_histogram:
+        extractors.append(unique_histogram_extractor)
+    if config.output_report:
+        extractors.append(report_extractor)
+
+
+    def run_extraction(filename_or_stream):
+        if len(extractors) > 0:
+            run_info_extractor(filename_or_stream, extractors, config.mode)
+            for extractor in extractors:
+                extractor.output_data(config)
+
+    to_be_run = []
     if config.no_redoc:
-        print "Handling the situation where we process an input file."
+        print >> sys.stderr, "Handling the situation where we process an input file."
+        def extraction_no_redoc():
+            run_extraction(config.input_stream)
+        to_be_run.append(extraction_no_redoc)
+        
     elif config.remove_redoc:
-        print "Removing redoc from source code."
+        print >> sys.stderr, "Removing redoc from source code."
+        if len(extractors) > 0:
+            output_file_name = "stereotype_preremoval.xml"
+
+            def output_current_stream_into_temp():
+                temp_file = open(output_file_name, "w")
+                for l in config.input:
+                    temp_file.write(l)
+                temp_file.close()
+
+            def extraction_remove_redoc():
+                run_extraction(output_file_name)
+
+            def delete_file():
+                os.remove(output_file_name)
+            to_be_run.append(output_current_stream_into_temp)
+            to_be_run.append(extraction_remove_redoc)
+            to_be_run.append(delete_file)
+        def remove_redoc():
+            raise NotImplementedError("Not implemented yet still working on it!!!")
+        to_be_run.append(remove_redoc)
+
     else:
-        print "Performing redocumentation on input. This is the easiest case."
+        print >> sys.stderr, "Performing redocumentation on input."
+        if len(extractors) > 0:
+            output_file_name = "stereotype_post_redoc.xml"
+            def output_current_stream_into_temp():
+                temp_file = open(output_file_name, "w")
+                for l in config.input:
+                    temp_file.write(l)
+                temp_file.close()
+
+            def extraction_remove_redoc():
+                run_extraction(output_file_name)
+
+            def delete_file():
+                os.remove(output_file_name)
+
+
+            to_be_run.append(output_current_stream_into_temp)
+            to_be_run.append(extraction_remove_redoc)
+            to_be_run.append(delete_file)
+        def do_redoc():
+            raise NotImplementedError("Not Implemented yet, ")
+        to_be_run.append(do_redoc)
+
+
+    for operation in to_be_run:
+        operation()
+
+
+

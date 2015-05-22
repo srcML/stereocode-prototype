@@ -16,3 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+from info_extractor import *
+
+class report_extractor(extractor_base):
+
+    def __init__(self):
+        super(report_extractor, self).__init__()
+
+    

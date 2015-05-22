@@ -47,6 +47,9 @@ class extractor_base(object):
     def on_unit(self, filename, document_locator, info):
         pass
 
+    def output_data(self, confug):
+        raise NotImplementedError("This must be implemented by a base class.")
+
 STATE_START = "STATE_START"
 STATE_UNIT_SEARCH = "STATE_UNIT_SEARCH"
 
@@ -319,15 +322,6 @@ class info_extractor(object, handler.ContentHandler):
                     # self.current_function_signature = 
             elif self.function_sig_state == FUNCSIG_STATE_READING_TILL_BLOCK:
                 pass
-                # if name == _TAG_block:
-                #     if  self.function_sig_depth == 1:
-                #         # TODO: Gather correct information here for the function signature.
-                #         self.current_function_signature = self.buffer.getvalue()
-                #         self.buffer.close()
-                #         self.buffer = cStringIO.StringIO()
-                #         self._call_on_function(self.current_stereotype, self.current_function_name, self.current_function_signature)
-                #         self.state = STATE_PROCESSING_LOOP
-
 
         elif self.state == STATE_READING_TYPE_NAME:
             if name == _TAG_name:
@@ -369,6 +363,6 @@ class info_extractor(object, handler.ContentHandler):
     def getCurrentUnitName(self):
         return self.current_unit_name
 
-def run_info_extractor(filename, extractor_set, mode=MODE_REDOCUMENT_SOURCE):
+def run_info_extractor(filename_or_stream, extractor_set, mode=MODE_REDOCUMENT_SOURCE):
     handler = info_extractor(extractor_set, mode)
-    parse(filename, handler)
+    parse(filename_or_stream, handler)
