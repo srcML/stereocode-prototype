@@ -22,10 +22,6 @@ from stereocode import *
 from testlib import *
 
 
-# VISIT_ON_FUNCTION = "on_function"
-# VISIT_ON_UNIT = "on_unit"
-
-
 class unit_visit_data:
     def __init__(self, unit_name, extra_tests=None):
         self.unit_name = unit_name

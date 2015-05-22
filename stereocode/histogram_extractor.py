@@ -17,3 +17,24 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from info_extractor import *
+
+
+class histogram_extractor(extractor_base):
+    """
+    Class responsible for extracting stereotype information and constructing a histogram
+    that can be output into a given stream.
+    """
+    def __init__(self):
+        super(histogram_extractor, self).__init__()
+        self.histogram = dict()
+
+
+    def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
+        for stereotype in stereotype_list:
+            if stereotype in self.histogram:
+                self.histogram[stereotype] += 1
+            else:
+                self.histogram[stereotype] = 1
+
+

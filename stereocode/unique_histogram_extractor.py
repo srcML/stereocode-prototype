@@ -16,3 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+from info_extractor import *
+
+class unique_histogram_extractor(extractor_base):
+    """
+    Class Responsible for extracting unique stereotype groupings and constructing a histogram
+    that can be output into a given stream.
+    """
+    def __init__(self):
+        super(unique_histogram_extractor, self).__init__()
+        self.histogram = dict()
+
+
+    def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
+        temp_unique_stereotype = " ".join(sorted(stereotype_list))
+        if temp_unique_stereotype in self.histogram:
+            self.histogram[temp_unique_stereotype] += 1
+        else:
+            self.histogram[temp_unique_stereotype] = 1
+
+
