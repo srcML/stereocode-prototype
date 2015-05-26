@@ -24,13 +24,6 @@ from testlib import *
 
 
 class TestRunStereocode(unittest.TestCase):
-
-    def test_run_stereocode(self):
-        # return NotImplemented
-        raise NotImplementedError()
-        pass
-
-
     
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
     def test_remove_stereotype(self, tree):
@@ -58,3 +51,38 @@ class TestRunStereocode(unittest.TestCase):
             )
         )
 
+
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_run_stereocode_redocument(self, tree):
+        # print help(tree)
+        output_stream = cStringIO.StringIO()
+        output_stream.write(et.tostring(tree))
+
+        cfg = configuration(
+            mode=MODE_REDOCUMENT_SOURCE,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = None,
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = False
+        )
+
+        run_stereocode(cfg)
+
+        transformed_doc = et.XML(cfg.output_stream.getvalue())
+        located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            2,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
+
+        

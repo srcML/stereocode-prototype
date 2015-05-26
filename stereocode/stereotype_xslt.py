@@ -50,3 +50,9 @@ def remove_stereotypes(config):
     input_doc = et.parse(config.input_stream)
     transformed_doc = removeStereotypeDoc(input_doc)
     transformed_doc.write(config.output_stream)
+
+def apply_stereotyping(config):
+
+    # TODO: Use srcML to make this work in the future.
+    # TODO: Configure stylesheet parameters.
+    stereocodeDoc(et.parse(config.input_stream)).write(config.output_stream)

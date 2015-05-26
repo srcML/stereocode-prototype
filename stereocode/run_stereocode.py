@@ -16,15 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import os, sys
+from stereotype_xslt import *
 
+def run_stereocode(config):
 
-def run_stereocode(cli_arguments=None):
-    # Loading configuration and displaying things correctly.
-    try:
-        config = parse_cli_arguments(cli_arguments)
-    except cli_error as e:
-        print >> sys.stderr, "Encountered an error from the command line", str(e)
-        sys.exit(0)
 
     # Using the configuration options in order to set things up for actually executing
     # stereocode.
@@ -90,11 +86,12 @@ def run_stereocode(cli_arguments=None):
             to_be_run.append(extraction_remove_redoc)
             to_be_run.append(delete_file)
         def remove_redoc():
-            raise NotImplementedError("Not implemented yet still working on it!!!")
+            remove_stereotypes(config)
         to_be_run.append(remove_redoc)
 
     else:
-        print >> sys.stderr, "Performing redocumentation on input."
+        if config.verbose_output:
+            print >> sys.stderr, "Performing redocumentation on input."
         if len(extractors) > 0:
             output_file_name = "stereotype_post_redoc.xml"
             def do_redoc_has_extractors():
@@ -114,11 +111,11 @@ def run_stereocode(cli_arguments=None):
 
             # to_be_run.append(output_current_stream_into_temp)
             to_be_run.append(extraction_remove_redoc)
-            # to_be_run.append(delete_file)
+            to_be_run.append(delete_temp_file)
 
         else:
             def do_redoc_no_extractors():
-                raise NotImplementedError("Not Implemented yet, ")
+                apply_stereotyping(config)
             to_be_run.append(do_redoc_no_extractors)
 
 

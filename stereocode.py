@@ -37,6 +37,12 @@ import srcml, sys, os, os.path, logging, argparse
 from stereocode import run_stereocode
 
 if __name__ == "__main__":
-    run_stereocode()
+    # Loading configuration and displaying things correctly.
+    try:
+        config = parse_cli_arguments(cli_arguments)
+    except cli_error as e:
+        print >> sys.stderr, "Encountered an error from the command line", str(e)
+        sys.exit(0)
+    run_stereocode(config)
 
 

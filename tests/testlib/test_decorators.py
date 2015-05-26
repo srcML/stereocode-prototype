@@ -17,7 +17,7 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os
+import os, os.path, cStringIO, sys, lxml.etree as et
 
 def gen_managed_file(filename, content):
     def run(func):
@@ -38,3 +38,6 @@ def gen_managed_file(filename, content):
             delete_files()
         return make_call
     return run
+
+
+# def validate_output_(generated_report=False, generated_histogram = False, generated_unique_histogram=False, expected_mode=False, 
