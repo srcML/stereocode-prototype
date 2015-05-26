@@ -78,9 +78,10 @@ def run_stereocode(config):
 
             def output_current_stream_into_temp():
                 temp_file = open(output_file_name, "w")
-                for l in config.input:
+                for l in config.input_stream:
                     temp_file.write(l)
                 temp_file.close()
+                config.temp_input_stream = open(output_file_name, "r")
 
             def extraction_remove_redoc():
                 run_extraction(output_file_name)
@@ -106,13 +107,6 @@ def run_stereocode(config):
                 config.temp_output_stream = temp_output_stream
                 apply_stereotyping(config)
                 temp_output_stream.close()
-
-                # raise NotImplementedError("Not Implemented yet")
-            # def output_current_stream_into_temp():
-            #     temp_file = open(output_file_name, "w")
-            #     for l in config.input:
-            #         temp_file.write(l)
-            #     temp_file.close()
 
             def extraction_remove_redoc():
                 run_extraction(output_file_name)

@@ -24,17 +24,34 @@ from testlib import *
 
 
 class TestRunStereocode(unittest.TestCase):
+
+    def parse_extract_histogram(self, input_stream, expected_dict):
+        # temp_list = dict()
+        # input_stream.getvalue()
+        actual_histogram_dict = {item[1].strip():int(item[0].strip()) for item in [l.strip().split(":") for l in input_stream][3:] }
+        # print actual_histogram_dict
+        self.assertDictEqual(actual_histogram_dict, expected_dict, "Mismatched expected and actual dictionary: Actual: {0} Expected: {1}".format(actual_histogram_dict, expected_dict))
+
+
     
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
     def test_remove_stereotype(self, tree):
         output_stream = cStringIO.StringIO()
         stereocodeDoc(tree).write(output_stream)
 
-        class faux_config:pass
-        cfg = faux_config()
-        cfg.input_stream = cStringIO.StringIO(output_stream.getvalue())
-        cfg.output_stream = cStringIO.StringIO()
-        cfg.mode = MODE_REDOCUMENT_SOURCE
+        cfg = configuration(
+            mode=MODE_REDOCUMENT_SOURCE,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = None,
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = False
+        )
         remove_stereotypes(cfg)
         transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
         no_stereotype_archive = et.parse(transformed_archive_stream)
@@ -146,6 +163,7 @@ class TestRunStereocode(unittest.TestCase):
                 "\n".join([et.tostring(elem) for elem in located_stereotypes])
             )
         )
+        self.parse_extract_histogram(cStringIO.StringIO(cfg.histogram_stream.getvalue()), {'collaborator': 1, 'nonconstget': 1, 'get': 1})
 
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
     def test_run_stereocode_redocument_unique_histogram(self, tree):
@@ -178,6 +196,7 @@ class TestRunStereocode(unittest.TestCase):
                 "\n".join([et.tostring(elem) for elem in located_stereotypes])
             )
         )
+        self.parse_extract_histogram(cStringIO.StringIO(cfg.unique_histogram_stream.getvalue()), {'collaborator get': 1, 'nonconstget': 1})
 
 
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
@@ -211,101 +230,105 @@ class TestRunStereocode(unittest.TestCase):
                 "\n".join([et.tostring(elem) for elem in located_stereotypes])
             )
         )
-
-
-    # @srcMLifyCode("tests/test_data/stereotype/get.cpp")
-    # def test_run_stereocode_remove_redocument_histogram(self, tree):
-    #     output_stream = cStringIO.StringIO()
-    #     output_stream.write(et.tostring(tree))
-
-    #     cfg = configuration(
-    #         mode=MODE_REDOCUMENT_SOURCE,
-    #         input_from=cStringIO.StringIO(output_stream.getvalue()),
-    #         output_to=cStringIO.StringIO(),
-    #         output_verbose = False,
-    #         output_timings = False,
-    #         histogram_stream = None,
-    #         unique_histogram_stream = None,
-    #         report_stream = None,
-    #         no_redocumentation = False,
-    #         ns_prefix_stream = None,
-    #         remove_redoc = False
-    #     )
-
-    #     run_stereocode(cfg)
-
-    #     transformed_doc = et.XML(cfg.output_stream.getvalue())
-    #     located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
-    #     self.assertEqual(
-    #         2,
-    #         len(located_stereotypes),
-    #         "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
-    #             len(located_stereotypes),
-    #             "\n".join([et.tostring(elem) for elem in located_stereotypes])
-    #         )
-    #     )
-
-
-    # @srcMLifyCode("tests/test_data/stereotype/get.cpp")
-    # def test_run_stereocode_remove_redocument_unique_histogram(self, tree):
-    #     output_stream = cStringIO.StringIO()
-    #     output_stream.write(et.tostring(tree))
-
-    #     cfg = configuration(
-    #         mode=MODE_REDOCUMENT_SOURCE,
-    #         input_from=cStringIO.StringIO(output_stream.getvalue()),
-    #         output_to=cStringIO.StringIO(),
-    #         output_verbose = False,
-    #         output_timings = False,
-    #         histogram_stream = None,
-    #         unique_histogram_stream = None,
-    #         report_stream = None,
-    #         no_redocumentation = False,
-    #         ns_prefix_stream = None,
-    #         remove_redoc = False
-    #     )
-
-    #     run_stereocode(cfg)
-
-    #     transformed_doc = et.XML(cfg.output_stream.getvalue())
-    #     located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
-    #     self.assertEqual(
-    #         2,
-    #         len(located_stereotypes),
-    #         "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
-    #             len(located_stereotypes),
-    #             "\n".join([et.tostring(elem) for elem in located_stereotypes])
-    #         )
-    #     )
         
-    # @srcMLifyCode("tests/test_data/stereotype/get.cpp")
-    # def test_run_stereocode_remove_redocument_report(self, tree):
-    #     output_stream = cStringIO.StringIO()
-    #     output_stream.write(et.tostring(tree))
 
-    #     cfg = configuration(
-    #         mode=MODE_REDOCUMENT_SOURCE,
-    #         input_from=cStringIO.StringIO(output_stream.getvalue()),
-    #         output_to=cStringIO.StringIO(),
-    #         output_verbose = False,
-    #         output_timings = False,
-    #         histogram_stream = None,
-    #         unique_histogram_stream = None,
-    #         report_stream = None,
-    #         no_redocumentation = False,
-    #         ns_prefix_stream = None,
-    #         remove_redoc = False
-    #     )
 
-    #     run_stereocode(cfg)
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_run_stereocode_remove_redocument_histogram(self, tree):
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
 
-    #     transformed_doc = et.XML(cfg.output_stream.getvalue())
-    #     located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
-    #     self.assertEqual(
-    #         2,
-    #         len(located_stereotypes),
-    #         "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
-    #             len(located_stereotypes),
-    #             "\n".join([et.tostring(elem) for elem in located_stereotypes])
-    #         )
-    #     )
+        cfg = configuration(
+            mode=MODE_REDOCUMENT_SOURCE,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = True
+        )
+        run_stereocode(cfg)
+        transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
+        no_stereotype_archive = et.parse(transformed_archive_stream)
+        transformed_archive_stream.close()
+        located_stereotypes = no_stereotype_archive.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            0,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
+        self.parse_extract_histogram(cStringIO.StringIO(cfg.histogram_stream.getvalue()), {'collaborator': 1, 'nonconstget': 1, 'get': 1})        
+
+
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_run_stereocode_remove_redocument_unique_histogram(self, tree):
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+
+        cfg = configuration(
+            mode=MODE_REDOCUMENT_SOURCE,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = cStringIO.StringIO(),
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = True
+        )
+        run_stereocode(cfg)
+        transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
+        no_stereotype_archive = et.parse(transformed_archive_stream)
+        transformed_archive_stream.close()
+        located_stereotypes = no_stereotype_archive.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            0,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
+        self.parse_extract_histogram(cStringIO.StringIO(cfg.unique_histogram_stream.getvalue()), {'collaborator get': 1, 'nonconstget': 1})
+        
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_run_stereocode_remove_redocument_report(self, tree):
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+
+        cfg = configuration(
+            mode=MODE_REDOCUMENT_SOURCE,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = None,
+            report_stream = cStringIO.StringIO(),
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = True
+        )
+        run_stereocode(cfg)
+        transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
+        no_stereotype_archive = et.parse(transformed_archive_stream)
+        transformed_archive_stream.close()
+        located_stereotypes = no_stereotype_archive.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            0,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
+    

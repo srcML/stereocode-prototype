@@ -57,7 +57,7 @@ def remove_stereotypes(config):
         raise NotImplementedError("XML node attribute not implemented as part of redocumentation yet.")
     else:
         raise Exception("Invalid Configuration Mode.")
-    input_doc = et.parse(config.input_stream)
+    input_doc = et.parse(config.input_stream if config.temp_input_stream == None else config.temp_input_stream)
     transformed_doc = removeStereotypeDoc(input_doc)
     transformed_doc.write(config.output_stream)
 

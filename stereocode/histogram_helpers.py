@@ -25,10 +25,11 @@ def write_histogram(histogram_title, histogram_dict, output_stream):
 
     output_stream.write(80*"-")
     output_stream.write("\n")
-    output_stream.write("{0:^80}".format(histogram_title))
+    output_stream.write("{0:^80}\n".format(histogram_title))
     output_stream.write(80*"-")
     output_stream.write("\n")
 
 
-    sorted_histogram = sorted(histogram_dict, key=lambda x: x[1])
-    output_stream.write("  {1:>6}: {0}\n".format(*sorted_histogram))
+    sorted_histogram = sorted(histogram_dict.items(), key=lambda x: x[1])
+    for item in sorted_histogram:
+        output_stream.write("  {1:>6}: {0}\n".format(*item))
