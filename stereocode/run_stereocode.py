@@ -97,25 +97,30 @@ def run_stereocode(cli_arguments=None):
         print >> sys.stderr, "Performing redocumentation on input."
         if len(extractors) > 0:
             output_file_name = "stereotype_post_redoc.xml"
-            def output_current_stream_into_temp():
-                temp_file = open(output_file_name, "w")
-                for l in config.input:
-                    temp_file.write(l)
-                temp_file.close()
+            def do_redoc_has_extractors():
+                raise NotImplementedError("Not Implemented yet")
+            # def output_current_stream_into_temp():
+            #     temp_file = open(output_file_name, "w")
+            #     for l in config.input:
+            #         temp_file.write(l)
+            #     temp_file.close()
 
             def extraction_remove_redoc():
                 run_extraction(output_file_name)
 
-            def delete_file():
+            def delete_temp_file():
                 os.remove(output_file_name)
 
 
-            to_be_run.append(output_current_stream_into_temp)
+            # to_be_run.append(output_current_stream_into_temp)
             to_be_run.append(extraction_remove_redoc)
-            to_be_run.append(delete_file)
-        def do_redoc():
-            raise NotImplementedError("Not Implemented yet, ")
-        to_be_run.append(do_redoc)
+            # to_be_run.append(delete_file)
+
+        else:
+            def do_redoc_no_extractors():
+                raise NotImplementedError("Not Implemented yet, ")
+            to_be_run.append(do_redoc_no_extractors)
+
 
 
     for operation in to_be_run:

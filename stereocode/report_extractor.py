@@ -24,4 +24,18 @@ class report_extractor(extractor_base):
     def __init__(self):
         super(report_extractor, self).__init__()
 
-    
+
+    def start_document(self):
+        pass
+
+    def end_document(self):
+        pass
+
+    def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
+        pass
+
+    def on_unit(self, filename, document_locator, info):
+        pass
+
+    def output_data(self, confug):
+        raise NotImplementedError()
