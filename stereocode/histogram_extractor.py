@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from info_extractor import *
-
+from histogram_helpers import *
 
 class histogram_extractor(extractor_base):
     """
@@ -37,4 +37,5 @@ class histogram_extractor(extractor_base):
             else:
                 self.histogram[stereotype] = 1
 
-
+    def output_data(self, config, **kwargs):
+        write_histogram("Stereotype Occurrence Histogram", self.histogram, config.histogram_stream)

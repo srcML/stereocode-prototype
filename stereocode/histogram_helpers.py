@@ -1,5 +1,5 @@
 ##
-# @file report_extractor.py
+# @file histogram_helpers.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -17,25 +17,18 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from info_extractor import *
 
-class report_extractor(extractor_base):
+def write_histogram(histogram_title, histogram_dict, output_stream):
+    """
+    Write a histogram as formatted output into the provided stream.
+    """
 
-    def __init__(self):
-        super(report_extractor, self).__init__()
+    output_stream.write(80*"-")
+    output_stream.write("\n")
+    output_stream.write("{0:^80}".format(histogram_title))
+    output_stream.write(80*"-")
+    output_stream.write("\n")
 
 
-    def start_document(self):
-        pass
-
-    def end_document(self):
-        pass
-
-    def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
-        pass
-
-    def on_unit(self, filename, document_locator, info):
-        pass
-
-    def output_data(self, config, **kwargs):
-        raise NotImplementedError("Not Implemented yet")
+    sorted_histogram = sorted(histogram_dict, key=lambda x: x[1])
+    output_stream.write("  {1:>6}: {0}\n".format(*sorted_histogram))

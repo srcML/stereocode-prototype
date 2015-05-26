@@ -47,8 +47,11 @@ class extractor_base(object):
     def on_unit(self, filename, document_locator, info):
         pass
 
-    def output_data(self, confug):
+    def output_data(self, config, **kwargs):
         raise NotImplementedError("This must be implemented by a base class.")
+
+
+
 
 STATE_START = "STATE_START"
 STATE_UNIT_SEARCH = "STATE_UNIT_SEARCH"
@@ -135,7 +138,6 @@ class info_extractor(object, handler.ContentHandler):
         return self._function_sig_state
     @function_sig_state.setter
     def function_sig_state(self, value):
-        # print >> sys.stderr, "    Transitioning Function Signature State: Previous State: {0} Next State: {1}".format(self._state, value)
         self._function_sig_state = value
     
     @property
@@ -144,7 +146,6 @@ class info_extractor(object, handler.ContentHandler):
 
     @state.setter
     def state(self, value):
-        # print >> sys.stderr, "Transitioning State: Previous State: {0} Next State: {1}".format(self._state, value)
         self._state = value
     
 

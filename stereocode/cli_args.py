@@ -53,7 +53,15 @@ class configuration(object):
         # self._extract_ns = kwargs["extract_ns_from_archive"]
         self._ns_pefix_file_strm = kwargs["ns_prefix_stream"]
         self._remove_redoc = kwargs["remove_redoc"]
+        self._temp_output_stream = None
 
+    @property
+    def temp_output_stream(self):
+        return self._temp_output_stream
+    @temp_output_stream.setter
+    def temp_output_stream(self, value):
+        self._temp_output_stream = value
+    
     @property
     def mode(self):
         return self._mode

@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from info_extractor import *
+from histogram_helpers import *
 
 class unique_histogram_extractor(extractor_base):
     """
@@ -35,5 +36,8 @@ class unique_histogram_extractor(extractor_base):
             self.histogram[temp_unique_stereotype] += 1
         else:
             self.histogram[temp_unique_stereotype] = 1
+
+    def output_data(self, config, **kwargs):
+        write_histogram("Unique Stereotype Occurrence Histogram", self.histogram, config.unique_histogram_stream)
 
 

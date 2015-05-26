@@ -18,6 +18,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import os, sys
 from stereotype_xslt import *
+from histogram_extractor import *
+from unique_histogram_extractor import *
+from report_extractor import *
 
 def run_stereocode(config):
 
@@ -46,11 +49,11 @@ def run_stereocode(config):
 
     # Loading extractors into a list so they can be more easily accessed.
     if config.output_histogram:
-        extractors.append(histogram_extractor)
+        extractors.append(histogram_extractor())
     if config.output_unique_histogram:
-        extractors.append(unique_histogram_extractor)
+        extractors.append(unique_histogram_extractor())
     if config.output_report:
-        extractors.append(report_extractor)
+        extractors.append(report_extractor())
 
 
     def run_extraction(filename_or_stream):
@@ -61,13 +64,15 @@ def run_stereocode(config):
 
     to_be_run = []
     if config.no_redoc:
-        print >> sys.stderr, "Handling the situation where we process an input file."
+        if config.verbose_output:
+            print >> sys.stderr, "Extracting information from input archive."
         def extraction_no_redoc():
             run_extraction(config.input_stream)
         to_be_run.append(extraction_no_redoc)
         
     elif config.remove_redoc:
-        print >> sys.stderr, "Removing redoc from source code."
+        if config.verbose_output:
+            print >> sys.stderr, "Removing redoc from source code."
         if len(extractors) > 0:
             output_file_name = "stereotype_preremoval.xml"
 
@@ -85,7 +90,7 @@ def run_stereocode(config):
             to_be_run.append(output_current_stream_into_temp)
             to_be_run.append(extraction_remove_redoc)
             to_be_run.append(delete_file)
-            
+
         def remove_redoc():
             remove_stereotypes(config)
         to_be_run.append(remove_redoc)
@@ -96,7 +101,13 @@ def run_stereocode(config):
         if len(extractors) > 0:
             output_file_name = "stereotype_post_redoc.xml"
             def do_redoc_has_extractors():
-                raise NotImplementedError("Not Implemented yet")
+                temp_output_stream = open(output_file_name, "w")
+                # Overriding default output with my own output stream.
+                config.temp_output_stream = temp_output_stream
+                apply_stereotyping(config)
+                temp_output_stream.close()
+
+                # raise NotImplementedError("Not Implemented yet")
             # def output_current_stream_into_temp():
             #     temp_file = open(output_file_name, "w")
             #     for l in config.input:
@@ -107,10 +118,12 @@ def run_stereocode(config):
                 run_extraction(output_file_name)
 
             def delete_temp_file():
+                for l in open(output_file_name, "r"):
+                    config.output_stream.write(l)
                 os.remove(output_file_name)
 
 
-            # to_be_run.append(output_current_stream_into_temp)
+            to_be_run.append(do_redoc_has_extractors)
             to_be_run.append(extraction_remove_redoc)
             to_be_run.append(delete_temp_file)
 

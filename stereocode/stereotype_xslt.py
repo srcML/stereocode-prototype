@@ -19,6 +19,8 @@
 
 
 import lxml.etree as et, lxml, os, os.path, sys
+from cli_args import *
+
 _currentDirectory = os.path.dirname(os.path.abspath(__file__))
 
 stereocodeXsltFilePath = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
@@ -47,12 +49,25 @@ removeStereotypeDoc = et.XSLT(et.parse(_remove_stereotype_doc_path))
 
 
 def remove_stereotypes(config):
+    # TODO: Use srcML to make this work in the future.
+    # TODO: Configure stylesheet parameters.
+    if config.mode == MODE_REDOCUMENT_SOURCE:
+        pass
+    elif config.mode ==MODE_ADD_XML_ATTR:
+        raise NotImplementedError("XML node attribute not implemented as part of redocumentation yet.")
+    else:
+        raise Exception("Invalid Configuration Mode.")
     input_doc = et.parse(config.input_stream)
     transformed_doc = removeStereotypeDoc(input_doc)
     transformed_doc.write(config.output_stream)
 
 def apply_stereotyping(config):
-
     # TODO: Use srcML to make this work in the future.
     # TODO: Configure stylesheet parameters.
-    stereocodeDoc(et.parse(config.input_stream)).write(config.output_stream)
+    if config.mode == MODE_REDOCUMENT_SOURCE:
+        pass
+    elif config.mode ==MODE_ADD_XML_ATTR:
+        raise NotImplementedError("XML node attribute not implemented as part of redocumentation yet.")
+    else:
+        raise Exception("Invalid Configuration Mode.")
+    stereocodeDoc(et.parse(config.input_stream)).write(config.output_stream if config.temp_output_stream == None else config.temp_output_stream)
