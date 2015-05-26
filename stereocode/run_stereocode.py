@@ -85,6 +85,7 @@ def run_stereocode(config):
             to_be_run.append(output_current_stream_into_temp)
             to_be_run.append(extraction_remove_redoc)
             to_be_run.append(delete_file)
+            
         def remove_redoc():
             remove_stereotypes(config)
         to_be_run.append(remove_redoc)

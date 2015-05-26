@@ -27,10 +27,8 @@ class TestRunStereocode(unittest.TestCase):
     
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
     def test_remove_stereotype(self, tree):
-        # output_stream = open("stereotype_")
         output_stream = cStringIO.StringIO()
         stereocodeDoc(tree).write(output_stream)
-        # output_stream.close()
 
         class faux_config:pass
         cfg = faux_config()
@@ -54,7 +52,6 @@ class TestRunStereocode(unittest.TestCase):
 
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")
     def test_run_stereocode_redocument(self, tree):
-        # print help(tree)
         output_stream = cStringIO.StringIO()
         output_stream.write(et.tostring(tree))
 
@@ -85,4 +82,35 @@ class TestRunStereocode(unittest.TestCase):
             )
         )
 
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_remove_stereotypes_configuration(self, tree):
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+
+        cfg = configuration(
+            mode=MODE_REDOCUMENT_SOURCE,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = None,
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = True
+        )
+
+        run_stereocode(cfg)
+
+        transformed_doc = et.XML(cfg.output_stream.getvalue())
+        located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            0,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
         
