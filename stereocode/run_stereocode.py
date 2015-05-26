@@ -21,9 +21,16 @@ from stereotype_xslt import *
 from histogram_extractor import *
 from unique_histogram_extractor import *
 from report_extractor import *
+# from timeit import *
+from time import *
 
 def run_stereocode(config):
-
+    """
+    Takes a configuration object and uses that to execute the main
+    part of stereocode. There are preconditions on this function
+    that are NOT enforced within this function and are instead
+    enforeced within the parse_cli_arguments function.
+    """
 
     # Using the configuration options in order to set things up for actually executing
     # stereocode.
@@ -47,20 +54,28 @@ def run_stereocode(config):
 
     extractors = []
 
+    compute_timings = config.output_timings
+    extractor_extra_data = dict()
+
+
     # Loading extractors into a list so they can be more easily accessed.
     if config.output_histogram:
         extractors.append(histogram_extractor())
     if config.output_unique_histogram:
         extractors.append(unique_histogram_extractor())
     if config.output_report:
+        compute_timings = True
         extractors.append(report_extractor())
+
 
 
     def run_extraction(filename_or_stream):
         if len(extractors) > 0:
+            if compute_timings:
+                start_extraction_time = time()
             run_info_extractor(filename_or_stream, extractors, config.mode)
-            for extractor in extractors:
-                extractor.output_data(config)
+            if compute_timings:
+                extractor_extra_data["extractor_timing"] = time() - start_extraction_time
 
     to_be_run = []
     if config.no_redoc:
@@ -126,10 +141,16 @@ def run_stereocode(config):
                 apply_stereotyping(config)
             to_be_run.append(do_redoc_no_extractors)
 
-
+    if compute_timings:
+        start_execution_time = time()
 
     for operation in to_be_run:
         operation()
 
+    if compute_timings:
+        extractor_extra_data["execution_time"] = time() - start_execution_time
+        if config.output_timings:
+            print "Total Timing: ", extractor_extra_data["execution_time"]
 
-
+    for extractor in extractors:
+        extractor.output_data(config, **extractor_extra_data)
