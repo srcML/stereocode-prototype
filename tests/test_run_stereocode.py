@@ -17,7 +17,7 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import unittest, lxml.etree as et, lxml, os, os.path
+import unittest, lxml.etree as et, lxml, os, os.path, cStringIO
 from stereocode import *
 from testlib import *
 
@@ -29,3 +29,32 @@ class TestRunStereocode(unittest.TestCase):
         # return NotImplemented
         raise NotImplementedError()
         pass
+
+
+    
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_remove_stereotype(self, tree):
+        # output_stream = open("stereotype_")
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+        # output_stream.close()
+
+        class faux_config:pass
+        cfg = faux_config()
+        cfg.input_stream = cStringIO.StringIO(output_stream.getvalue())
+        cfg.output_stream = cStringIO.StringIO()
+        cfg.mode = MODE_REDOCUMENT_SOURCE
+        remove_stereotypes(cfg)
+        transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
+        no_stereotype_archive = et.parse(transformed_archive_stream)
+        transformed_archive_stream.close()
+        located_stereotypes = no_stereotype_archive.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            0,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
+

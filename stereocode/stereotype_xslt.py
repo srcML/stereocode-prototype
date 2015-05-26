@@ -18,9 +18,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-import lxml.etree as et, lxml, os, os.path
+import lxml.etree as et, lxml, os, os.path, sys
 _currentDirectory = os.path.dirname(os.path.abspath(__file__))
 
+stereocodeXsltFilePath = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
+stereocodeDoc = et.XSLT(et.parse(stereocodeXsltFilePath))
+
+_remove_stereotype_doc_path = os.path.join(_currentDirectory, "xslt", "remove_stereotypes.xsl")
+removeStereotypeDoc = et.XSLT(et.parse(_remove_stereotype_doc_path))
+
+# Example code using extension functions that doesn't work due to
+# a bug within lxml.
 # _ns = et.FunctionNamespace(None)
 
 # class MyExt:
@@ -36,5 +44,9 @@ _currentDirectory = os.path.dirname(os.path.abspath(__file__))
 # extensions = et.Extension( ext_module, functions, ns="http://www.sdml.info/srcML/src" )
 
 # stereocodeDoc = et.XSLT(et.parse(_xsltFile), extensions=extensions)
-stereocodeXsltFilePath = os.path.join(_currentDirectory, "xslt", "stereotype.xsl")
-stereocodeDoc = et.XSLT(et.parse(stereocodeXsltFilePath))
+
+
+def remove_stereotypes(config):
+    input_doc = et.parse(config.input_stream)
+    transformed_doc = removeStereotypeDoc(input_doc)
+    transformed_doc.write(config.output_stream)
