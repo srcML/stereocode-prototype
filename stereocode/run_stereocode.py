@@ -150,7 +150,7 @@ def run_stereocode(config):
     if compute_timings:
         extractor_extra_data["execution_time"] = time() - start_execution_time
         if config.output_timings:
-            print "Total Timing: ", extractor_extra_data["execution_time"]
+            print >> sys.stderr, "Time elapsed: ", extractor_extra_data["execution_time"]
 
     for extractor in extractors:
         extractor.output_data(config, **extractor_extra_data)

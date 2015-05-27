@@ -53,6 +53,92 @@ class TestExtractFunctionList(unittest.TestCase):
     def test_function_list_extractor(self, filename):
         extractor = function_list_extractor()
         run_info_extractor(filename, [extractor])
-        # self.assertEqual(1, histogram.histogram["collaborator"], "Incorrect # from stereotype")
-        # self.assertEqual(2, histogram.histogram["unclassified"], "Incorrect # from stereotype")
-        # self.assertEqual(4, histogram.histogram["command"], "Incorrect # from stereotype")
+        # print "\n".join([str(x)for x in  extractor.func_info])
+        """
+{'functions': [
+
+],
+'archive_line_number': 4, 'filename': u'advgeom.cpp'}
+        """
+        self.assertEqual(1, len(extractor.functions_by_unit), "Incorrect # of units located")
+        self.assertEqual(6, len([f for u in extractor.functions_by_unit for f in u.functions]), "Incorrect # of functions located")
+        self.assertEqual(4, extractor.functions_by_unit[0].archive_line_number, "Incorrect archive line number")
+        self.assertEqual("advgeom.cpp", extractor.functions_by_unit[0].filename, "Incorrect filename")
+
+        # Testing function names, sigs, etc...
+        #   'file_line_number': 2
+        # current_func = extractor.functions_by_unit[0].functions[0]
+        test_data = [
+            {'is_within_class': False, 'name': 'CExampleWindow::onInit', 'archive_line_number': 6, 'signature': 'void CExampleWindow::onInit(int width, int height)', 'class_name': '', 'stereotypes': ['command', 'collaborator'], 'file_line_number': 2}, 
+            {'is_within_class': False, 'name': 'CExampleWindow::onResize', 'archive_line_number': 9, 'signature': 'void CExampleWindow::onResize(int width, int height)', 'class_name': '', 'stereotypes': ['unclassified'], 'file_line_number': 5}, 
+            {'is_within_class': False, 'name': 'CExampleWindow::onRender', 'archive_line_number': 12, 'signature': 'void CExampleWindow::onRender()', 'class_name': '', 'stereotypes': ['unclassified'], 'file_line_number': 8}, 
+            {'is_within_class': False, 'name': 'CExampleWindow::onMouseDown', 'archive_line_number': 15, 'signature': 'void CExampleWindow::onMouseDown(int x, int y)', 'class_name': '', 'stereotypes': ['command'], 'file_line_number': 11}, 
+            {'is_within_class': False, 'name': 'CExampleWindow::onMouseMove', 'archive_line_number': 18, 'signature': 'void CExampleWindow::onMouseMove(int x, int y)', 'class_name': '', 'stereotypes': ['command'], 'file_line_number': 14}, 
+            {'is_within_class': False, 'name': 'CExampleWindow::onMouseUp', 'archive_line_number': 21, 'signature': 'void CExampleWindow::onMouseUp(int x, int y)', 'class_name': '', 'stereotypes': ['command'], 'file_line_number': 17}
+        ]
+        for t in zip(extractor.functions_by_unit[0].functions, test_data):
+
+            self.validated_correct_func(
+                *t
+                # extractor.functions_by_unit[0].functions[0],
+                # {'is_within_class': False, 'name': 'CExampleWindow::onInit', 'archive_line_number': 6, 'signature': 'void CExampleWindow::onInit(int width, int height)', 'class_name': '', 'stereotypes': ['command', 'collaborator'], 'file_line_number': 2}
+            )
+
+
+    def validated_correct_func(self, current_func, expected):
+        self.assertEqual(
+            expected["is_within_class"],
+            current_func.is_within_class,
+            "Incorrect is_within_class. Expected: {0} Actual: {1}".format(
+                expected["is_within_class"],
+                current_func.is_within_class
+            )
+        )
+        self.assertEqual(
+            expected["name"],
+            current_func.name,
+            "Incorrect name. Expected: {0} Actual: {1}".format(
+                expected["name"],
+                current_func.name
+            )
+        )
+        self.assertEqual(
+            expected["signature"],
+            current_func.signature,
+            "Incorrect signature. Expected: {0} Actual: {1}".format(
+                expected["signature"],
+                current_func.signature
+            )
+        )
+        self.assertEqual(
+            expected["class_name"],
+            current_func.class_name,
+            "Incorrect class name prefix. Expected: {0} Actual: {1}".format(
+                expected["class_name"],
+                current_func.class_name
+            )
+        )
+        self.assertListEqual(
+            expected["stereotypes"],
+            current_func.stereotypes,
+            "Incorrect stereotypes. Expected: {0} Actual: {1}".format(
+                expected["stereotypes"],
+                current_func.stereotypes
+            )
+        )
+        self.assertEqual(
+            expected["archive_line_number"],
+            current_func.archive_line_number,
+            "Incorrect line # in archive. Expected: {0} Actual: {1}".format(
+                expected["archive_line_number"],
+                current_func.archive_line_number
+            )
+        )
+        self.assertEqual(
+            expected["file_line_number"],
+            current_func.file_line_number,
+            "Incorrect line # in file. Expected: {0} Actual: {1}".format(
+                expected["file_line_number"],
+                current_func.file_line_number
+            )
+        )

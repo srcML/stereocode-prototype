@@ -18,7 +18,23 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from info_extractor import *
-from histogram_helpers import *
+
+class unit_info:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+    # def __repr__(self):
+    #     return str(self.__dict__) 
+    def __str__(self):
+        return str(self.__dict__) 
+
+class func_info:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+    def __repr__(self):
+        return "\n" + str(self.__dict__) 
+
+    def __str__(self):
+        return "\n" + str(self.__dict__) 
 
 class function_list_extractor(extractor_base):
     """
@@ -27,15 +43,35 @@ class function_list_extractor(extractor_base):
     """
     def __init__(self):
         super(function_list_extractor, self).__init__()
-        self.histogram = dict()
+        self.functions_by_unit = []
+        self.current_unit = None
 
+    
+    def start_document(self):
+        self.functions_by_unit = []
 
+    def end_document(self):
+        self.functions_by_unit.append(self.current_unit)
+        self.current_unit = None
+    
+    def on_unit(self, filename, document_locator, info):
+        self.current_unit = unit_info(filename=filename, archive_line_number=document_locator.getLineNumber(), functions=[])
+    
+    
     def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
-        for stereotype in stereotype_list:
-            if stereotype in self.histogram:
-                self.histogram[stereotype] += 1
-            else:
-                self.histogram[stereotype] = 1
+        self.current_unit.functions.append(
+            func_info(
+                name=function_name,
+                signature=function_signature,
+                file_line_number=document_locator.getLineNumber() - self.current_unit.archive_line_number,
+                archive_line_number=document_locator.getLineNumber(),
+                stereotypes=stereotype_list,
+                is_within_class=len(info.cls_ns_stack) !=0,
+                class_name="::".join(info.cls_ns_stack)
+            )
+        )
 
+    
     def output_data(self, config, **kwargs):
-        write_histogram("Stereotype Occurrence Histogram", self.histogram, config.histogram_stream)
+        # write_histogram("Stereotype Occurrence Histogram", self.histogram, config.histogram_stream)
+        pass
