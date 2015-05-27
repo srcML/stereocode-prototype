@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from info_extractor import *
+from csv import DictWriter, QUOTE_MINIMAL
 
 class unit_info:
     def __init__(self, **kwargs):
@@ -41,6 +42,9 @@ class function_list_extractor(extractor_base):
     Class that extracts a list of functions signatures by stereotype and outputs them
     into a specified file.
     """
+
+    fieldnames = ["function name", "function signature", "stereotypes", "filename", "archive line number", "file line number", "class defined within"]
+
     def __init__(self):
         super(function_list_extractor, self).__init__()
         self.functions_by_unit = []
@@ -55,6 +59,7 @@ class function_list_extractor(extractor_base):
         self.current_unit = None
     
     def on_unit(self, filename, document_locator, info):
+        # print >> sys.stderr, "Read file name: ", filename
         self.current_unit = unit_info(filename=filename, archive_line_number=document_locator.getLineNumber(), functions=[])
     
     
@@ -65,7 +70,7 @@ class function_list_extractor(extractor_base):
                 signature=function_signature,
                 file_line_number=document_locator.getLineNumber() - self.current_unit.archive_line_number,
                 archive_line_number=document_locator.getLineNumber(),
-                stereotypes=stereotype_list,
+                stereotypes=[x for x in stereotype_list],
                 is_within_class=len(info.cls_ns_stack) !=0,
                 class_name="::".join(info.cls_ns_stack)
             )
@@ -73,5 +78,24 @@ class function_list_extractor(extractor_base):
 
     
     def output_data(self, config, **kwargs):
-        # write_histogram("Stereotype Occurrence Histogram", self.histogram, config.histogram_stream)
-        pass
+        csv_writer = DictWriter(
+            config.function_list_stream,
+            fieldnames=function_list_extractor.fieldnames,
+            delimiter=',',
+            quotechar='"',
+            quoting=QUOTE_MINIMAL
+        )
+        csv_writer.writeheader()
+        for u in self.functions_by_unit:
+            for f in u.functions:
+                csv_writer.writerow(
+                    {
+                        "filename": u.filename,
+                        "function name": f.name,
+                        "function signature":f.signature,
+                        "stereotypes":",".join(f.stereotypes),
+                        "archive line number":f.archive_line_number,
+                        "file line number":f.file_line_number,
+                        "class defined within": f.class_name
+                    }
+                )

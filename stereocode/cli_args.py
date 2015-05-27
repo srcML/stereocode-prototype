@@ -215,9 +215,6 @@ This program has several methods of operation:
     2) XML Attribute Annotation. Each <function> is annotated with stereotype XML 
         attribute that contains a comma separated list of stereotypes associated
         with that method.
-    3) Function List. Creates a new archive containing an XML archive containing
-        a list of all function signatures by file paired with stereotype
-        information.
 """
     )
 
@@ -250,7 +247,7 @@ This program has several methods of operation:
         default=processingModes[0],
         choices=processingModes,
         dest="mode",
-        help='Specifies how the output should be formatted. possible modes: ReDocSrc, XmlAttr, and FuncList.'
+        help='Specifies how the output should be formatted. possible modes: ReDocSrc, and XmlAttr.'
     )
 
     arg_parser.add_argument(

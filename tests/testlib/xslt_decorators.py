@@ -33,7 +33,7 @@ def srcMLifyCode(fileToProcess, language=LANGUAGE_CXX):
             try:
                 with memory_buffer() as buff:
                     with writable_archive(writable_archive_settings(default_language=language), buffer=buff) as archive_writer:
-                        u = archive_writer.create_unit()
+                        u = archive_writer.create_unit(filename=fileToProcess)
                         u.parse(filename=fileToProcess)
                         archive_writer.write(u)
                     srcMLXmlDoc = et.XML(str(buff))

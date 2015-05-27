@@ -77,12 +77,7 @@ class TestExtractFunctionList(unittest.TestCase):
             {'is_within_class': False, 'name': 'CExampleWindow::onMouseUp', 'archive_line_number': 21, 'signature': 'void CExampleWindow::onMouseUp(int x, int y)', 'class_name': '', 'stereotypes': ['command'], 'file_line_number': 17}
         ]
         for t in zip(extractor.functions_by_unit[0].functions, test_data):
-
-            self.validated_correct_func(
-                *t
-                # extractor.functions_by_unit[0].functions[0],
-                # {'is_within_class': False, 'name': 'CExampleWindow::onInit', 'archive_line_number': 6, 'signature': 'void CExampleWindow::onInit(int width, int height)', 'class_name': '', 'stereotypes': ['command', 'collaborator'], 'file_line_number': 2}
-            )
+            self.validated_correct_func(*t)
 
 
     def validated_correct_func(self, current_func, expected):

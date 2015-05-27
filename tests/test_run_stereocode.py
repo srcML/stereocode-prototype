@@ -20,7 +20,7 @@
 import unittest, lxml.etree as et, lxml, os, os.path, cStringIO
 from stereocode import *
 from testlib import *
-
+from csv import DictReader
 
 
 class TestRunStereocode(unittest.TestCase):
@@ -236,7 +236,60 @@ class TestRunStereocode(unittest.TestCase):
                 "\n".join([et.tostring(elem) for elem in located_stereotypes])
             )
         )
-        
+
+
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_run_stereocode_redocument_funclist(self, tree):
+        output_stream = cStringIO.StringIO()
+        output_stream.write(et.tostring(tree))
+        # print >>sys.stderr, output_stream.getvalue()
+        cfg = configuration(
+            mode=MODE_REDOCUMENT_SOURCE,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = None,
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = False,
+            extract_func_list=cStringIO.StringIO()
+        )
+
+        run_stereocode(cfg)
+
+        transformed_doc = et.XML(cfg.output_stream.getvalue())
+        located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            2,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
+        tempstr = cfg.function_list_stream.getvalue()
+        # print tempstr
+        csv_strm = cStringIO.StringIO(tempstr)
+        csv_reader = DictReader(csv_strm)
+        written_data=[
+            ["y::match1","obj* y::match1() const","get,collaborator","tests/test_data/stereotype/get.cpp","12","9",""],
+            ["y::match2","int y::match2()","nonconstget","tests/test_data/stereotype/get.cpp","17","14",""]
+        ]
+        index = 0
+        for r in csv_reader:
+            expected = dict(zip(csv_reader.fieldnames, written_data[index]))
+            self.assertDictEqual(
+                expected,
+                r,
+                "Incorrect output. Expected: {1} Actual:{0}".format(
+                    "".join(["{0}: {1}\n".format(*x) for x in r.items()]),
+                    "".join(["{0}: {1}\n".format(*x) for x in expected.items()])
+                )
+            )
+            index += 1
 
 
     @srcMLifyCode("tests/test_data/stereotype/get.cpp")

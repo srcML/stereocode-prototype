@@ -21,7 +21,7 @@ from stereotype_xslt import *
 from histogram_extractor import *
 from unique_histogram_extractor import *
 from report_extractor import *
-# from timeit import *
+from function_list_extractor import *
 from time import *
 
 def run_stereocode(config):
@@ -63,6 +63,8 @@ def run_stereocode(config):
         extractors.append(histogram_extractor())
     if config.output_unique_histogram:
         extractors.append(unique_histogram_extractor())
+    if config.extract_function_list:
+        extractors.append(function_list_extractor())
     if config.output_report:
         compute_timings = True
         extractors.append(report_extractor())
