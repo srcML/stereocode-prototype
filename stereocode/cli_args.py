@@ -28,7 +28,6 @@ MODE_ADD_XML_ATTR = "XmlAttr"
 processingModes = [
     MODE_REDOCUMENT_SOURCE,
     MODE_ADD_XML_ATTR
-    # ,    MODE_FUNCTION_LIST
 ]
 
 

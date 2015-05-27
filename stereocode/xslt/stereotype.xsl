@@ -56,7 +56,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   -->
   <!-- current encoding (XSLT cannot obtain internally) -->
   <xsl:param name="encoding" select="ISO-8859-1"/>
-
+  <xsl:param name="processing_mode">ReDocSrc</xsl:param>
+  <!-- <xsl:param name="" select=""/> -->
   <!-- provide identity transformation -->
   <xsl:output method="xml" encoding="ISO-8859-1"/>
 
@@ -86,6 +87,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   -->
   <xsl:variable name="more_ignorable_calls" select="''"/>
   <xsl:variable name="ignorable_calls" select="str:split(concat('assert static_cast const_cast dynamic_cast reinterpret_cast ', $more_ignorable_calls))"/>
+
+  
 
   <!--
     Functions
@@ -1277,19 +1280,37 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     </xsl:variable>
 
     <!-- insert stereotype comment -->
-    <comment xmlns="http://www.srcML.org/srcML/src" type="block">/** @stereotype <xsl:value-of select="$stereotype"/>*/</comment>
-    <xsl:value-of select="$eol"/>
+    <xsl:choose>
+      <xsl:when test="$processing_mode='ReDocSrc'">
+        <comment xmlns="http://www.srcML.org/srcML/src" type="block">/** @stereotype <xsl:value-of select="$stereotype"/>*/</comment>
+        <xsl:value-of select="$eol"/>
 
-    <!-- calculate the indent currently on the declaration so we can duplicate it on the comment -->
-    <xsl:variable name="indent" select="src:last_ws(preceding-sibling::text()[1])"/>
-   
-    <!-- insert indentation -->
-    <xsl:value-of select="$indent"/>
+        <!-- calculate the indent currently on the declaration so we can duplicate it on the comment -->
+        <xsl:variable name="indent" select="src:last_ws(preceding-sibling::text()[1])"/>
+       
+        <!-- insert indentation -->
+        <xsl:value-of select="$indent"/>
 
-    <!-- copy of function -->
-    <xsl:copy>
-      <xsl:apply-templates select="@*|node()"/>
-    </xsl:copy>
+        <!-- copy of function -->
+        <xsl:copy>
+          <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:when test="$processing_mode='XmlAttr'">
+        <xsl:copy>
+          <xsl:attribute name="stereotype">
+            <xsl:value-of select="$stereotype"/>
+          </xsl:attribute>
+          <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:otherwise>
+           <xsl:message terminate="yes">
+              ERROR: Unknown processing mode.
+           </xsl:message>
+      </xsl:otherwise>
+    </xsl:choose>
+
   </xsl:template>
 
 

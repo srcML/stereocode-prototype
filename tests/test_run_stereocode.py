@@ -428,3 +428,77 @@ class TestRunStereocode(unittest.TestCase):
             )
         )
     
+
+
+
+
+
+
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #          Testing the XmlAttr Mode of annotation
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_run_stereocode_redocument_XmlAttr(self, tree):
+        output_stream = cStringIO.StringIO()
+        output_stream.write(et.tostring(tree))
+        cfg = configuration(
+            mode = MODE_ADD_XML_ATTR,
+            input_from = cStringIO.StringIO(output_stream.getvalue()),
+            output_to = cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = None,
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = False,
+            extract_func_list = None
+        )
+        run_stereocode(cfg)
+        transformed_doc = et.XML(cfg.output_stream.getvalue())
+        # print et.tostring(transformed_doc)
+        located_stereotypes = transformed_doc.xpath("//src:function[@stereotype]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            2,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
+
+
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    def test_remove_stereotype_XmlAttr(self, tree):
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = None,
+            unique_histogram_stream = None,
+            report_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        remove_stereotypes(cfg)
+        transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
+        no_stereotype_archive = et.parse(transformed_archive_stream)
+        transformed_archive_stream.close()
+        located_stereotypes = no_stereotype_archive.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            0,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )
