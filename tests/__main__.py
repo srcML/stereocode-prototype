@@ -25,6 +25,7 @@ from test_info_extractor import *
 from test_report_extractor import *
 from test_histogram_extractor import *
 from test_unique_histogram_extractor import *
+from test_extract_funcion_list import *
 from stereocode import *
 from testlib import *
 from srcml import *

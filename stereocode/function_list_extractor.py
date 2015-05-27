@@ -1,5 +1,5 @@
 ##
-# @file __init__.py
+# @file function_list_extractor.py
 #
 # @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
 # 
@@ -17,11 +17,25 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from cli_args import *
-from stereotype_xslt import *
-from run_stereocode import *
 from info_extractor import *
-from histogram_extractor import *
-from unique_histogram_extractor import *
-from report_extractor import *
-from function_list_extractor import *
+from histogram_helpers import *
+
+class function_list_extractor(extractor_base):
+    """
+    Class that extracts a list of functions signatures by stereotype and outputs them
+    into a specified file.
+    """
+    def __init__(self):
+        super(function_list_extractor, self).__init__()
+        self.histogram = dict()
+
+
+    def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
+        for stereotype in stereotype_list:
+            if stereotype in self.histogram:
+                self.histogram[stereotype] += 1
+            else:
+                self.histogram[stereotype] = 1
+
+    def output_data(self, config, **kwargs):
+        write_histogram("Stereotype Occurrence Histogram", self.histogram, config.histogram_stream)

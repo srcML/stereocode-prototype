@@ -49,14 +49,6 @@ class TestCLIArgs(unittest.TestCase):
         self.assertFalse(result.no_redoc, "Didn't get expected value.")
         self.assertFalse(result.remove_redoc, "Didn't get expected value.")
         
-    # def test_help(self):
-    #     result = parse_cli_arguments("-h")
-        # print 
-        # self.assertTrue(isinstance(result.input, list), "Didn't get expected type.")
-        # self.assertEqual(result.output, None, "Didn't get expected type.")
-        # self.assertEqual(result.mode,processingModes[0], "Didn't get expected type.")
-        # self.assertFalse(result.debug, "Didn't get expected type.")
-        # self.assertFalse(result.enableTiming, "Didn't get expected type.")
 
     # testing input file.
     def test_input_from_console(self):
@@ -78,11 +70,6 @@ class TestCLIArgs(unittest.TestCase):
     def test_from_invalid_file(self):
         config = parse_cli_arguments("-i something.xml", False)
 
-    @expect_exception(cli_error)
-    def test_remove_redocumentation_from_function_list(self):
-        config = parse_cli_arguments("--remove-redoc -m FuncList", False)
-
-
     def test_remove_redocumentation(self):
         config = parse_cli_arguments("--remove-redoc", False)
         self.assertTrue(config.remove_redoc, "Didn't correctly set remove redocumentation value")
@@ -97,9 +84,11 @@ class TestCLIArgs(unittest.TestCase):
         config = parse_cli_arguments("-m XmlAttr", False)
         self.assertEqual(config.mode, MODE_ADD_XML_ATTR, "Didn't correctly set mode")
 
-    def test_mode_FuncList(self):
-        config = parse_cli_arguments("-m FuncList", False)
-        self.assertEqual(config.mode, MODE_FUNCTION_LIST, "Didn't correctly set mode")
+    @cleanup_files("FuncList.txt")
+    def test_extract_function_list(self):
+        config = parse_cli_arguments("-f FuncList.txt", False)
+        # self.assertEqual(config.mode, MODE_FUNCTION_LIST, "Didn't correctly set mode")
+        self.assertTrue(config.function_list_stream)
 
     # testing verbose
     def test_verbose(self):
@@ -164,12 +153,7 @@ class TestCLIArgs(unittest.TestCase):
     @expect_exception(cli_error)
     def test_ns_file_remove_redoc(self):
         config = parse_cli_arguments("--ns-file ns_list.txt --remove-redoc", False)
-        
 
     @expect_exception(cli_error)
     def test_no_redoc_nothing_to_be_done(self):
         config = parse_cli_arguments("--no-redoc", False)
-
-    @expect_exception(cli_error)
-    def test_no_redoc_on_function_list(self):
-        config = parse_cli_arguments("--no-redoc -m FuncList", False)

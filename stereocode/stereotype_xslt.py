@@ -66,7 +66,7 @@ def apply_stereotyping(config):
     # TODO: Configure stylesheet parameters.
     if config.mode == MODE_REDOCUMENT_SOURCE:
         pass
-    elif config.mode ==MODE_ADD_XML_ATTR:
+    elif config.mode == MODE_ADD_XML_ATTR:
         raise NotImplementedError("XML node attribute not implemented as part of redocumentation yet.")
     else:
         raise Exception("Invalid Configuration Mode.")

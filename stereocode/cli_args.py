@@ -22,13 +22,13 @@ import sys, os.path, logging, argparse, traceback
 
 MODE_REDOCUMENT_SOURCE = "ReDocSrc"
 MODE_ADD_XML_ATTR = "XmlAttr"
-MODE_FUNCTION_LIST = "FuncList"
+# MODE_FUNCTION_LIST = "FuncList"
 
 
 processingModes = [
     MODE_REDOCUMENT_SOURCE,
-    MODE_ADD_XML_ATTR,
-    MODE_FUNCTION_LIST
+    MODE_ADD_XML_ATTR
+    # ,    MODE_FUNCTION_LIST
 ]
 
 
@@ -55,6 +55,7 @@ class configuration(object):
         self._remove_redoc = kwargs["remove_redoc"]
         self._temp_output_stream = None
         self._temp_input_stream = None
+        self._func_list_stream = kwargs["extract_func_list"]
 
     @property
     def temp_output_stream(self):
@@ -115,6 +116,14 @@ class configuration(object):
     def report_stream(self):
         return self._report_strm
 
+    @property
+    def extract_function_list(self):
+        return self._func_list_stream != None
+
+    @property
+    def function_list_stream(self):
+        return self._func_list_stream
+    
     # @property
     # def extract_ns_from_archive(self):
     #     return self._extract_ns
@@ -325,6 +334,16 @@ This program has several methods of operation:
         help="This processing mode removes existing sterotypes from the provided archive. Only removes stereotypes that are part of the specified mode."
     )
 
+    arg_parser.add_argument(
+        "-f",
+        "--extract-func-list",
+        metavar='FUNC_LIST_PATH',
+        type=str,
+        default=None,
+        dest="extractFunctionList",
+        help="This is option allows for the stereotypes and functions from an existing archive to be extracted and output into a given file."
+    )
+
     # Error assistance function.
     def precondition_test(cond, variable_name, failure_message, value):
         if not cond:
@@ -343,6 +362,7 @@ This program has several methods of operation:
     no_redocumentation = False
     ns_prefix_stream = None
     remove_redoc = False
+    extract_func_list_strm = None
 
     args = arg_parser.parse_args(argument_string.split() if argument_string != None else None)
     no_redocumentation = args.noRedoc
@@ -359,18 +379,19 @@ This program has several methods of operation:
     #       Constraints that involve more than one CLI argument
     # ----------------------------------------------------------------------------
     if remove_redoc:
-        precondition_test(mode != MODE_FUNCTION_LIST, "--mode,--remove-redoc", "Can't remove redocumentation from a function list.", args.mode)
+        # precondition_test(mode != MODE_FUNCTION_LIST, "--mode,--remove-redoc", "Can't remove redocumentation from a function list.", args.mode)
         precondition_test(not no_redocumentation, "--no-redoc,--remove-redoc", "Invalid option combination.", None)
         precondition_test(args.namespaceFileName is None, "--ns-file,--remove-redoc", "can't use namespaces file when removing documentation", None)
 
     if no_redocumentation:
-        precondition_test(mode != MODE_FUNCTION_LIST, "--no-redoc,--mode", "Information can't be extracted from a function list", None)
+        # precondition_test(mode != MODE_FUNCTION_LIST, "--no-redoc,--mode", "Information can't be extracted from a function list", None)
         precondition_test(
             args.generateReport is not None or
             args.computeUniqueHistogram is not None or
-            args.computeHistogram is not None,
-            "--no-redoc,--report,--histogram,--unique-histogram",
-            "When processing a file with no redocumentation option set you must set at least one of the following options: --report, --hisogram, --unique-histogram.",
+            args.computeHistogram is not None or
+            args.extractFunctionList is not None,
+            "--no-redoc,--report,--histogram,--unique-histogram, --extract-func-list",
+            "When processing a file with no redocumentation option set you must set at least one of the following options: --report, --hisogram, --unique-histogram, --extract-func-list",
             None
         )
 
@@ -382,6 +403,11 @@ This program has several methods of operation:
 
     # Configuring input and output streams.
     try:
+        if args.extractFunctionList is not None:
+            try:
+                extract_func_list_strm = open(args.extractFunctionList, "w")
+            except Exception as e:
+                raise cli_error("--extract-func-list", "Failed to open function list file writing", args.extractFunctionList, e)                
         if args.computeHistogram is not None:
             try:
                 histogram_stream = open(args.computeHistogram, "w")
@@ -425,6 +451,10 @@ This program has several methods of operation:
             input_from = open(args.input, "r")
 
     except Exception as e:
+
+        if extract_func_list_strm is not None:
+            extract_func_list_strm.close()
+
         if histogram_stream is not None:
             histogram_stream.close()
 
@@ -440,7 +470,7 @@ This program has several methods of operation:
         if args.output is not None:
             if output_to is not None:
                 output_to.close()
-        raise e
+        raise
 
     
 
@@ -459,5 +489,6 @@ This program has several methods of operation:
         no_redocumentation = no_redocumentation,
         # extract_ns_from_archive = extract_ns_from_archive,
         ns_prefix_stream = ns_prefix_stream,
-        remove_redoc = remove_redoc
+        remove_redoc = remove_redoc,
+        extract_func_list = extract_func_list_strm
     )

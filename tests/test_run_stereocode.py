@@ -50,7 +50,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = None,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = False
+            remove_redoc = False,
+            extract_func_list=None
         )
         remove_stereotypes(cfg)
         transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
@@ -83,7 +84,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = None,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = False
+            remove_redoc = False,
+            extract_func_list=None
         )
 
         run_stereocode(cfg)
@@ -115,7 +117,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = None,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = True
+            remove_redoc = True,
+            extract_func_list=None
         )
 
         run_stereocode(cfg)
@@ -148,7 +151,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = None,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = False
+            remove_redoc = False,
+            extract_func_list=None
         )
 
         run_stereocode(cfg)
@@ -181,7 +185,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = None,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = False
+            remove_redoc = False,
+            extract_func_list=None
         )
 
         run_stereocode(cfg)
@@ -215,7 +220,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = cStringIO.StringIO(),
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = False
+            remove_redoc = False,
+            extract_func_list=None
         )
 
         run_stereocode(cfg)
@@ -249,7 +255,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = None,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = True
+            remove_redoc = True,
+            extract_func_list=None
         )
         run_stereocode(cfg)
         transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
@@ -283,7 +290,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = None,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = True
+            remove_redoc = True,
+            extract_func_list=None
         )
         run_stereocode(cfg)
         transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
@@ -316,7 +324,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = cStringIO.StringIO(),
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = True
+            remove_redoc = True,
+            extract_func_list=None
         )
         run_stereocode(cfg)
         transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
@@ -349,7 +358,8 @@ class TestRunStereocode(unittest.TestCase):
             report_stream = False,
             no_redocumentation = False,
             ns_prefix_stream = None,
-            remove_redoc = True
+            remove_redoc = True,
+            extract_func_list=None
         )
         run_stereocode(cfg)
         transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
