@@ -493,7 +493,7 @@ class TestRunStereocode(unittest.TestCase):
         transformed_archive_stream = cStringIO.StringIO(cfg.output_stream.getvalue())
         no_stereotype_archive = et.parse(transformed_archive_stream)
         transformed_archive_stream.close()
-        located_stereotypes = no_stereotype_archive.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        located_stereotypes = no_stereotype_archive.xpath("//src:function[@stereotype]", namespaces=xmlNamespaces)
         self.assertEqual(
             0,
             len(located_stereotypes),

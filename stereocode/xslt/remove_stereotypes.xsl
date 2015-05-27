@@ -9,8 +9,42 @@
     exclude-result-prefixes="src"
     version="1.0">
 
-    <xsl:template match="src:comment[contains(text(), '@stereotype')]"/>
+    <xsl:param name="processing_mode">ReDocSrc</xsl:param>
+
+    <xsl:template match="src:comment[contains(text(), '@stereotype')]" mode="redoc_src"/>
+    <xsl:template match="@stereotype" mode="xml_attr"/>
+
     <xsl:template match="node()|@*">
+      <xsl:choose>
+            <xsl:when test="$processing_mode='ReDocSrc'">
+              <xsl:copy>
+                 <xsl:apply-templates select="." mode="redoc_src"/>
+              </xsl:copy>
+          </xsl:when>
+          <xsl:when test="$processing_mode='XmlAttr'">
+              <xsl:copy>
+                 <xsl:apply-templates select="." mode="xml_attr"/>
+              </xsl:copy>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:message terminate="yes">
+              ERROR: Unknown mode.
+            </xsl:message>
+          </xsl:otherwise>
+      </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="node()|@*" mode="xml_attr">
+        <!-- [$processing_mode='XmlAttr']
+    [$processing_mode='ReDocSrc']-->
+      <xsl:copy>
+         <xsl:apply-templates select="node()|@*"/>
+      </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="node()|@*" mode="redoc_src">
+        <!-- [$processing_mode='XmlAttr']
+    [$processing_mode='ReDocSrc']-->
       <xsl:copy>
          <xsl:apply-templates select="node()|@*"/>
       </xsl:copy>

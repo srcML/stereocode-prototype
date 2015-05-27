@@ -51,14 +51,16 @@ removeStereotypeDoc = et.XSLT(et.parse(_remove_stereotype_doc_path))
 def remove_stereotypes(config):
     # TODO: Use srcML to make this work in the future.
     # TODO: Configure stylesheet parameters.
-    if config.mode == MODE_REDOCUMENT_SOURCE:
-        pass
-    elif config.mode ==MODE_ADD_XML_ATTR:
-        raise NotImplementedError("XML node attribute not implemented as part of removal yet.")
-    else:
-        raise Exception("Invalid Configuration Mode: '" + config.mode + "'")
+    # if config.mode == MODE_REDOCUMENT_SOURCE:
+    #     pass
+    # elif config.mode ==MODE_ADD_XML_ATTR:
+    #     raise NotImplementedError("XML node attribute not implemented as part of removal yet.")
+    # else:
+    #     raise Exception("Invalid Configuration Mode: '" + config.mode + "'")
     input_doc = et.parse(config.input_stream if config.temp_input_stream == None else config.temp_input_stream)
-    transformed_doc = removeStereotypeDoc(input_doc, processing_mode=config.mode)
+    transformed_doc = removeStereotypeDoc(input_doc, processing_mode=et.XSLT.strparam(config.mode))
+    if len(removeStereotypeDoc.error_log) > 0:
+        print >> sys.stderr, removeStereotypeDoc
     transformed_doc.write(config.output_stream)
 
 def apply_stereotyping(config):
@@ -73,6 +75,6 @@ def apply_stereotyping(config):
     #     raise Exception("Invalid Configuration Mode: '" + config.mode + "'")
     redocumented_doc = stereocodeDoc(et.parse(config.input_stream), processing_mode=et.XSLT.strparam(config.mode))
     # if config.verbose_output:
-    if len(removeStereotypeDoc.error_log) > 0:
-        print >> sys.stderr, removeStereotypeDoc
+    if len(stereocodeDoc.error_log) > 0:
+        print >> sys.stderr, stereocodeDoc
     redocumented_doc.write(config.output_stream if config.temp_output_stream == None else config.temp_output_stream)
