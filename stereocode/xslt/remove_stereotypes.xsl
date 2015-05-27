@@ -43,17 +43,8 @@
     </xsl:template>
 
     <xsl:template match="node()|@*" mode="redoc_src">
-        <!-- [$processing_mode='XmlAttr']
-    [$processing_mode='ReDocSrc']-->
       <xsl:copy>
          <xsl:apply-templates select="node()|@*"/>
       </xsl:copy>
     </xsl:template>
-
-    <!-- <xsl:template match="Element[@fruit='apple' and @animal='cat']"/> -->
-
-    <!-- Copy all non-comment elements. -->
-<!--     <xsl:template match="@*|node()">
-        <xsl:copy-of select="."/>
-    </xsl:template> -->
 </xsl:stylesheet>
