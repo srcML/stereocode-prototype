@@ -57,6 +57,10 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- current encoding (XSLT cannot obtain internally) -->
   <xsl:param name="encoding" select="ISO-8859-1"/>
   <xsl:param name="processing_mode">ReDocSrc</xsl:param>
+  <xsl:param name="more_native"></xsl:param>
+  <xsl:param name="more_modifiers"></xsl:param>
+  <xsl:param name="more_ignorable_calls"></xsl:param>
+
   <!-- <xsl:param name="" select=""/> -->
   <!-- provide identity transformation -->
   <xsl:output method="xml" encoding="ISO-8859-1"/>
@@ -71,21 +75,21 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       Definition of native types.  Additional types can be declared in
       the variable more_types
   -->
-  <xsl:variable name="more_native" select="''"/>
+  <!-- <xsl:variable name="more_native" select="''"/> -->
   <xsl:variable name="native" select="str:split(concat('int long double float string char unsigned signed wchar_t char16_t char32_t bool vector list map ', $more_native))"/>
 
   <!--
       Definition of names that occur in types, but are modifiers, etc.
       More types can be declared in the variable more_modifiers
   -->
-  <xsl:variable name="more_modifiers" select="''"/>
+  <!-- <xsl:variable name="more_modifiers" select="''"/> -->
   <xsl:variable name="modifiers" select="str:split(concat('std void emit virtual inline static const ', $more_modifiers))"/>
 
   <!--
       Definition of calls that aren't really calls, e.g., dynamic_cast.
       More types can be declared in the variable more_modifiers
   -->
-  <xsl:variable name="more_ignorable_calls" select="''"/>
+  <!-- <xsl:variable name="more_ignorable_calls" select="''"/> -->
   <xsl:variable name="ignorable_calls" select="str:split(concat('assert static_cast const_cast dynamic_cast reinterpret_cast ', $more_ignorable_calls))"/>
 
   
@@ -539,8 +543,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   -->
   <func:function name="src:is_native_type">
 
-  <!--  <xsl:message><xsl:value-of select="."/></xsl:message> -->
-
      <func:result select=".=$native"/>
 
   </func:function>
@@ -549,11 +551,11 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     Not sure if this is necessary anymore because modifier has been migrated into
     the src namespace.
   -->
-  <func:function name="src:is_modifier">
+<!--   <func:function name="src:is_modifier">
 
      <func:result select=".=$modifiers"/>
 
-  </func:function>
+  </func:function> -->
 
 
   <!-- 
