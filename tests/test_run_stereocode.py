@@ -47,7 +47,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
@@ -81,7 +81,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
@@ -114,7 +114,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = True,
@@ -148,7 +148,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = cStringIO.StringIO(),
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
@@ -182,7 +182,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = cStringIO.StringIO(),
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
@@ -218,7 +218,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
@@ -272,7 +272,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = cStringIO.StringIO(),
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = True,
@@ -307,7 +307,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = cStringIO.StringIO(),
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = True,
@@ -351,7 +351,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
@@ -384,7 +384,7 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = None,
-            report_stream = None,
+            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
