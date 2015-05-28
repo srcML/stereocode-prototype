@@ -23,5 +23,4 @@ from run_stereocode import *
 from info_extractor import *
 from histogram_extractor import *
 from unique_histogram_extractor import *
-from report_extractor import *
 from function_list_extractor import *

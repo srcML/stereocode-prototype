@@ -47,7 +47,7 @@ class configuration(object):
         self._output_timings = kwargs["output_timings"]
         self._histogram_strm = kwargs["histogram_stream"]
         self._unique_histogram_strm = kwargs["unique_histogram_stream"]
-        self._report_strm = kwargs["report_stream"]
+        # self._report_strm = kwargs["report_stream"]
         self._no_redoc = kwargs["no_redocumentation"]
         # self._extract_ns = kwargs["extract_ns_from_archive"]
         self._ns_pefix_file_strm = kwargs["ns_prefix_stream"]
@@ -107,13 +107,13 @@ class configuration(object):
     def unique_histogram_stream(self):
         return self._unique_histogram_strm
 
-    @property
-    def output_report(self):
-        return self._report_strm != None
+    # @property
+    # def output_report(self):
+    #     return self._report_strm != None
 
-    @property
-    def report_stream(self):
-        return self._report_strm
+    # @property
+    # def report_stream(self):
+    #     return self._report_strm
 
     @property
     def extract_function_list(self):
@@ -264,7 +264,7 @@ This program has several methods of operation:
         action='store_true',
         default=False,
         dest="enableTiming",
-        help='Outputs execution timing information to the console. This information is included as part of the report if generated.'
+        help='Outputs execution timing information to the console.'
     )
 
     arg_parser.add_argument(
@@ -296,14 +296,14 @@ This program has several methods of operation:
         help="Doesn't recompute stereotypes for an input archive, but instead simply loads the input file and assumes that the archive was redocumented in the specified mode."
     )
 
-    arg_parser.add_argument(
-        "--report",
-        metavar='REPORT_PATH',
-        type=str,
-        default=None,
-        dest="generateReport",
-        help="Generate a report from after an archive was transformed or from an existing archive if --no-redoc is specified."
-    )
+    # arg_parser.add_argument(
+    #     "--report",
+    #     metavar='REPORT_PATH',
+    #     type=str,
+    #     default=None,
+    #     dest="generateReport",
+    #     help="Generate a report from after an archive was transformed or from an existing archive if --no-redoc is specified."
+    # )
 
     arg_parser.add_argument(
         "--ns-file",
@@ -354,7 +354,7 @@ This program has several methods of operation:
     output_timings = False
     histogram_stream = None
     unique_histogram_stream = None
-    report_stream = None
+    # report_stream = None
     no_redocumentation = False
     ns_prefix_stream = None
     remove_redoc = False
@@ -382,12 +382,11 @@ This program has several methods of operation:
     if no_redocumentation:
         # precondition_test(mode != MODE_FUNCTION_LIST, "--no-redoc,--mode", "Information can't be extracted from a function list", None)
         precondition_test(
-            args.generateReport is not None or
             args.computeUniqueHistogram is not None or
             args.computeHistogram is not None or
             args.extractFunctionList is not None,
-            "--no-redoc,--report,--histogram,--unique-histogram, --extract-func-list",
-            "When processing a file with no redocumentation option set you must set at least one of the following options: --report, --hisogram, --unique-histogram, --extract-func-list",
+            "--no-redoc,--histogram,--unique-histogram, --extract-func-list",
+            "When processing a file with no redocumentation option set you must set at least one of the following options: --hisogram, --unique-histogram, --extract-func-list",
             None
         )
 
@@ -424,11 +423,11 @@ This program has several methods of operation:
             except Exception as e:
                 raise cli_error("--ns-file", "Failed to open namespace file for reading", args.namespaceFileName, e)
 
-        if args.generateReport is not None:
-            try:
-                report_stream = open(args.generateReport, "w")
-            except Exception as e:
-                raise cli_error("--report", "Failed to open report file writing", args.generateReport, e)
+        # if args.generateReport is not None:
+        #     try:
+        #         report_stream = open(args.generateReport, "w")
+        #     except Exception as e:
+        #         raise cli_error("--report", "Failed to open report file writing", args.generateReport, e)
 
 
         if args.output is None:
@@ -457,8 +456,8 @@ This program has several methods of operation:
         if unique_histogram_stream is not None:
             unique_histogram_stream.close()
 
-        if report_stream is not None:
-            report_stream.close()
+        # if report_stream is not None:
+        #     report_stream.close()
 
         if ns_prefix_stream is not None:
             ns_prefix_stream.close()
@@ -481,7 +480,7 @@ This program has several methods of operation:
         output_timings =output_timings,
         histogram_stream = histogram_stream,
         unique_histogram_stream = unique_histogram_stream,
-        report_stream = report_stream,
+        # report_stream = report_stream,
         no_redocumentation = no_redocumentation,
         # extract_ns_from_archive = extract_ns_from_archive,
         ns_prefix_stream = ns_prefix_stream,

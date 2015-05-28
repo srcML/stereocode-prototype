@@ -35,8 +35,6 @@
     </xsl:template>
 
     <xsl:template match="node()|@*" mode="xml_attr">
-        <!-- [$processing_mode='XmlAttr']
-    [$processing_mode='ReDocSrc']-->
       <xsl:copy>
          <xsl:apply-templates select="node()|@*"/>
       </xsl:copy>

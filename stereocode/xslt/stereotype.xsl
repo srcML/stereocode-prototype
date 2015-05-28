@@ -75,21 +75,18 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       Definition of native types.  Additional types can be declared in
       the variable more_types
   -->
-  <!-- <xsl:variable name="more_native" select="''"/> -->
   <xsl:variable name="native" select="str:split(concat('int long double float string char unsigned signed wchar_t char16_t char32_t bool vector list map ', $more_native))"/>
 
   <!--
       Definition of names that occur in types, but are modifiers, etc.
       More types can be declared in the variable more_modifiers
   -->
-  <!-- <xsl:variable name="more_modifiers" select="''"/> -->
   <xsl:variable name="modifiers" select="str:split(concat('std void emit virtual inline static const ', $more_modifiers))"/>
 
   <!--
       Definition of calls that aren't really calls, e.g., dynamic_cast.
       More types can be declared in the variable more_modifiers
   -->
-  <!-- <xsl:variable name="more_ignorable_calls" select="''"/> -->
   <xsl:variable name="ignorable_calls" select="str:split(concat('assert static_cast const_cast dynamic_cast reinterpret_cast ', $more_ignorable_calls))"/>
 
   
@@ -101,7 +98,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!--
     Unique signature of a function based on types of parameters
   -->
-  <func:function name="src:function_signature">
+<!--   <func:function name="src:function_signature">
     <xsl:param name="function"/>
 
     <xsl:choose>
@@ -113,11 +110,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     </xsl:variable>
 
     <xsl:variable name="raw1" select="normalize-space($raw0)"/>
-
     <xsl:variable name="raw2" select="str:replace($raw1, 'std::', '')"/>
-<!-- str:replace(str:replace(str:replace($raw2, 'hippodraw::', ''), 'numeric::', ''), 'boost::python::', '') -->
     <xsl:variable name="raw3" select="$raw2"/>
-
     <xsl:variable name="raw4" select="concat($raw3, '||', $function/src:specifier[.='const'])"/>
 
     <func:result select="translate(string($raw4), ' ', '')"/>
@@ -127,7 +121,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       </xsl:otherwise>
     </xsl:choose>
 
-  </func:function>
+  </func:function> -->
 
   <!--
     pure virtual function declaration

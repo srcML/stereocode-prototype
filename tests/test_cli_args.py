@@ -37,12 +37,6 @@ class TestCLIArgs(unittest.TestCase):
         self.assertFalse(result.output_unique_histogram, "Didn't get expected value.")
         self.assertIsNone(result.unique_histogram_stream, "Didn't get expected value.")
 
-        self.assertFalse(result.output_report, "Didn't get expected value.")
-        self.assertIsNone(result.report_stream, "Didn't get expected value.")
-
-        # self.assertTrue(result.extract_ns_from_archive, "Didn't get expected value.")
-        self.assertIsNone(result.report_stream, "Didn't get expected value.")
-
         self.assertFalse(result.has_ns_pefix_file, "Didn't get expected values")
         self.assertIsNone(result.ns_pefix_file_stream, "Didn't get expected value.")
 
@@ -123,13 +117,6 @@ class TestCLIArgs(unittest.TestCase):
         config = parse_cli_arguments("--unique-histogram uh_temp.txt", False)
         self.assertTrue(config.output_unique_histogram, "Didn't correctly set unique histogram")
         self.assertEqual(config.unique_histogram_stream.__class__, file, "Didn't get correct object type for input. Actual: {0} Expected: {1}".format(config.unique_histogram_stream.__class__.__name__, file))
-
-    # Testing report
-    @cleanup_files("r_temp.txt")
-    def test_report(self):
-        config = parse_cli_arguments("--report r_temp.txt", False)
-        self.assertTrue(config.output_report, "Didn't correctly set report")
-        self.assertEqual(config.report_stream.__class__, file, "Didn't get correct object type for input. Actual: {0} Expected: {1}".format(config.report_stream.__class__.__name__, file))
 
     # Testing namespace file name
     @cleanup_files("ns_file.txt")

@@ -22,7 +22,7 @@ from test_cli_args import *
 from test_stereotype_xslt import *
 from test_run_stereocode import *
 from test_info_extractor import *
-from test_report_extractor import *
+# from test_report_extractor import *
 from test_histogram_extractor import *
 from test_unique_histogram_extractor import *
 from test_extract_funcion_list import *

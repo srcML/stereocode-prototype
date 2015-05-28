@@ -20,7 +20,7 @@ import os, sys
 from stereotype_xslt import *
 from histogram_extractor import *
 from unique_histogram_extractor import *
-from report_extractor import *
+# from report_extractor import *
 from function_list_extractor import *
 from time import *
 
@@ -43,15 +43,6 @@ def run_stereocode(config):
         # TODO: Post processing on possible namespace prefixes.
         raise NotImplementedError("Namespace prefix support isn't implemented yet.")
 
-    """
-    Things that need to be figured out.
-    1) What's the report going to contain?
-    2) When producing the necessary output for things like
-        histograms or reports can this be done all at the same time?
-    3) What's the most efficient way to remove redocumentation from an archive?
-    4) How much of this can be done with SAX?
-    """
-
     extractors = []
 
     compute_timings = config.output_timings
@@ -65,9 +56,9 @@ def run_stereocode(config):
         extractors.append(unique_histogram_extractor())
     if config.extract_function_list:
         extractors.append(function_list_extractor())
-    if config.output_report:
-        compute_timings = True
-        extractors.append(report_extractor())
+    # if config.output_report:
+    #     compute_timings = True
+    #     extractors.append(report_extractor())
 
 
 
