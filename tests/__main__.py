@@ -22,7 +22,6 @@ from test_cli_args import *
 from test_stereotype_xslt import *
 from test_run_stereocode import *
 from test_info_extractor import *
-# from test_report_extractor import *
 from test_histogram_extractor import *
 from test_unique_histogram_extractor import *
 from test_extract_funcion_list import *
@@ -43,7 +42,7 @@ if __name__ == '__main__':
     # re-running stereocode on it and testing the result
     # to see if the stereotypes are the same or different.
     testTracker = CodeBaseTestDataTracker()
-    # inputFile = "/home/brian/Projects/srcTools/stereocode/archive_test_data/reports/Code/actual__CDR_Stream_0_possibleBug.cpp.xml"
+    inputFile = "/home/brian/Projects/srcTools/stereocode/archive_test_data/reports/Code/actual__CDR_Stream_0_possibleBug.cpp.xml"
     # testTracker.runTest(
     #     # inputFile,
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/ACE___5.6.1___ACEOnly___ACE_wrappers___annotated___all.ann.xml",
@@ -55,8 +54,8 @@ if __name__ == '__main__':
     #         ("ACE_RCSID", "src:macro"),
     #         ("ACE_TSS_TYPE", "src:type")
     #     ],
-    #     1000,
-    #     1700
+    #     10022,
+    #     2771
     # )
 
     # testTracker.runTest(
@@ -76,7 +75,7 @@ if __name__ == '__main__':
     #         ("ACE_APPLICATION_PREALLOCATED_ARRAY_DEFINITIONS", "src:macro"),
     #         ("ACE_TSS_TYPE", "src:type")
     #     ],
-    #     10178,
+    #     10184,
     #     2882
     # )
 
@@ -84,17 +83,17 @@ if __name__ == '__main__':
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/ATM___annotated___all.ann.xml",
     #     [
     #     ],
-    #       1000,
-    #     1700
-    #)
+    #     84,
+    #     16
+    # )
 
-    #testTracker.runTest(
+    # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/CEL___cel-src-1.2.1___annotated___all.ann.xml",
     #     [
     #         ("CEL_IMPLEMENT_FACTORY_ALT", "src:macro"),
     #         ("CS_IMPLEMENT_PLUGIN", "src:macro")
     #     ],
-    #     10000,
+    #     2984,
     #     360
     # )
 
@@ -103,8 +102,8 @@ if __name__ == '__main__':
     #     [
     #         # ("CEL_IMPLEMENT_FACTORY_ALT", "src:macro"),
     #     ],
-    #     10000,
-    #     360
+    #     313,
+    #     29
     # )
 
 
@@ -117,7 +116,7 @@ if __name__ == '__main__':
     #         ("CGAL_int", "src:macro")
 
     #     ],
-    #     10000,
+    #     26462,
     #     2933
     # )
 
@@ -127,8 +126,8 @@ if __name__ == '__main__':
     #     [
 
     #     ],
-    #     10000,
-    #     2933
+    #     4650,
+    #     1117
     # )
 
     # testTracker.runTest(
@@ -136,7 +135,7 @@ if __name__ == '__main__':
     #     [
 
     #     ],
-    #     10000,
+    #     4775,
     #     1137
     # )
 
@@ -165,8 +164,8 @@ if __name__ == '__main__':
     #         ("EVT_LIST_ITEM_ACTIVATED", "src:macro"),
     #         ("EVT_SIZE", "src:macro"),
     #     ],
-    #     10859,
-    #     1378
+    #     12243,
+    #     1377
     # )
 
 
@@ -174,8 +173,8 @@ if __name__ == '__main__':
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/CppUnit2___1.10.2___annotated___all.ann.xml",
     #     [
     #     ],
-    #     10000,
-    #     1378
+    #     1329,
+    #     353
     # )
 
     # testTracker.runTest(
@@ -184,83 +183,44 @@ if __name__ == '__main__':
     #         ("CPPUNIT_NS_BEGIN", "src:macro"),
     #         ("CPPUNIT_NS_END", "src:macro")
     #     ],
-    #     10000,
-    #     1378
+    #     1360,
+    #     357
     # )
 
-    # testTracker.runTest(
-    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/CrystalSpace___crystalspace-src-1.2___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
-    # )
-
-    # testTracker.runTest(
-    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/CrystalSpace-src-1.2__50Units.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
-    # )
-
-    # Has NASTY bug
-    # testTracker.runTest(
-    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Doxygen___doxygen-1.5.8___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378,
-    #     None
-    # )
-
-
+    # Bug already filed.
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/filezilla-3.0.0___annotated___all.ann.xml",
-    #     [],
+    #     [
+    #         ("STDMETHODIMP_","src:macro"),
+    #         ("STDMETHODIMP","src:type")
+    #     ],
     #     10000,
-    #     1378
+    #     209
     # )
 
-    # 
+    
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/FlightGearNatalia___FlightGear-1.9.1___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     6102,
+    #     876
     # )
 
     
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/GScript___ghostscript-8.54___annotated___all.ann.xml",
     #     [],
-    #     10000,
+    #     65,
     #     647
     # )
 
-    # TOO MANY BROKEN MACROS!!
-    # testTracker.runTest(
-    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/HippoDraw___HippoDraw-1.21.2___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     692
-    #     # ,OPTION_CPP_TEXT_ELSE
-    # )
-
-    # # 
-    # testTracker.runTest(
-    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/HippoDraw___HippoDraw-1.21.3___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
-    # )
-
-    # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Ice___Ice-3.3.0___annotated___all.ann.xml",
     #     [],
-    #     10000,
+    #     7533,
     #     1173
     # )
 
-    # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/ICU___icu-4_0_1___annotated___all.ann.xml",
     #     [
@@ -273,7 +233,7 @@ if __name__ == '__main__':
     #         ("UOBJECT_DEFINE_RTTI_IMPLEMENTATION", "src:macro")
 
     #     ],
-    #     10000,
+    #     6214,
     #     1125
     # )
 
@@ -281,7 +241,7 @@ if __name__ == '__main__':
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Ivf++___ivf-depend-source-win32-msvc-8___annotated___all.ann.xml",
     #     [],
-    #     10000,
+    #     2041,
     #     643
     # )
 
@@ -289,7 +249,7 @@ if __name__ == '__main__':
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Ivf++___ivfplusplus___ivf-1.0.0___annotated___all.ann.xml",
     #     [],
-    #     10000,
+    #     3042,
     #     508
     # )
 
@@ -315,147 +275,181 @@ if __name__ == '__main__':
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/libkate___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     1972,
+    #     111
     # )
 
-    # # 
+    # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/MySQL++___mysql++-2.3.2___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     379,
+    #     84
     # )
 
-    # # 
+    # BUG
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/OpenWBEM___openwbem-3.2.2___annotated___all.ann.xml",
     #     [],
     #     10000,
-    #     1378
+    #     950
     # )
 
     # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/PPTactical___PPTactical_Engine_0.9.6___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
+    #     [
+    #         ("__fastcall", "src:specifier")
+    #         # , __stdcall, __clrcall, __cdecl, __thiscall and __vectorcall
+    #     ],
+    #     5044,
+    #     879
     # )
 
-    # # 
+    # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Qt___4.1.2___qt-win-opensource-src-4.1.2___src___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
+    #     [
+    #         ("QT_BEGIN_NAMESPACE", "src:macro"),
+    #         ("QT_END_NAMESPACE", "src:macro"),
+    #         ("Q_GLOBAL_STATIC", "src:macro"),
+    #         ("Q_PROPERTY", "src:macro"),
+    #         ("Q_OBJECT", "src:macro"),
+    #         ("Q_CLASSINFO", "src:macro"),
+    #         ("Q_GLOBAL_STATIC_WITH_ARGS", "src:macro"),
+    #         ("QT_USE_NAMESPACE", "src:macro"),
+    #         ("QT_BEGIN_INCLUDE_NAMESPACE", "src:macro"),
+    #         ("QT_END_INCLUDE_NAMESPACE", "src:macro"),
+    #         ("QML_INSTR_HEADER", "src:macro"),
+    #         ("FT_BEGIN_HEADER", "src:macro"),
+    #         ("HB_BEGIN_HEADER", "src:macro"),
+    #         ("Q_CHECK_PAINTEVENTS", "src:macro"),
+    #         ("QTEST_DISABLE_KEYPAD_NAVIGATION", "src:macro"),
+    #         ("Q_DUMMY_ACCESSOR", "src:macro"),
+    #         ("QML_GETTYPENAMES", "src:macro"),
+    #         ("BEGIN_OPCODE", "src:case"),
+    #         ("Q_DECLARE_SHARED", "src:macro"),
+    #         ("Q_DECLARE_OPERATORS_FOR_FLAGS", "src:macro"),
+    #         ("STACK_OF", "src:name"),
+    #         ("Q_OUTOFLINE_TEMPLATE", "src:specifier"),
+    #         ("Q_CORE_EXPORT","src:specifier"),
+    #         ("Q_INLINE_TEMPLATE","src:specifier"),
+    #         ("QT3_SUPPORT_CONSTRUCTOR","src:macro"),
+    #         # ("STDMETHODIMP","src:name"),
+    #         ("STDMETHODIMP_","src:macro")
+
+    #     ],
+    #     17126,
+    #     1292
     # )
 
-    # # 
+    # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Qt___4.3.3___tools___designer___src___components___formeditor___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
+    #     [
+    #         ("QT_BEGIN_NAMESPACE", "src:macro"),
+    #         ("QT_END_NAMESPACE", "src:macro"),
+    #         ("Q_GLOBAL_STATIC", "src:macro"),
+    #         ("Q_PROPERTY", "src:macro"),
+    #         ("Q_OBJECT", "src:macro"),
+    #         ("Q_CLASSINFO", "src:macro"),
+    #         ("Q_GLOBAL_STATIC_WITH_ARGS", "src:macro"),
+    #         ("QT_USE_NAMESPACE", "src:macro"),
+    #         ("QT_BEGIN_INCLUDE_NAMESPACE", "src:macro"),
+    #         ("QT_END_INCLUDE_NAMESPACE", "src:macro"),
+    #         ("QML_INSTR_HEADER", "src:macro"),
+    #         ("FT_BEGIN_HEADER", "src:macro"),
+    #         ("HB_BEGIN_HEADER", "src:macro"),
+    #         ("Q_CHECK_PAINTEVENTS", "src:macro"),
+    #         ("QTEST_DISABLE_KEYPAD_NAVIGATION", "src:macro"),
+    #         ("Q_DUMMY_ACCESSOR", "src:macro"),
+    #         ("QML_GETTYPENAMES", "src:macro"),
+    #         ("BEGIN_OPCODE", "src:case"),
+    #         ("Q_DECLARE_SHARED", "src:macro"),
+    #         ("Q_DECLARE_OPERATORS_FOR_FLAGS", "src:macro"),
+    #         ("STACK_OF", "src:name"),
+    #         ("Q_OUTOFLINE_TEMPLATE", "src:specifier"),
+    #         ("Q_CORE_EXPORT","src:specifier"),
+    #         ("Q_INLINE_TEMPLATE","src:specifier"),
+    #         ("QT3_SUPPORT_CONSTRUCTOR","src:macro"),
+    #         ("STDMETHODIMP_","src:macro")
+    #     ],
+    #     416,
+    #     48
     # )
 
-    # # 
+    # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/QuantLib___QuantLib-0.9.7___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     5584,
+    #     1694
     # )
 
     # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/QuantLib___QuantLib___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     408,
+    #     112
     # )
 
-    # # 
+    # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/SmartWin++___SmartWin___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
+    #     [
+    #         ("BOOST_UBLAS_INLINE", "src:specifier")
+    #     ],
+    #     7694,
+    #     2028
     # )
 
     # #
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Test09___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     73,
+    #     4
     # )
 
     # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Test___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     1190,
+    #     91
     # )
 
     # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Test___last_fix___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     5,
+    #     6
     # )
 
     # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Test___last_fix___DataSource___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     4,
+    #     4
     # )
 
     # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Test___last_fix___QDataStream___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     1,
+    #     2
     # )
 
     # # 
     # testTracker.runTest(
     #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/Test___t1___annotated___all.ann.xml",
     #     [],
-    #     10000,
-    #     1378
+    #     94,
+    #     1
     # )
 
-    # # 
-    # testTracker.runTest(
-    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/wxWidgets___2.8.6___src___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
-    # )
-
-    # # 
-    # testTracker.runTest(
-    #     "/home/brian/Projects/srcTools/stereocode/archive_test_data/wxWidgets___2.8.6___src___mac___classic___annotated___all.ann.xml",
-    #     [],
-    #     10000,
-    #     1378
-    # )
-
-
-    # filesToProcess = [f for f in os.listdir("archive_test_data") if os.path.isfile(os.path.join("archive_test_data", f))]
-    # root = "archive_test_data"
-    # for name in filesToProcess:
-    #     currentName = os.path.join(root, name)
-    #     # print "Processing: ", currentName
-    #     testTracker.runTest(currentName)
-    #     # print currentName
-
-    # Running other parts of the test suite.
-    # sys.stdout.flush()
     unittest.main()

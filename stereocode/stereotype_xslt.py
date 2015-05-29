@@ -29,25 +29,6 @@ stereocodeDoc = et.XSLT(et.parse(stereocodeXsltFilePath))
 _remove_stereotype_doc_path = os.path.join(_currentDirectory, "xslt", "remove_stereotypes.xsl")
 removeStereotypeDoc = et.XSLT(et.parse(_remove_stereotype_doc_path))
 
-# Example code using extension functions that doesn't work due to
-# a bug within lxml.
-# _ns = et.FunctionNamespace(None)
-
-# class MyExt:
-#     def function1(self, ctxt, arg):
-#         return '1' + arg
-#     def function2(self, ctxt, arg):
-#         return '2' + arg
-#     def function3(self, ctxt, arg):
-#         return '3' + arg
-
-# ext_module = MyExt()
-# functions = ('function1', 'function2')
-# extensions = et.Extension( ext_module, functions, ns="http://www.sdml.info/srcML/src" )
-
-# stereocodeDoc = et.XSLT(et.parse(_xsltFile), extensions=extensions)
-
-
 def remove_stereotypes(config):
     input_doc = et.parse(config.input_stream if config.temp_input_stream == None else config.temp_input_stream)
     transformed_doc = removeStereotypeDoc(input_doc, processing_mode=et.XSLT.strparam(config.mode))

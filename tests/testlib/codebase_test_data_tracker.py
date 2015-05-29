@@ -133,6 +133,9 @@ class CodeBaseTestDataTracker:
             # "propgrid.cpp":0
             # "metar_main.cxx":0
             # "CanvasView.cxx":0
+            # "init_linux.h":0,
+            # "event_listener_unix.h":0,
+            # "crash_reporter_win32.cpp":0
             }
         )
         extractedNamesPostStereotypedDict = dict(extractFileNameDict)
@@ -169,7 +172,8 @@ class CodeBaseTestDataTracker:
                     counter += 1
             print >> sys.stderr, "    Total Processed File Count: ", counter
 
-        assert counter == expectedFileCount, "Didn't receive the correct # of files from archive."
+        assert counter == expectedFileCount, "Didn't receive the correct # of files from archive. Actual: {0} Expected: {1}".format(counter, expectedFileCount)
+
         self.data.actualFileCount = counter
         # Loading current document for processing
         print >> sys.stderr, "  Loading Document for transformation"
@@ -282,7 +286,7 @@ class CodeBaseTestDataTracker:
 
         self.data.currentStereotypeInfo = newStereotypeInfo
         self.data.currentHistogram = buildHistogram(newStereotypeInfo)
-
+        assert len(self.data.currentStereotypeInfo) == expectedFunctionCount, "Incorrect # of functions located within archive: Actual: {0} Expected: {1}".format(len(self.data.currentStereotypeInfo), expectedFunctionCount)
         print >> sys.stderr,"  Analyzing Stereotype document"
 
 
@@ -366,10 +370,6 @@ class CodeBaseTestDataTracker:
         # Reporting extra functions
         # Doing a set difference to see if the same functions exist within both
         # sets of function info.
-        # ---------------------------------------------------------------------------
-        #                          !!!!Start working here!!!!!
-        # ---------------------------------------------------------------------------
-
         def buildFunctionBySigDict(stereotypeDataInput):
             ret = dict()
             for stereotypeInfo in stereotypeDataInput:
@@ -380,6 +380,7 @@ class CodeBaseTestDataTracker:
                     nextStereotypeName = nextStereotypeName[0] + "_{0}".format(functionCounter)
                 ret.update({nextStereotypeName: stereotypeInfo})
             return ret
+
 
         initialFunctionBySig = buildFunctionBySigDict(self.data.initialStereotypeInfo)
         currentFunctionBySig = buildFunctionBySigDict(self.data.currentStereotypeInfo)

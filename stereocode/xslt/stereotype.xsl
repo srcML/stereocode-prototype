@@ -89,39 +89,9 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   -->
   <xsl:variable name="ignorable_calls" select="str:split(concat('assert static_cast const_cast dynamic_cast reinterpret_cast ', $more_ignorable_calls))"/>
 
-  
-
   <!--
     Functions
   -->
-
-  <!--
-    Unique signature of a function based on types of parameters
-  -->
-<!--   <func:function name="src:function_signature">
-    <xsl:param name="function"/>
-
-    <xsl:choose>
-      <xsl:when test="$function/src:parameter_list/src:parameter">
-    <xsl:variable name="raw0">
-      <xsl:for-each select="$function/src:parameter_list/src:parameter/src:decl/src:type">
-        <xsl:copy-of select="."/><xsl:text>|</xsl:text>
-      </xsl:for-each>
-    </xsl:variable>
-
-    <xsl:variable name="raw1" select="normalize-space($raw0)"/>
-    <xsl:variable name="raw2" select="str:replace($raw1, 'std::', '')"/>
-    <xsl:variable name="raw3" select="$raw2"/>
-    <xsl:variable name="raw4" select="concat($raw3, '||', $function/src:specifier[.='const'])"/>
-
-    <func:result select="translate(string($raw4), ' ', '')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="concat('||', $function/src:specifier[.='const'])"/>
-      </xsl:otherwise>
-    </xsl:choose>
-
-  </func:function> -->
 
   <!--
     pure virtual function declaration
@@ -133,128 +103,11 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   </func:function>
 
   <!--
-    Retrieve a functions name
-  -->
-  <func:function name="src:function_fullname">
-    <xsl:param name="declaration"/>
-
-    <xsl:if test="not(contains($declaration/src:name, '::'))">
-      <func:result select="concat($declaration/ancestor::src:class/src:name, '::', src:strip-space($declaration/src:name))"/>
-    </xsl:if>
-
-    <xsl:if test="contains($declaration/src:name, '::')">
-      <func:result select="src:strip-space($declaration/src:name)"/>
-    </xsl:if>
-
-  </func:function>
-
-  <!--
-    strips all spaces from a string
-  -->
-  <func:function name="src:strip-space">
-    <xsl:param name="s"/>
-
-    <func:result select="translate($s, '&#xa; 
-  ', '')"/>
-  </func:function>
-
-
-  <!--
-    String Replace functionality.
-  -->
-  <func:function name="str:replace">
-    <xsl:param name="string" select="''" />
-     <xsl:param name="search" select="/.." />
-     <xsl:param name="replace" select="/.." />
-     <xsl:choose>
-        <xsl:when test="not($string)">
-          <func:result select="/.." />
-        </xsl:when>
-        <xsl:when test="function-available('exsl:node-set')">
-           <!-- this converts the search and replace arguments to node sets
-                if they are one of the other XPath types -->
-           <xsl:variable name="search-nodes-rtf">
-             <xsl:copy-of select="$search" />
-           </xsl:variable>
-           <xsl:variable name="replace-nodes-rtf">
-             <xsl:copy-of select="$replace" />
-           </xsl:variable>
-           <xsl:variable name="replacements-rtf">
-              <xsl:for-each select="exsl:node-set($search-nodes-rtf)/node()">
-                 <xsl:variable name="pos" select="position()" />
-                 <replace search="{.}">
-                    <xsl:copy-of select="exsl:node-set($replace-nodes-rtf)/node()[$pos]" />
-                 </replace>
-              </xsl:for-each>
-           </xsl:variable>
-           <xsl:variable name="sorted-replacements-rtf">
-              <xsl:for-each select="exsl:node-set($replacements-rtf)/replace">
-                 <xsl:sort select="string-length(@search)" data-type="number" order="descending" />
-                 <xsl:copy-of select="." />
-              </xsl:for-each>
-           </xsl:variable>
-           <xsl:variable name="result">
-             <xsl:choose>
-                <xsl:when test="not($search)">
-                  <xsl:value-of select="$string" />
-                </xsl:when>
-               <xsl:otherwise>
-                 <xsl:call-template name="str:_replace">
-                    <xsl:with-param name="string" select="$string" />
-                    <xsl:with-param name="replacements" select="exsl:node-set($sorted-replacements-rtf)/replace" />
-                 </xsl:call-template>
-               </xsl:otherwise>
-             </xsl:choose>
-           </xsl:variable>
-           <func:result select="exsl:node-set($result)/node()" />
-        </xsl:when>
-        <xsl:otherwise>
-           <xsl:message terminate="yes">
-              ERROR: function implementation of str:replace() relies on exsl:node-set().
-           </xsl:message>
-        </xsl:otherwise>
-     </xsl:choose>
-  </func:function>
-
-
-
-
-  <!--
     locate all top-level function
   -->
   <func:function name="src:function">
 
     <func:result select="ancestor-or-self::src:function[1]"/>
-
-  </func:function>
-
-  <!-- 
-    Not sure what this is used for but it's here...
-
-    @TODO: check usage.
-  -->
-  <func:function name="src:trace">
-     <xsl:param name="context"/>
-
-    <xsl:message><xsl:value-of select="$context"/></xsl:message>
-
-    <func:result select="true()"/>
-
-  </func:function>
-
-
-  <!-- 
-    Not sure what this is used for but it's here...
-
-    @TODO: check usage.
-  -->
-  <func:function name="src:trace2">
-     <xsl:param name="field"/>
-     <xsl:param name="context"/>
-
-    <xsl:message><xsl:value-of select="$field"/><xsl:text> </xsl:text><xsl:value-of select="$context"/></xsl:message>
-
-    <func:result select="true()"/>
 
   </func:function>
 
@@ -1218,58 +1071,12 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
   <xsl:template match="src:function" mode="empty"/>
 
-
-  <!--
-    String Replace template
-  -->
-  <xsl:template name="str:_replace">
-    <xsl:param name="string" select="''" />
-    <xsl:param name="replacements" select="/.." />
-    <xsl:choose>
-      <xsl:when test="not($string)" />
-      <xsl:when test="not($replacements)">
-        <xsl:value-of select="$string" />
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="replacement" select="$replacements[1]" />
-        <xsl:variable name="search" select="$replacement/@search" />
-        <xsl:choose>
-          <xsl:when test="not(string($search))">
-            <xsl:value-of select="substring($string, 1, 1)" />
-            <xsl:copy-of select="$replacement/node()" />
-            <xsl:call-template name="str:_replace">
-              <xsl:with-param name="string" select="substring($string, 2)" />
-              <xsl:with-param name="replacements" select="$replacements" />
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:when test="contains($string, $search)">
-            <xsl:call-template name="str:_replace">
-              <xsl:with-param name="string" select="substring-before($string, $search)" />
-              <xsl:with-param name="replacements" select="$replacements[position() > 1]" />
-            </xsl:call-template>      
-            <xsl:copy-of select="$replacement/node()" />
-            <xsl:call-template name="str:_replace">
-              <xsl:with-param name="string" select="substring-after($string, $search)" />
-              <xsl:with-param name="replacements" select="$replacements" />
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:call-template name="str:_replace">
-              <xsl:with-param name="string" select="$string" />
-              <xsl:with-param name="replacements" select="$replacements[position() > 1]" />
-            </xsl:call-template>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
   <!--
       Section responsible for actually applying all of the stereotypes and annotating
       the source code with a comment.
   -->
   <!-- annotate function declaration/definition with passed definition  -->
-  <xsl:template match="src:function[src:name/src:operator[.='::'] or ancestor::src:class or ancestor::src:struct]">
+  <xsl:template match="src:function[src:name/src:operator[.='::'] or ancestor::src:class or ancestor::src:struct or ancestor::src:interface or ancestor::annotation_defn or ancestor::src:union]">
     <!-- calculate stereotype -->
     <xsl:variable name="stereotype">
       <xsl:apply-templates select="." mode="stereotype_list"/>

@@ -504,7 +504,7 @@ def reprocessAndExtractDocument(inputFilePath, outputDirectory, erroringFileName
                     extractedFileMarkUpDict[currentUnit.filename] = 0
                 outputFileName = "{3}{0}_{1}{2}".format(temp[0], extractedFileMarkUpDict[currentUnit.filename], temp[1], outputFilePrefix)
                 print >> sys.stderr, "  Processing problematic markup: ", outputFileName
-                problematicMarkupFileName = os.path.join(outputDirectory, outputFileName)
+                problematicMarkupFileName = os.path.join(outputDirectory, os.path.split(outputFileName)[1])
                 tempStrm = open(problematicMarkupFileName, "w")
                 source_code = currentUnit.unparse()
                 tempStrm.write(source_code)
