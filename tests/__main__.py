@@ -25,6 +25,11 @@ from test_info_extractor import *
 from test_histogram_extractor import *
 from test_unique_histogram_extractor import *
 from test_extract_funcion_list import *
+from test_more_native_types import *
+from test_more_modifiers import *
+from test_known_namespaces import *
+from test_ignorable_calls import *
+
 from stereocode import *
 from testlib import *
 from srcml import *
