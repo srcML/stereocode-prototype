@@ -34,13 +34,27 @@ def run_stereocode(config):
     # Using the configuration options in order to set things up for actually executing
     # stereocode.
 
-    knownNamespaces = []
+    # known_namespaces = []
 
     # Reading in namespace names from file if necessary.
     if config.has_ns_pefix_file:
-        knownNamespaces = config.ns_prefix_stream.read_lines()
-        # TODO: Post processing on possible namespace prefixes.
-        raise NotImplementedError("Namespace prefix support isn't implemented yet.")
+        config.known_namespaces = [
+            "::".join([x.strip() for x in x.split("::")]) for x in config.ns_pefix_file_stream.readlines() if x.strip() != ""
+        ]
+
+
+    if config.has_more_native:
+        config.native_types = [
+            "::".join([x.strip() for x in x.split("::")]) for x in config.more_native_stream.readlines() if x.strip() != ""
+        ]
+
+    if config.has_more_modifiers:
+        config.modifiers = [x.strip() for x in config.more_modifiers_stream.readlines() if x.strip() != ""]
+
+    if config.has_more_ignorable_calls:
+        config.ignorable_calls = [x.strip() for x in config.more_ignorable_calls_stream.readlines() if x.strip() != ""]
+
+
 
     extractors = []
 

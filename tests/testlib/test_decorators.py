@@ -25,13 +25,13 @@ def gen_managed_file(filename, content):
             if os.path.exists(filename):
                 os.remove(filename)
 
-        def make_call(self):
+        def make_call(self, *args):
             delete_files()
             try:
                 temp_strm = open(filename, "w")
                 temp_strm.write(content)
                 temp_strm.close()
-                func(self, filename)
+                func(self, filename, *args)
             except:
                 delete_files()
                 raise

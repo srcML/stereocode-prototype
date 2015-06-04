@@ -54,6 +54,46 @@ class configuration(object):
         self._temp_output_stream = None
         self._temp_input_stream = None
         self._func_list_stream = kwargs["extract_func_list"]
+        self._more_native_stream = kwargs.get("more_native_stream", None)
+        self._more_modifiers_stream = kwargs.get("more_modifiers_stream", None)
+        self._more_ignorable_calls_stream = kwargs.get("more_ignorable_calls_stream", None)
+
+        self._known_namespaces = None
+        self._native_types = None
+        self._modifiers = None
+        self._ignorable_calls = None
+
+    @property
+    def known_namespaces(self):
+        return self._known_namespaces
+    @known_namespaces.setter
+    def known_namespaces(self, value):
+        self._known_namespaces = value
+    
+
+    @property
+    def native_types(self):
+        return self._native_types
+    @native_types.setter
+    def native_types(self, value):
+        self._native_types = value
+    
+
+    @property
+    def modifiers(self):
+        return self._modifiers
+    @modifiers.setter
+    def modifiers(self, value):
+        self._modifiers = value
+    
+
+    @property
+    def ignorable_calls(self):
+        return self._ignorable_calls
+    @ignorable_calls.setter
+    def ignorable_calls(self, value):
+        self._ignorable_calls = value
+    
 
     @property
     def temp_output_stream(self):
@@ -118,6 +158,8 @@ class configuration(object):
     # def extract_ns_from_archive(self):
     #     return self._extract_ns
     
+    # Properties that need to be read in so they can be used later on
+    # as part of parameters for the configuration for the XSLT sheet.
     @property
     def has_ns_pefix_file(self):
         return self._ns_pefix_file_strm != None
@@ -126,6 +168,31 @@ class configuration(object):
     def ns_pefix_file_stream(self):
         return self._ns_pefix_file_strm
 
+
+    @property
+    def has_more_native(self):
+        return self._more_native_stream != None
+
+    @property
+    def more_native_stream(self):
+        return self._more_native_stream
+
+    @property
+    def has_more_modifiers(self):
+        return self._more_modifiers_stream != None
+
+    @property
+    def more_modifiers_stream(self):
+        return self._more_modifiers_stream
+
+    @property
+    def has_more_ignorable_calls(self):
+        return self._more_ignorable_calls_stream != None
+
+    @property
+    def more_ignorable_calls_stream(self):
+        return self._more_ignorable_calls_stream
+    
     @property
     def no_redoc(self):
         return self._no_redoc
@@ -294,6 +361,35 @@ This program has several methods of operation:
         default=None,
         dest="namespaceFileName",
         help="Specify possible namespace prefixes for functions. This allows for namespace that are defined within macros to be specified and prevents free functions from being mistaken as member functions. The namespaces are specified using their prefix for a function, one per line. For example std:: would be a the standard namespace prefix."
+    )
+
+
+    arg_parser.add_argument(
+        "--modifiers-file",
+        metavar='MODIFIERS_FILE_PATH',
+        type=str,
+        default=None,
+        dest="modifiers",
+        help="Other names to count as modifiers which basically mean that it's not a type name and instead its a modifier name. One modifier per line."
+    )
+
+    arg_parser.add_argument(
+        "--native-types-file",
+        metavar='NATIVE_TYPES_FILE_PATH',
+        type=str,
+        default=None,
+        dest="nativeTypes",
+        help="Names of native types, or types which are not technically to be treated as objects during the evaluation of heuristics. One type per line."
+    )
+
+
+    arg_parser.add_argument(
+        "--ignorable-calls-file",
+        metavar='IGNORABLE_CALLS_FILE_PATH',
+        type=str,
+        default=None,
+        dest="ignorableCalls",
+        help="A list of function or macro calls that can be excluded from the heuristics during stereotype evaluation. One function name per line."
     )
 
     # arg_parser.add_argument(

@@ -403,3 +403,133 @@ class TestRunStereocode(unittest.TestCase):
                 "\n".join([et.tostring(elem) for elem in located_stereotypes])
             )
         )
+
+
+
+
+
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #    Testing the reading in of additional files to
+    #   use as parameters for the stereocode style sheet
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    @gen_managed_file("test_known_namespace_parsing.txt", """std
+        ns1
+        ns2::ns3::ns4
+
+        """)
+    def test_known_namespaces_parsing(self, filename, tree):
+
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            no_redocumentation = True,
+            ns_prefix_stream = open(filename, "r"),
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        run_stereocode(cfg)
+        self.assertEqual(3, len(cfg.known_namespaces), "Incorrect # of namespaces read in.")
+        self.assertEqual("std", cfg.known_namespaces[0], "Incorrect namespace.")
+        self.assertEqual("ns1", cfg.known_namespaces[1], "Incorrect namespace.")
+        self.assertEqual("ns2::ns3::ns4", cfg.known_namespaces[2], "Incorrect namespace.")
+
+
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    @gen_managed_file("test_ignorable_calls.txt", """func
+        less
+        something
+
+        """)
+    def test_more_ignorable_calls(self, filename, tree):
+
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            no_redocumentation = True,
+            ns_prefix_stream = None,
+            more_ignorable_calls_stream=open(filename, "r"),
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        run_stereocode(cfg)
+        self.assertEqual(3, len(cfg.ignorable_calls), "Incorrect # of Ignorable function call names.")
+        self.assertEqual("func", cfg.ignorable_calls[0], "Incorrect value.")
+        self.assertEqual("less", cfg.ignorable_calls[1], "Incorrect value.")
+        self.assertEqual("something", cfg.ignorable_calls[2], "Incorrect value.")
+
+
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    @gen_managed_file("test_more_modifiers.txt", """func
+        less
+        something
+
+        """)
+    def test_more_modifiers(self, filename, tree):
+
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            no_redocumentation = True,
+            ns_prefix_stream = None,
+            more_modifiers_stream=open(filename, "r"),
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        run_stereocode(cfg)
+        self.assertEqual(3, len(cfg.modifiers), "Incorrect # modifiers.")
+        self.assertEqual("func", cfg.modifiers[0], "Incorrect value.")
+        self.assertEqual("less", cfg.modifiers[1], "Incorrect value.")
+        self.assertEqual("something", cfg.modifiers[2], "Incorrect value.")
+
+
+    @srcMLifyCode("tests/test_data/stereotype/get.cpp")
+    @gen_managed_file("more_native_types.txt", """func
+        less
+        something
+
+        """)
+    def test_more_native_types(self, filename, tree):
+
+        output_stream = cStringIO.StringIO()
+        stereocodeDoc(tree).write(output_stream)
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=cStringIO.StringIO(output_stream.getvalue()),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            no_redocumentation = True,
+            ns_prefix_stream = None,
+            more_native_stream=open(filename, "r"),
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        run_stereocode(cfg)
+        self.assertEqual(3, len(cfg.native_types), "Incorrect # of native types.")
+        self.assertEqual("func", cfg.native_types[0], "Incorrect value.")
+        self.assertEqual("less", cfg.native_types[1], "Incorrect value.")
+        self.assertEqual("something", cfg.native_types[2], "Incorrect value.")
