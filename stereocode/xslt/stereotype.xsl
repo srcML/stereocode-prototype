@@ -99,7 +99,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:param name="collection"/>
     <xsl:param name="index"/>
     <xsl:param name="length"/>
-    <!-- <xsl:variable name="joined-str"><xsl:text><xsl:value-of select=""/></xsl:text></xsl:variable> -->
     <func:result select="src:str-join_impl($collection, $index, $length)"/>
   </func:function>
 
@@ -118,26 +117,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     </xsl:choose>
   </func:function>
 
-  <func:function name="src:has_namespace_prefix_impl">
-    <xsl:param name="index"/>
-    <xsl:param name="func_name"/>
-    <xsl:choose>
-      <xsl:when test="$index &lt; count($namespaces)">
-        <xsl:choose>
-          <xsl:when test="$namespaces[$index] = $func_name">
-            <xsl:result select="true()"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <func:result select="src:has_namespace_prefix_impl($index + 1, $func_name)"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:otherwise>
-        <func:result select="false()"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </func:function>
-
   <func:function name="src:has_namespace_prefix">
     <xsl:param name="func"/>
     <xsl:choose>
@@ -145,7 +124,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
         <xsl:choose>
           <xsl:when test="count($func/src:name/*) >= 2">
             <xsl:variable name="func_name" select="src:str-join($func/src:name/*, 1, (count($func/src:name/*) - 2))"/>
-            <func:result select="src:has_namespace_prefix_impl(1, $func_name)"/>
+            <func:result select="$func_name = $namespaces"/>
           </xsl:when>
           <xsl:otherwise>
             <func:result select="false()" />
@@ -158,10 +137,10 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     </xsl:choose>
   </func:function>
 
-  <!-- < -->
+
 
   <!--
-    Functions
+    Functions - For stereotype matching.
   -->
 
   <!--

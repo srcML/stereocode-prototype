@@ -37,7 +37,7 @@ class TestKnownNamespaces(unittest.TestCase):
         temp = output_stream.getvalue()
         # print temp
         cfg = configuration(
-            mode=MODE_ADD_XML_ATTR,
+            mode=MODE_REDOCUMENT_SOURCE,
             input_from=cStringIO.StringIO(temp),
             output_to=cStringIO.StringIO(),
             output_verbose = False,
