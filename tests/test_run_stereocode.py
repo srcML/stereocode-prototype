@@ -81,7 +81,6 @@ class TestRunStereocode(unittest.TestCase):
             output_timings = False,
             histogram_stream = None,
             unique_histogram_stream = None,
-            
             no_redocumentation = False,
             ns_prefix_stream = None,
             remove_redoc = False,
@@ -209,7 +208,7 @@ class TestRunStereocode(unittest.TestCase):
     def test_run_stereocode_redocument_funclist(self, tree):
         output_stream = cStringIO.StringIO()
         output_stream.write(et.tostring(tree))
-        # print >>sys.stderr, output_stream.getvalue()
+
         cfg = configuration(
             mode=MODE_REDOCUMENT_SOURCE,
             input_from=cStringIO.StringIO(output_stream.getvalue()),

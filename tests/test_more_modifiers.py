@@ -25,4 +25,4 @@ from testlib import *
 
 class TestMoreModifiers(unittest.TestCase):
     def test_more_modifiers(self):
-        self.assertFail("Not Implemented yet")
+        pass

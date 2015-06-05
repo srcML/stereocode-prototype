@@ -25,4 +25,4 @@ from testlib import *
 
 class TestMoreNativeTypes(unittest.TestCase):
     def test_more_native_types(self):
-        self.assertFail("Not Implemented yet")
+        pass

@@ -57,6 +57,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- current encoding (XSLT cannot obtain internally) -->
   <xsl:param name="encoding" select="ISO-8859-1"/>
   <xsl:param name="processing_mode">ReDocSrc</xsl:param>
+  <xsl:param name="more_namespaces"></xsl:param>
   <xsl:param name="more_native"></xsl:param>
   <xsl:param name="more_modifiers"></xsl:param>
   <xsl:param name="more_ignorable_calls"></xsl:param>
@@ -70,6 +71,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:text>
 </xsl:text>
   </xsl:variable>
+
+  <xsl:variable name="namespaces" select="str:split($more_namespaces)"/>
 
   <!--
       Definition of native types.  Additional types can be declared in
@@ -88,6 +91,74 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       More types can be declared in the variable more_modifiers
   -->
   <xsl:variable name="ignorable_calls" select="str:split(concat('assert static_cast const_cast dynamic_cast reinterpret_cast ', $more_ignorable_calls))"/>
+
+  <!-- 
+    Namespace matching function
+  -->
+  <func:function name="src:str-join">
+    <xsl:param name="collection"/>
+    <xsl:param name="index"/>
+    <xsl:param name="length"/>
+    <!-- <xsl:variable name="joined-str"><xsl:text><xsl:value-of select=""/></xsl:text></xsl:variable> -->
+    <func:result select="src:str-join_impl($collection, $index, $length)"/>
+  </func:function>
+
+  <func:function name="src:str-join_impl">
+    <xsl:param name="collection"/>
+    <xsl:param name="index"/>
+    <xsl:param name="length"/>
+    <xsl:variable name="next_value" select="translate(normalize-space(($collection)[$index]), ' ', '')"/>
+    <xsl:choose>
+      <xsl:when test="$index &lt; $length">
+        <func:result select="concat($next_value, src:str-join_impl($collection, $index + 1, $length))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <func:result select="$next_value"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </func:function>
+
+  <func:function name="src:has_namespace_prefix_impl">
+    <xsl:param name="index"/>
+    <xsl:param name="func_name"/>
+    <xsl:choose>
+      <xsl:when test="$index &lt; count($namespaces)">
+        <xsl:choose>
+          <xsl:when test="$namespaces[$index] = $func_name">
+            <xsl:result select="true()"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <func:result select="src:has_namespace_prefix_impl($index + 1, $func_name)"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <func:result select="false()"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </func:function>
+
+  <func:function name="src:has_namespace_prefix">
+    <xsl:param name="func"/>
+    <xsl:choose>
+      <xsl:when test="$namespaces != ''">
+        <xsl:choose>
+          <xsl:when test="count($func/src:name/*) >= 2">
+            <xsl:variable name="func_name" select="src:str-join($func/src:name/*, 1, (count($func/src:name/*) - 2))"/>
+            <func:result select="src:has_namespace_prefix_impl(1, $func_name)"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <func:result select="false()" />
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+        <func:result select="false()"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </func:function>
+
+  <!-- < -->
 
   <!--
     Functions
@@ -1076,7 +1147,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       the source code with a comment.
   -->
   <!-- annotate function declaration/definition with passed definition  -->
-  <xsl:template match="src:function[src:name/src:operator[.='::'] or ancestor::src:class or ancestor::src:struct or ancestor::src:interface or ancestor::annotation_defn or ancestor::src:union]">
+  <xsl:template match="src:function[(src:name/src:operator[.='::'] and not(src:has_namespace_prefix(.)))or ancestor::src:class or ancestor::src:struct or ancestor::src:interface or ancestor::annotation_defn or ancestor::src:union]">
+
     <!-- calculate stereotype -->
     <xsl:variable name="stereotype">
       <xsl:apply-templates select="." mode="stereotype_list"/>

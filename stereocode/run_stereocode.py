@@ -36,7 +36,8 @@ def run_stereocode(config):
 
     # known_namespaces = []
 
-    # Reading in namespace names from file if necessary.
+   
+    # Reading things in from file: unknown namespaces, native types, modifiers, and ignorable calls.
     if config.has_ns_pefix_file:
         config.known_namespaces = [
             "::".join([x.strip() for x in x.split("::")]) for x in config.ns_pefix_file_stream.readlines() if x.strip() != ""

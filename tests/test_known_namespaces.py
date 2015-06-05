@@ -24,5 +24,39 @@ from testlib import *
 
 
 class TestKnownNamespaces(unittest.TestCase):
-    def test_known_namespaces(self):
-        self.assertFail("Not Implemented yet")
+
+    @srcMLifyCode("tests/test_data/xslt_parameters/known_namespaces.cpp")
+    @gen_managed_file("test_known_namespace_parsing.txt", """std
+        ns1
+        ns2::ns3::ns4
+
+        """)
+    def test_known_namespaces_are_ignored(self, filename, tree):
+
+        output_stream = cStringIO.StringIO(et.tostring(tree))
+        temp = output_stream.getvalue()
+        # print temp
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=cStringIO.StringIO(temp),
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = open(filename, "r"),
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        run_stereocode(cfg)
+        transformed_doc = et.XML(cfg.output_stream.getvalue())
+        located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
+        self.assertEqual(
+            0,
+            len(located_stereotypes),
+            "Didn't locate correct # of namespaces within document. Located #: {0}\n\nLocated Stereotypes: \n{1}".format(
+                len(located_stereotypes),
+                "\n".join([et.tostring(elem) for elem in located_stereotypes])
+            )
+        )

@@ -31,14 +31,28 @@ removeStereotypeDoc = et.XSLT(et.parse(_remove_stereotype_doc_path))
 
 def remove_stereotypes(config):
     input_doc = et.parse(config.input_stream if config.temp_input_stream == None else config.temp_input_stream)
-    transformed_doc = removeStereotypeDoc(input_doc, processing_mode=et.XSLT.strparam(config.mode))
+    parameters = dict(processing_mode=et.XSLT.strparam(config.mode))
+    transformed_doc = removeStereotypeDoc(input_doc, **parameters)
     if len(removeStereotypeDoc.error_log) > 0:
         print >> sys.stderr, removeStereotypeDoc
     transformed_doc.write(config.output_stream)
 
 def apply_stereotyping(config):
-    redocumented_doc = stereocodeDoc(et.parse(config.input_stream), processing_mode=et.XSLT.strparam(config.mode))
-    # if config.verbose_output:
-    if len(stereocodeDoc.error_log) > 0:
-        print >> sys.stderr, stereocodeDoc
+    parameters = dict(processing_mode=et.XSLT.strparam(config.mode))
+    if config.known_namespaces != None:
+        temp = " ".join([x for x in config.known_namespaces])
+        parameters["more_namespaces"] = et.XSLT.strparam(temp)
+
+    if config.native_types != None:
+        parameters["more_native"] = et.XSLT.strparam(" ".join([x for x in config.native_types]))
+
+    if config.modifiers != None:
+        parameters["more_modifiers"] = et.XSLT.strparam(" ".join([x for x in config.modifiers]))
+
+    if config.ignorable_calls != None:
+        parameters["more_ignorable_calls"] = et.XSLT.strparam(" ".join([x for x in config.ignorable_calls]))
+
+    redocumented_doc = stereocodeDoc(et.parse(config.input_stream), **parameters)
+    # if len(stereocodeDoc.error_log) > 0:
+    #     print >> sys.stderr, stereocodeDoc
     redocumented_doc.write(config.output_stream if config.temp_output_stream == None else config.temp_output_stream)
