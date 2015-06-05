@@ -26,7 +26,7 @@ from testlib import *
 class TestIgnorableCalls(unittest.TestCase):
 
     @srcMLifyCode("tests/test_data/xslt_parameters/ignorable_calls.cpp")
-    @gen_managed_file("test_known_namespace_parsing.txt", """
+    @gen_managed_file("test_ignorable_calls_are_ignored.txt", """
         bar
         """)
     def test_ignorable_calls_are_ignored(self, filename, tree):

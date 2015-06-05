@@ -40,8 +40,7 @@ def remove_stereotypes(config):
 def apply_stereotyping(config):
     parameters = dict(processing_mode=et.XSLT.strparam(config.mode))
     if config.known_namespaces != None:
-        temp = " ".join([x for x in config.known_namespaces])
-        parameters["more_namespaces"] = et.XSLT.strparam(temp)
+        parameters["more_namespaces"] = et.XSLT.strparam(" ".join([x for x in config.known_namespaces]))
 
     if config.native_types != None:
         parameters["more_native"] = et.XSLT.strparam(" ".join([x for x in config.native_types]))
