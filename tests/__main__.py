@@ -36,16 +36,7 @@ from srcml import *
 
 if __name__ == '__main__':
 
-    # print 80 * "-"
-    # print "Testing against previous stereotypes"
-    # print 80 * "-"
-    # Handling special test cases that are run after the initial test suite so that they can
-    # test a larger mount of projects.
-
-    # Walking all of the directories and re-srcml-ing
-    # each of the files from within an all archive, then
-    # re-running stereocode on it and testing the result
-    # to see if the stereotypes are the same or different.
+    # Leave as false for now because it takes to long to run otherwise.
     if False:
         testTracker = CodeBaseTestDataTracker()
         testTracker.runTest(
