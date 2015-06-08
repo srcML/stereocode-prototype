@@ -8,7 +8,7 @@ if sys.version_info >= (3,):
     raise NotImplementedError("2to3 conversion has not been tested!")
 
 def read_docuemntation():
-
+    return "\n".join(open("README.md")).readlines()
 setup(
     name='stereocode',
     version = '1.0',
@@ -23,7 +23,7 @@ setup(
     license = "GPL",
     keywords = "static analysis stereotype stereocode srcML SDML",
     url = "www.sdml.com",
-    long_description="",
+    long_description=read_docuemntation(),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",

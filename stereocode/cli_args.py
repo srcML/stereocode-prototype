@@ -333,7 +333,7 @@ This program has several methods of operation:
         dest="computeHistogram",
         help="Output counts of all occurrences of each type stereotype. Setting this outputs a count for each time a "
             +"stereotype occurs, and not for each combination of stereotypes. The output is written into a file."
-            + " The input be redocumented with stereotypes unless --no-redoc is specified."
+            + " The input is redocumented with stereotypes unless --no-redoc is specified."
     )
 
     arg_parser.add_argument(
@@ -436,7 +436,9 @@ This program has several methods of operation:
     ns_prefix_stream = None
     remove_redoc = False
     extract_func_list_strm = None
-
+    more_modifiers_stream = None
+    more_ignorable_calls_stream = None
+    more_native_types_stream = None
     args = arg_parser.parse_args(argument_string.split() if argument_string != None else None)
     no_redocumentation = args.noRedoc
     remove_redoc = args.removeRedocumentation
@@ -500,6 +502,32 @@ This program has several methods of operation:
             except Exception as e:
                 raise cli_error("--ns-file", "Failed to open namespace file for reading", args.namespaceFileName, e)
 
+        if args.modifiers is not None:
+            try:
+                precondition_test(os.path.exists(args.modifiers), "--modifiers-file", "Provided input doesn't exist.", args.modifiers)
+                precondition_test(os.path.isfile(args.modifiers), "--modifiers-file", "Provided input isn't a file.", args.modifiers)
+                more_modifiers_stream = open(args.modifiers, "r")
+            except Exception as e:
+                raise cli_error("--modifiers-file", "Failed to open modifiers file for reading", args.modifiers, e)
+
+        if args.nativeTypes is not None:
+            try:
+                precondition_test(os.path.exists(args.nativeTypes), "--native-types-file", "Provided input doesn't exist.", args.nativeTypes)
+                precondition_test(os.path.isfile(args.nativeTypes), "--native-types-file", "Provided input isn't a file.", args.nativeTypes)
+                more_native_types_stream = open(args.nativeTypes, "r")
+            except Exception as e:
+                raise cli_error("--native-types-file", "Failed to open the native types file for reading", args.nativeTypes, e)
+
+        if args.ignorableCalls is not None:
+            try:
+                precondition_test(os.path.exists(args.ignorableCalls), "--ignorable-calls-file", "Provided input doesn't exist.", args.ignorableCalls)
+                precondition_test(os.path.isfile(args.ignorableCalls), "--ignorable-calls-file", "Provided input isn't a file.", args.ignorableCalls)
+                more_ignorable_calls_stream = open(args.ignorableCalls, "r")
+            except Exception as e:
+                raise cli_error("--ignorable-calls-file", "Failed to open the ignorable calls file for reading", args.ignorableCalls, e)
+
+#  = None
+
         if args.output is None:
             output_to = sys.stdout
         else:
@@ -551,5 +579,8 @@ This program has several methods of operation:
         # extract_ns_from_archive = extract_ns_from_archive,
         ns_prefix_stream = ns_prefix_stream,
         remove_redoc = remove_redoc,
-        extract_func_list = extract_func_list_strm
+        extract_func_list = extract_func_list_strm,
+        more_modifiers_stream=more_modifiers_stream,
+        more_ignorable_calls_stream=more_ignorable_calls_stream,
+        more_native_stream=more_native_types_stream
     )
