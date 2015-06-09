@@ -35,13 +35,13 @@ setup(
     description='Source code stereotypeing tool that annotates srcML-i-fied with method stereotypes.',
     author='SDML',
     author_email='',
-    package_dir = {'stereocode': 'stereocode', 'stereocode/xslt': 'stereocode.xslt'},
-    packages = ['stereocode'],
+    package_dir = {'libstereocode': 'libstereocode', 'libstereocode/xslt': 'libstereocode.xslt'},
+    packages = ['libstereocode'],
     data_files=[
-        ('stereocode/xslt',
+        ('libstereocode/xslt',
             [
-                'stereocode/xslt/stereotype.xsl',
-                'stereocode/xslt/remove_stereotypes.xsl'
+                'libstereocode/xslt/stereotype.xsl',
+                'libstereocode/xslt/remove_stereotypes.xsl'
             ]
         )
     ],

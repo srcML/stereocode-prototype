@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import unittest, lxml.etree as et, lxml, os, os.path
-from stereocode import *
+from libstereocode import *
 from testlib import *
 
 

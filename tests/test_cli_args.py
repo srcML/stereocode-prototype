@@ -19,7 +19,7 @@
 
 import unittest, sys, os
 from testlib import *
-from stereocode import *
+from libstereocode import *
 
 class TestCLIArgs(unittest.TestCase):
     def test_default_parsed_arguments(self):

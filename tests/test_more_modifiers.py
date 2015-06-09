@@ -19,7 +19,7 @@
 
 
 import unittest, lxml.etree as et, lxml, os, os.path, cStringIO
-from stereocode import *
+from libstereocode import *
 from testlib import *
 
 

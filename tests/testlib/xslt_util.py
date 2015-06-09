@@ -17,7 +17,7 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import stereocode, lxml, lxml.etree as et, re, os, os.path, shutil, sys, StringIO, lxml.sax as lsax
+import libstereocode, lxml, lxml.etree as et, re, os, os.path, shutil, sys, StringIO, lxml.sax as lsax
 from xml.sax.handler import ContentHandler
 import xml.sax as sax
 from srcml import *

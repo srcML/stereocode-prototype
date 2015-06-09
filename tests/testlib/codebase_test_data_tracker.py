@@ -17,7 +17,7 @@
 # along with the stereocode Toolkit; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import sys, stereocode, lxml.etree as et, lxml, os, os.path
+import sys, libstereocode, lxml.etree as et, lxml, os, os.path
 from xslt_util import *
 from srcml.xslt import *
 from srcml import *
@@ -242,7 +242,7 @@ class CodeBaseTestDataTracker:
         docWithNoComments = removeCommentsDoc(documentToTransform)
         # print >>sys.stderr, removeCommentsDoc.xslt_profile
         print >> sys.stderr, "  Redocumenting with stereocode."
-        transformedDocument = stereocode.stereocodeDoc(docWithNoComments)
+        transformedDocument = libstereocode.stereocodeDoc(docWithNoComments)
         transformedDocument.write(stereotypedOutputDocPath)
 
         if any([(x[1] > 0) for x in extractFileNameDict.items()]):
@@ -264,7 +264,7 @@ class CodeBaseTestDataTracker:
             print >> sys.stderr, "    %s" % entry
 
         print >> sys.stderr, "  Stereotype Log Entries"
-        for entry in stereocode.stereocodeDoc.error_log:
+        for entry in libstereocode.stereocodeDoc.error_log:
             print >> sys.stderr, "    %s" % entry
 
         # xsltInputBuffer = memory_buffer()
