@@ -16,8 +16,9 @@ setup(
     description='Source code stereotypeing tool that annotates srcML-i-fied with method stereotypes.',
     author='SDML',
     author_email='',
-    package_dir = {'stereocode': 'stereocode'},
+    package_dir = {'stereocode': 'stereocode', 'stereocode/xslt': 'stereocode.xslt'},
     packages = ['stereocode'],
+    data_files=['stereocode/xslt/stereotype.xsl', 'stereocode/xslt/remove_stereotypes.xsl'],
     test_suite = '',
     # **extra
 
