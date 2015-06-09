@@ -33,7 +33,7 @@ The main file that's used for executing stereocode from the command line.
 """
 
 
-import srcml, sys, os, os.path, logging, argparse
+import sys
 from stereocode import run_stereocode,  cli_error, parse_cli_arguments
 # from cli_arguments import 
 
