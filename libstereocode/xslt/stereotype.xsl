@@ -9,9 +9,9 @@
     xmlns:regexp="http://exslt.org/regular-expressions"
     xmlns:func="http://exslt.org/functions"
     xmlns:dyn="http://exslt.org/dynamic"
-
+    xmlns:src_old="http://www.sdml.info/srcML/src"
     extension-element-prefixes="exsl str func regexp"
-    exclude-result-prefixes="set src dyn"
+    exclude-result-prefixes="set src dyn src_old"
     version="1.0">
 <!-- 
 @file stereotype.xsl
@@ -1177,9 +1177,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
         </xsl:copy>
       </xsl:when>
       <xsl:otherwise>
-           <xsl:message terminate="yes">
-              ERROR: Unknown processing mode.
-           </xsl:message>
+           <xsl:message terminate="yes">ERROR: Unknown processing mode.</xsl:message>
       </xsl:otherwise>
     </xsl:choose>
 
@@ -1194,6 +1192,14 @@ To identify the stereotype Creator::Factory the following conditions need to be 
       <xsl:otherwise>unclassified </xsl:otherwise>
     </xsl:choose>
 
+  </xsl:template>
+
+  <xsl:template match="/src_old:unit">
+    <xsl:message terminate="yes">ERROR: Newer version of srcML required.</xsl:message>
+  </xsl:template>
+
+  <xsl:template match="src:unit[number(concat(str:split(@revision, '.'),'')) >= 95]">
+    <xsl:message terminate="yes">ERROR: Newer version of srcML required.</xsl:message>
   </xsl:template>
 
   <!-- copy any element which does not contain a function -->

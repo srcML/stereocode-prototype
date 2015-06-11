@@ -21,7 +21,7 @@ import libstereocode, lxml, lxml.etree as et, re, os, os.path, shutil, sys, Stri
 from xml.sax.handler import ContentHandler
 import xml.sax as sax
 from srcml import *
-
+import copy
 # from operator import itemgetter, attrgetter, methodcaller
 xmlNamespaces = dict(src="http://www.srcML.org/srcML/src", cpp="http://www.srcML.org/srcML/cpp")
 stereotypeExtractingRe = re.compile(r"@stereotype (?P<stereotypes>[^\*]*)")
@@ -33,15 +33,22 @@ def executeTransform(xmlDocument, xsltDocument):
     and register other possible extension functionality associated with the
     XSLT document.
     """
-    return xsltDocument(xmlDocument)
+    # for i in range(len(xsltDocument.error_log)):
+    #     del xsltDocument.error_log[i]
+    copiedDocument = copy.copy(xsltDocument)
+    ret = copiedDocument(xmlDocument)
+    if len(copiedDocument.error_log) > 0:
+        print >> sys.stderr, "Error Log entries:"
+        for entry in copiedDocument.error_log:
+            print >> sys.stderr, """    Line: {0} Col: {1} Domain: {2} Level: {3} Level Name: {4} Type: {5} Type Name: {6} Message: {7}""".format(entry.line, entry.column, entry.domain, entry.level, entry.level_name, entry.type, entry.type_name, entry.message)
+        raise Exception("Encountered error while processing document within XSLT.")
+        # et.clear_error_log()
+    return ret
 
 def executeAndTestTransform(unitTestInstance, xmlDocument, xsltDocument, expectedData, printTrasformedDoc=False):
     try:
         resultingDoc = executeTransform(xmlDocument, xsltDocument)
-        if len(xsltDocument.error_log) > 0:
-            print >> sys.stderr, "Error Log entries:"
-            for entry in xsltDocument.error_log:
-                print >> sys.stderr, """    Line: {0} Col: {1} Domain: {2} Level: {3} Level Name: {4} Type: {5} Type Name: {6} Message: {7}""".format(entry.line, entry.column, entry.domain, entry.level, entry.level_name, entry.type, entry.type_name, entry.message)
+
         if printTrasformedDoc:
             print et.tostring(resultingDoc)
     except:
@@ -96,6 +103,7 @@ def quickDumpFunctionStereotypeInfo(xmlDocument, xsltDocument,):
         print >> sys.stderr,  et.tostring(resultingDoc)
         if len(xsltDocument.error_log) >0:
             print >> sys.stderr, xsltDocument.error_log
+            et.clear_error_log()
     except:
         print "Failed to execute transformation"
         raise

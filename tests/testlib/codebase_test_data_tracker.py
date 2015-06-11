@@ -242,6 +242,7 @@ class CodeBaseTestDataTracker:
         docWithNoComments = removeCommentsDoc(documentToTransform)
         # print >>sys.stderr, removeCommentsDoc.xslt_profile
         print >> sys.stderr, "  Redocumenting with stereocode."
+        et.clear_error_log()
         transformedDocument = libstereocode.stereocodeDoc(docWithNoComments)
         transformedDocument.write(stereotypedOutputDocPath)
 

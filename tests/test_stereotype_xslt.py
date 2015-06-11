@@ -215,6 +215,7 @@ class TestStereotypeXslt(unittest.TestCase):
 
     @srcMLifyCode("tests/test_data/to_fix_3.cpp")
     def test_toFixThree(self, tree):
+        
         executeAndTestTransform(self, tree, stereocodeDoc, {
             "matchesWithAStereotype": 8,
             "functionInfo":

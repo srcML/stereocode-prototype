@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-import lxml.etree as et, lxml, os, os.path, sys
+import lxml.etree as et, lxml, os, os.path, sys, copy
 from cli_args import *
 
 _currentDirectory = os.path.dirname(os.path.abspath(__file__))
@@ -32,9 +32,13 @@ removeStereotypeDoc = et.XSLT(et.parse(_remove_stereotype_doc_path))
 def remove_stereotypes(config):
     input_doc = et.parse(config.input_stream if config.temp_input_stream == None else config.temp_input_stream)
     parameters = dict(processing_mode=et.XSLT.strparam(config.mode))
-    transformed_doc = removeStereotypeDoc(input_doc, **parameters)
-    if len(removeStereotypeDoc.error_log) > 0:
-        print >> sys.stderr, removeStereotypeDoc
+    remove_redoc_copy = copy.copy(removeStereotypeDoc)
+    transformed_doc = remove_redoc_copy(input_doc, **parameters)
+    if len(remove_redoc_copy.error_log) > 0:
+        print >> sys.stderr, "Error Log entries:"
+        for entry in remove_redoc_copy.error_log:
+            print >> sys.stderr, """    Line: {0} Col: {1} Domain: {2} Level: {3} Level Name: {4} Type: {5} Type Name: {6} Message: {7}""".format(entry.line, entry.column, entry.domain, entry.level, entry.level_name, entry.type, entry.type_name, entry.message)
+        raise Exception("Encountered errors while removing redocumention from source code")
     transformed_doc.write(config.output_stream)
 
 def apply_stereotyping(config):
@@ -50,8 +54,11 @@ def apply_stereotyping(config):
 
     if config.ignorable_calls != None:
         parameters["more_ignorable_calls"] = et.XSLT.strparam(" ".join([x for x in config.ignorable_calls]))
-
-    redocumented_doc = stereocodeDoc(et.parse(config.input_stream), **parameters)
-    # if len(stereocodeDoc.error_log) > 0:
-    #     print >> sys.stderr, stereocodeDoc
+    stereocode_doc_copy = copy.copy(stereocodeDoc)
+    redocumented_doc = stereocode_doc_copy(et.parse(config.input_stream), **parameters)
+    if len(stereocode_doc_copy.error_log) > 0:
+        print >> sys.stderr, "Error Log entries:"
+        for entry in stereocode_doc_copy.error_log:
+            print >> sys.stderr, """    Line: {0} Col: {1} Domain: {2} Level: {3} Level Name: {4} Type: {5} Type Name: {6} Message: {7}""".format(entry.line, entry.column, entry.domain, entry.level, entry.level_name, entry.type, entry.type_name, entry.message)
+        raise Exception("Encountered errors while redocumenting source code")
     redocumented_doc.write(config.output_stream if config.temp_output_stream == None else config.temp_output_stream)

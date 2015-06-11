@@ -225,8 +225,9 @@ class TestRunStereocode(unittest.TestCase):
         )
 
         run_stereocode(cfg)
-
-        transformed_doc = et.XML(cfg.output_stream.getvalue())
+        temp = cfg.output_stream.getvalue()
+        # print temp
+        transformed_doc = et.XML(temp)
         located_stereotypes = transformed_doc.xpath("//src:comment[contains(text(), '@stereotype')]", namespaces=xmlNamespaces)
         self.assertEqual(
             2,
@@ -241,8 +242,8 @@ class TestRunStereocode(unittest.TestCase):
         csv_strm = cStringIO.StringIO(tempstr)
         csv_reader = DictReader(csv_strm)
         written_data=[
-            ["y::match1","obj* y::match1() const","get,collaborator","tests/test_data/stereotype/get.cpp","12","9",""],
-            ["y::match2","int y::match2()","nonconstget","tests/test_data/stereotype/get.cpp","17","14",""]
+            ["y::match1","obj* y::match1() const","get,collaborator","tests/test_data/stereotype/get.cpp","11","8",""],
+            ["y::match2","int y::match2()","nonconstget","tests/test_data/stereotype/get.cpp","15","12",""]
         ]
         index = 0
         for r in csv_reader:
@@ -532,3 +533,66 @@ class TestRunStereocode(unittest.TestCase):
         self.assertEqual("func", cfg.native_types[0], "Incorrect value.")
         self.assertEqual("less", cfg.native_types[1], "Incorrect value.")
         self.assertEqual("something", cfg.native_types[2], "Incorrect value.")
+
+    #---------------------------------------------------------------
+    #           Attempting to validate correct actual failures.
+    #---------------------------------------------------------------
+    @expect_exception(Exception)
+    def test_old_srcml_ns(self):
+        # help(stereocodeDoc)
+        # help(stereocodeDoc.error_log)
+        # print dir(stereocodeDoc)
+        # print dir(stereocodeDoc.error_log)
+        input_stream = cStringIO.StringIO("""<unit xmlns="http://www.sdml.info/srcML/src" xmlns:cpp="http://www.sdml.info/srcML/cpp" xmlns:op="http://www.sdml.info/srcML/operator" xmlns:type="http://www.sdml.info/srcML/modifier" language="C++">
+            </unit>
+            """)
+        # output_stream = cStringIO.StringIO()
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=input_stream,
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            more_native_stream=None,
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        run_stereocode(cfg)
+        # self.assertEqual(3, len(cfg.native_types), "Incorrect # of native types.")
+        # self.assertEqual("func", cfg.native_types[0], "Incorrect value.")
+        # self.assertEqual("less", cfg.native_types[1], "Incorrect value.")
+        # self.assertEqual("something", cfg.native_types[2], "Incorrect value.")
+
+    @expect_exception(Exception)
+    def test_old_version(self):
+        # help(stereocodeDoc)
+        # help(stereocodeDoc.error_log)
+        # print dir(stereocodeDoc)
+        # print dir(stereocodeDoc.error_log)
+        input_stream = cStringIO.StringIO("""<unit revision="0.8.0" xmlns="http://www.srcML.org/srcML/src">
+            </unit>
+            """)
+        # output_stream = cStringIO.StringIO()
+        cfg = configuration(
+            mode=MODE_ADD_XML_ATTR,
+            input_from=input_stream,
+            output_to=cStringIO.StringIO(),
+            output_verbose = False,
+            output_timings = False,
+            histogram_stream = cStringIO.StringIO(),
+            unique_histogram_stream = None,
+            no_redocumentation = False,
+            ns_prefix_stream = None,
+            more_native_stream=None,
+            remove_redoc = False,
+            extract_func_list=None
+        )
+        run_stereocode(cfg)
+        # self.assertEqual(3, len(cfg.native_types), "Incorrect # of native types.")
+        # self.assertEqual("func", cfg.native_types[0], "Incorrect value.")
+        # self.assertEqual("less", cfg.native_types[1], "Incorrect value.")
+        # self.assertEqual("something", cfg.native_types[2], "Incorrect value.")
