@@ -309,7 +309,7 @@ class info_extractor(object, handler.ContentHandler):
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
             self.function_sig_depth -= 1
             if self.function_sig_state == FUNCSIG_STATE_READING_UPTHROUGH_TYPE:
-                if name == _TAG_type:
+                if self.function_sig_depth == 0 and name == _TAG_type:
                     self.function_sig_state = FUNCSIG_STATE_READING_FUNCTION_NAME   
             elif self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
                 if self.function_sig_depth == 0:
