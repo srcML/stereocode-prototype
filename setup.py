@@ -51,7 +51,7 @@ setup(
 
     license = "GPL",
     keywords = "static analysis stereotype stereocode srcML SDML",
-    url = "www.sdml.com",
+    url = "www.srcML.org",
     long_description=read_docuemntation(),
     classifiers=[
         "Development Status :: 4 - Beta",
