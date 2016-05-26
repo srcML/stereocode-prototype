@@ -244,7 +244,9 @@ class info_extractor(object, handler.ContentHandler):
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
             self.function_sig_depth += 1
             if self.function_sig_state == FUNCSIG_STATE_READING_UPTHROUGH_TYPE:
-                pass 
+                # if function has no type such as in some operator methods
+                if self.function_sig_depth == 1 and name == _TAG_name:
+                    self.function_sig_state = FUNCSIG_STATE_READING_FUNCTION_NAME 
             elif self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
                 pass
             elif self.function_sig_state == FUNCSIG_STATE_READING_TILL_BLOCK:
