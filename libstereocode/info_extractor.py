@@ -131,6 +131,7 @@ class info_extractor(object, handler.ContentHandler):
         self.buffer = cStringIO.StringIO()
         self.function_sig_buffer = None
         self.read_content = False 
+        self.type_name_depth = 0
         self.function_sig_depth = 0
         self.function_name_buffer = None
         self._function_sig_state = FUNCSIG_STATE_READING_UPTHROUGH_TYPE
@@ -211,6 +212,7 @@ class info_extractor(object, handler.ContentHandler):
                 name == _TAG_annotation_defn or
                 name == _TAG_union):
                 self.state = STATE_READING_TYPE_NAME
+                self.type_name_depth = 0
 
             elif name == _TAG_function:
                 if _ATTR_stereotype in attrs:
@@ -258,6 +260,7 @@ class info_extractor(object, handler.ContentHandler):
 
             if name == _TAG_name:
                 self.read_content = True
+                self.type_name_depth += 1
 
             if name == _TAG_block:
                 self.cls_ns_stack.append(self.buffer.getvalue())
@@ -331,7 +334,9 @@ class info_extractor(object, handler.ContentHandler):
 
         elif self.state == STATE_READING_TYPE_NAME:
             if name == _TAG_name:
-                self.read_content = False
+                self.type_name_depth -= 1
+                if self.type_name_depth == 0:
+                    self.read_content = False
 
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
