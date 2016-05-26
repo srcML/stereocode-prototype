@@ -262,12 +262,6 @@ class info_extractor(object, handler.ContentHandler):
                 self.read_content = True
                 self.type_name_depth += 1
 
-            if name == _TAG_block:
-                self.cls_ns_stack.append(self.buffer.getvalue())
-                self.buffer.close()
-                self.buffer = cStringIO.StringIO()
-                self.state = STATE_PROCESSING_LOOP
-
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
 
@@ -337,6 +331,10 @@ class info_extractor(object, handler.ContentHandler):
                 self.type_name_depth -= 1
                 if self.type_name_depth == 0:
                     self.read_content = False
+                    self.cls_ns_stack.append(self.buffer.getvalue())
+                    self.buffer.close()
+                    self.buffer = cStringIO.StringIO()
+                    self.state = STATE_PROCESSING_LOOP
 
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
