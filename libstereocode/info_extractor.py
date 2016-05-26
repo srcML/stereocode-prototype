@@ -132,7 +132,6 @@ class info_extractor(object, handler.ContentHandler):
         self.function_sig_buffer = None
         self.read_content = False
         self.type_name_depth = 0
-        self.name_depth = 0
         self.function_sig_depth = 0
         self.function_name_buffer = None
         self._function_sig_state = FUNCSIG_STATE_READING_UPTHROUGH_TYPE
@@ -214,7 +213,6 @@ class info_extractor(object, handler.ContentHandler):
                 name == _TAG_union):
                 self.state = STATE_READING_TYPE_NAME
                 self.type_name_depth = 0
-                self.name_depth = 0
 
             elif name == _TAG_function:
                 if _ATTR_stereotype in attrs:
@@ -262,9 +260,9 @@ class info_extractor(object, handler.ContentHandler):
 
             self.type_name_depth += 1
 
-            if name == _TAG_name and self.type_name_depth == 1:
-                self.read_content = True
-                self.name_depth += 1
+            if name == _TAG_name:
+                if self.type_name_depth == 1:
+                    self.read_content = True
 
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
@@ -335,8 +333,8 @@ class info_extractor(object, handler.ContentHandler):
             self.type_name_depth -= 1
 
             if name == _TAG_name and self.read_content:
-                self.name_depth -= 1
-                if self.name_depth == 0:
+
+                if self.type_name_depth == 0:
                     self.read_content = False
                     self.cls_ns_stack.append(self.buffer.getvalue())
                     self.buffer.close()
