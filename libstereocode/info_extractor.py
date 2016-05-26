@@ -47,6 +47,9 @@ class extractor_base(object):
     def on_unit(self, filename, document_locator, info):
         pass
 
+    def end_unit(self):
+        pass
+
     def output_data(self, config, **kwargs):
         raise NotImplementedError("This must be implemented by a base class.")
 
@@ -282,6 +285,8 @@ class info_extractor(object, handler.ContentHandler):
                 self.cls_ns_stack.pop()
 
             elif name == _TAG_unit:
+                for extractor in self.extractors:
+                    extractor.end_unit()
                 self.cls_ns_stack = []
                 self.state = STATE_UNIT_SEARCH
 

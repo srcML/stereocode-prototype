@@ -55,13 +55,15 @@ class function_list_extractor(extractor_base):
         self.functions_by_unit = []
 
     def end_document(self):
-        self.functions_by_unit.append(self.current_unit)
-        self.current_unit = None
-    
+        pass
+
     def on_unit(self, filename, document_locator, info):
         # print >> sys.stderr, "Read file name: ", filename
         self.current_unit = unit_info(filename=filename, archive_line_number=document_locator.getLineNumber(), functions=[])
     
+    def end_unit(self) :
+        self.functions_by_unit.append(self.current_unit)
+        self.current_unit = None
     
     def on_function(self, stereotype_list, function_name, function_signature, document_locator, info):
         self.current_unit.functions.append(
