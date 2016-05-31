@@ -22,7 +22,7 @@ from xml.sax.handler import *
 from xml.sax import *
 from cli_args import MODE_REDOCUMENT_SOURCE, MODE_ADD_XML_ATTR
 import cStringIO, sys, re
-
+from kitchen.text.converters import to_bytes
 
 
 
@@ -365,7 +365,7 @@ class info_extractor(object, handler.ContentHandler):
             pass
 
         elif self.state == STATE_READING_COMMENT:
-            self.buffer.write(content)
+            self.buffer.write(to_bytes(content))
 
         elif self.state == STATE_EXPECTING_FUNCTION:
             pass
@@ -373,11 +373,11 @@ class info_extractor(object, handler.ContentHandler):
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
             if self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
                 self.function_name_buffer.write(content)
-            self.buffer.write(content)
+            self.buffer.write(to_bytes(content))
 
         elif self.state == STATE_READING_TYPE_NAME:
             if self.read_content:
-                self.buffer.write(content)
+                self.buffer.write(to_bytes(content))
 
         else:
             raise Exception ("Invalid state encountered: {0}".format(self.state))
