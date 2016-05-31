@@ -333,7 +333,8 @@ class info_extractor(object, handler.ContentHandler):
                         self.function_name_buffer = None
                         self.function_sig_state = FUNCSIG_STATE_READING_TILL_BLOCK
                     else:
-                        self.raise_error_message("Encountered unexpected element while transitioning from reading function name to reading the rest of the function signature.")
+                        pass
+                        #self.raise_error_message("Encountered unexpected element while transitioning from reading function name to reading the rest of the function signature.")
                     # self.current_function_signature = 
             elif self.function_sig_state == FUNCSIG_STATE_READING_TILL_BLOCK:
                 pass
