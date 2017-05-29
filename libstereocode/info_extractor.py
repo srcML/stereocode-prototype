@@ -84,6 +84,7 @@ _TAG_annotation_defn = "annotation_defn"
 _TAG_name = "name"
 _TAG_function = "function"
 _TAG_block = "block"
+_TAG_try = 'try'
 _TAG_type = "type"
 
 # attributes
@@ -250,7 +251,7 @@ class info_extractor(object, handler.ContentHandler):
             elif self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
                 pass
             elif self.function_sig_state == FUNCSIG_STATE_READING_TILL_BLOCK:
-                if name == _TAG_block:
+                if name == _TAG_block or name == _TAG_try:
                     if  self.function_sig_depth == 1:
                         self.current_function_signature = self.buffer.getvalue()
                         self.buffer.close()
@@ -267,7 +268,7 @@ class info_extractor(object, handler.ContentHandler):
                     self.read_content = True
 
             # anonymous type name
-            elif name == _TAG_block:
+            elif name == _TAG_block or name == _TAG_try:
                 self.read_content = False
                 self.cls_ns_stack.append(self.buffer.getvalue())
                 self.buffer.close()
