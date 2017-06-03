@@ -374,7 +374,7 @@ class info_extractor(object, handler.ContentHandler):
 
         elif self.state == STATE_READING_FUNCTION_SIGNATURE:
             if self.function_sig_state == FUNCSIG_STATE_READING_FUNCTION_NAME:
-                self.function_name_buffer.write(content)
+                self.function_name_buffer.write(to_bytes(content))
             self.buffer.write(to_bytes(content))
 
         elif self.state == STATE_READING_TYPE_NAME:
