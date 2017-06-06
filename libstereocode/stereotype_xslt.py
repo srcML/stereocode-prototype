@@ -55,7 +55,9 @@ def apply_stereotyping(config):
     if config.ignorable_calls != None:
         parameters["more_ignorable_calls"] = et.XSLT.strparam(" ".join([x for x in config.ignorable_calls]))
     stereocode_doc_copy = copy.copy(stereocodeDoc)
-    redocumented_doc = stereocode_doc_copy(et.parse(config.input_stream), **parameters)
+
+    p = et.XMLParser(huge_tree=True)
+    redocumented_doc = stereocode_doc_copy(et.parse(config.input_stream, parser=p), **parameters)
     if len(stereocode_doc_copy.error_log) > 0:
         print >> sys.stderr, "Error Log entries:"
         for entry in stereocode_doc_copy.error_log:
