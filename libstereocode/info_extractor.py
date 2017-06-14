@@ -268,7 +268,7 @@ class info_extractor(object, handler.ContentHandler):
                     self.read_content = True
 
             # anonymous type name
-            elif name == _TAG_block or name == _TAG_try:
+            elif name == _TAG_block:
                 self.read_content = False
                 self.cls_ns_stack.append(self.buffer.getvalue())
                 self.buffer.close()
