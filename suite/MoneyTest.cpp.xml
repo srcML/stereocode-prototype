@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="MoneyTest.cpp"><comment type="line">// MoneyTest.cpp</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"StdAfx.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;cppunit/config/SourcePrefix.h&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"Money.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"MoneyTest.h"</cpp:file></cpp:include>
+
+<class>class <name>MoneyTest</name><super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super>  <block>{<private type="default">
+<comment type="line">// Registers the fixture into the 'registry'</comment>
+<constructor_decl><name>CPPUNIT_TEST_SUITE_REGISTRATION</name><parameter_list>( <parameter><decl><type><name>MoneyTest</name></type></decl></parameter> )</parameter_list>;</constructor_decl>
+
+</private><public>public:
+<comment type="block">/** @stereotype empty test_initializer */</comment>
+<function><type><name>void</name></type> <name><name>MoneyTest</name><operator>::</operator><name>setUp</name></name><parameter_list>()</parameter_list>
+<block>{
+}</block></function>
+
+
+<comment type="block">/** @stereotype empty test_cleaner */</comment>
+<function><type><name>void</name></type> <name><name>MoneyTest</name><operator>::</operator><name>tearDown</name></name><parameter_list>()</parameter_list>
+<block>{
+}</block></function>
+
+
+<comment type="block">/** @stereotype command collaborator equality_verifier */</comment>
+<function><type><name>void</name></type> <name>testConstructor</name><parameter_list>()</parameter_list>
+<block>{
+  <comment type="line">// Set up</comment>
+  <decl_stmt><decl><type><specifier>const</specifier> <name><name>std</name><operator>::</operator><name>string</name></name></type> <name>currencyFF</name><argument_list>( <argument><expr><literal type="string">"FF"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>double</name></type> <name>longNumber</name> <init>= <expr><literal type="number">1234.5678</literal></expr></init></decl>;</decl_stmt>
+
+  <comment type="line">// Process</comment>
+  <decl_stmt><decl><type><name>Money</name></type> <name>money</name><argument_list>( <argument><expr><name>longNumber</name></expr></argument>, <argument><expr><name>currencyFF</name></expr></argument> )</argument_list></decl>;</decl_stmt>
+
+  <comment type="line">// Check</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><name>longNumber</name></expr></argument>, <argument><expr><call><name><name>money</name><operator>.</operator><name>getAmount</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><name>currencyFF</name></expr></argument>, <argument><expr><call><name><name>money</name><operator>.</operator><name>getCurrency</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+
+<comment type="block">/** @stereotype command collaborator boolean_verifier */</comment>
+<function><type><name>void</name></type> <name>testEqual</name><parameter_list>()</parameter_list>
+<block>{
+  <comment type="line">// Set up</comment>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>Money</name></type> <name>money123FF</name><argument_list>( <argument><expr><literal type="number">123</literal></expr></argument>, <argument><expr><literal type="string">"FF"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>Money</name></type> <name>money123USD</name><argument_list>( <argument><expr><literal type="number">123</literal></expr></argument>, <argument><expr><literal type="string">"USD"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>Money</name></type> <name>money12FF</name><argument_list>( <argument><expr><literal type="number">12</literal></expr></argument>, <argument><expr><literal type="string">"FF"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>Money</name></type> <name>money12USD</name><argument_list>( <argument><expr><literal type="number">12</literal></expr></argument>, <argument><expr><literal type="string">"USD"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+
+  <comment type="line">// Process &amp; Check</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><name>money123FF</name> <operator>==</operator> <name>money123FF</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>    <comment type="line">// ==</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><name>money12FF</name> <operator>!=</operator> <name>money123FF</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>     <comment type="line">// != amount</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><name>money123USD</name> <operator>!=</operator> <name>money123FF</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>   <comment type="line">// != currency</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><name>money12USD</name> <operator>!=</operator> <name>money123FF</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>    <comment type="line">// != currency and != amount</comment>
+}</block></function>
+
+
+<comment type="block">/** @stereotype command collaborator boolean_verifier equality_verifier hybrid_verifier */</comment>
+<function><type><name>void</name></type> <name>testAdd</name><parameter_list>()</parameter_list>
+<block>{
+  <comment type="line">// Set up</comment>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>Money</name></type> <name>money12FF</name><argument_list>( <argument><expr><literal type="number">12</literal></expr></argument>, <argument><expr><literal type="string">"FF"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>Money</name></type> <name>expectedMoney</name><argument_list>( <argument><expr><literal type="number">135</literal></expr></argument>, <argument><expr><literal type="string">"FF"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+
+  <comment type="line">// Process</comment>
+  <decl_stmt><decl><type><name>Money</name></type> <name>money</name><argument_list>( <argument><expr><literal type="number">123</literal></expr></argument>, <argument><expr><literal type="string">"FF"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+  <expr_stmt><expr><name>money</name> <operator>+=</operator> <name>money12FF</name></expr>;</expr_stmt>
+
+  <comment type="line">// Check</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><name>expectedMoney</name></expr></argument>, <argument><expr><name>money</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>           <comment type="line">// add works</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><operator>&amp;</operator><name>money</name> <operator>==</operator> <operator>&amp;</operator><operator>(</operator><name>money</name> <operator>+=</operator> <name>money12FF</name><operator>)</operator></expr></argument> )</argument_list></call></expr>;</expr_stmt>  <comment type="line">// add returns ref. on 'this'.</comment>
+}</block></function>
+
+
+<comment type="block">/** @stereotype command collaborator exception_verifier */</comment>
+<function><type><name>void</name></type> <name>testAddThrow</name><parameter_list>()</parameter_list>
+<block>{
+  <comment type="line">// Set up</comment>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>Money</name></type> <name>money123FF</name><argument_list>( <argument><expr><literal type="number">123</literal></expr></argument>, <argument><expr><literal type="string">"FF"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+
+  <comment type="line">// Process</comment>
+  <decl_stmt><decl><type><name>Money</name></type> <name>money</name><argument_list>( <argument><expr><literal type="number">123</literal></expr></argument>, <argument><expr><literal type="string">"USD"</literal></expr></argument> )</argument_list></decl>;</decl_stmt>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_THROW</name><argument_list>( <argument><expr><name>money</name> <operator>+=</operator> <name>money123FF</name></expr></argument>, <argument><expr><name>IncompatibleMoneyError</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+</public>}</block>;</class>
+</unit>

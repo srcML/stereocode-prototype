@@ -15,57 +15,46 @@
     version="1.0">
 <!-- 
 @file stereotype.xsl
-
 @copyright Copyright (C) 2013-2014 srcML, LLC. (www.srcML.org)
-
 The stereocode is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
-
 The stereocode Toolkit is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with the stereocode Toolkit; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  -->
     <!--
-
 To identify the stereotype Accessor::Get the following conditions need to be satisfied: 
   • method is const 
   • returns a data member 
   • return type is primitive or container of a primitives 
-
 To identify the stereotype Accessor::Predicate the following conditions need to be satisfied: 
   • method is const 
   • returns a Boolean value that is not a data member 
-
 To identify the stereotype Accessor::Property the following conditions need to be satisfied: 
   • method is const 
   • does not return a data member 
   • return type is primitive or container of primitives 
   • return type is not Boolean 
-
 To identify the stereotype Mutator::Set the following conditions need to be satisfied: 
   • method is not const 
   • return type is void or Boolean 
   • only one data member is changed 
-
 To identify the stereotype Mutator::Command the following conditions need to be satisfied: 
   • method is not const 
   • return type is void or Boolean 
   • complex change to the object’s state is performed 
   e.g., more than one data member was changed 
-
 To identify the stereotype Collaborator one of the following statements needs to be satisfied: 
   • returns void and at least one of the method’s 
     parameters or local variables is an object 
   • returns a parameter or local variable that is an 
     object 
-
 To identify the stereotype Creator::Factory the following conditions need to be satisfied: 
   • returns an object created in the method’s body
      -->
@@ -402,11 +391,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
   <!--
       Primary variable name.
-
       Either the direct name, or for a complex name with multiple subnames, the last one.
-
       E.g.,
-
           a  -> a
           b::a -> a
           c::b::a -> a
@@ -420,10 +406,8 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
   <!--
       All names in a type
-
       Includes a direct name, or for a complex name, multiple subnames.
       E.g.,
-
           a  -> a
           b::a -> b
     std::a -> a
@@ -467,9 +451,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     the src namespace.
   -->
 <!--   <func:function name="src:is_modifier">
-
      <func:result select=".=$modifiers"/>
-
   </func:function> -->
 
 
@@ -530,7 +512,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!--
     Stereotype matching function
     Classifies stereotypes using criteria on function definition
-
   -->
   <xsl:template match="src:function" mode="stereotype">
     <xsl:apply-templates select="." mode="get"/>
@@ -550,7 +531,20 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:apply-templates select="." mode="stateless"/>
     <xsl:apply-templates select="." mode="pure_stateless"/>
     <xsl:apply-templates select="." mode="empty"/>
-
+    <xsl:apply-templates select="." mode="boolean_verifier"/>
+    <xsl:apply-templates select="." mode="equality_verifier"/>
+    <xsl:apply-templates select="." mode="doubles_equality_verifier"/>
+    <xsl:apply-templates select="." mode="exception_verifier"/>
+    <xsl:apply-templates select="." mode="no_exception_verifier"/>
+    <xsl:apply-templates select="." mode="assertion_verifier"/>
+    <xsl:apply-templates select="." mode="test_cleaner"/>
+    <xsl:apply-templates select="." mode="test_initializer"/>
+    <xsl:apply-templates select="." mode="utility_verifier"/>
+    <xsl:apply-templates select="." mode="hybrid_verifier"/> 
+    <xsl:apply-templates select="." mode="unclassified"/> 
+    <xsl:apply-templates select="." mode="branch_verifier"/>
+    <xsl:apply-templates select="." mode="iterative_verifier"/>
+    <xsl:apply-templates select="." mode="execution_tester"/>
   </xsl:template>
 
 
@@ -558,69 +552,47 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- Accessors -->
 
   <!-- stereotype get 
-
        method is const
-
        return type is not void
-
        contains at least one return statement which is:
-
               a single variable
         pointer to a variable
               has no calls
               variable is a data member
-
       in other words, it is of the form:
-
                  return n;
                  return *n;
-
       where the n is a data member.
   -->
   <xsl:template match="src:function[
-
          src:specifier='const' and
-
          not(src:type[src:name='void']) and
-
          src:return()[
                     (count(*)=1 and src:name or
            count(*)=2 and *[1][self::src:operator='*'] and *[2][self::src:name]) and
-
                     src:primary_variable_name(src:name)[src:is_data_member()]][1]
-
          ]" mode="get">get </xsl:template>
 
   <xsl:template match="src:function" mode="get"/>
 
   <xsl:template match="src:function[
-
          not(src:specifier='const') and
-
          not(src:type[src:name='void']) and
-
                not(src:data_members()[src:is_written()]) and 
-
          src:return()[
                     (count(*)=1 and src:name or
            count(*)=2 and *[1][self::src:operator='*'] and *[2][self::src:name]) and
-
                     src:primary_variable_name(src:name)[src:is_data_member() and not(.='this')]][1]
-
          ]" mode="nonconstget">nonconstget </xsl:template>
 
   <xsl:template match="src:function" mode="nonconstget"/>
 
   <!-- stereotype predicate 
-
        method is const
-
        return type includes bool
        
        data members are used or there is a pure call or call on data members
-
        at least one return expression contains:
-
         false
         true
         no variable, or more then one variable
@@ -629,7 +601,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
         one of the variables is not a data member
   -->
   <xsl:template match="src:function[
-
          src:specifier='const' and
            
                src:type/src:name='bool' and
@@ -645,38 +616,28 @@ To identify the stereotype Creator::Factory the following conditions need to be 
          ) and 
            
          src:return()[
-
                      .='false' or .='true' or
-
                      src:call[1] or
-
                      count(src:name)!=1 or
-
                      *[2][self::src:operator] or
-
                      src:primary_variable_name(src:name)[src:is_declared()]][1]
-
          ]" mode="predicate">predicate </xsl:template>
 
   <xsl:template match="src:function" mode="predicate"/>
 
   <!-- stereotype property
-
        method is const
-
        return type is not void or bool
        
        data members are used or data or there is a pure call or call on data members 
        
        return expression contains one of the following:
-
            more then one variable, or no variables
      a call
      single variable with an operator
      single variable that is not a data member
   -->
   <xsl:template match="src:function[
-
          src:specifier='const' and
            
                not(src:type[src:name='void' or src:name='bool']) and
@@ -698,29 +659,22 @@ To identify the stereotype Creator::Factory the following conditions need to be 
                not(src:return()[
         not(
             *[2][self::src:operator] or
-
             src:call[1] or
-
                         count(src:name)!=1 or
-
                         src:primary_variable_name(src:name)[src:is_declared()]
          )
          ][1])
-
               ]" mode="property">property </xsl:template>
 
   <xsl:template match="src:function" mode="property"/>
 
   <!-- stereotype voidaccessor 
-
        specifier is const
        
        data members are used
-
        return is void (??? void * allowed ???)
   -->
   <xsl:template match="src:function[
-
                src:specifier='const' and 
                
                (src:data_members() or
@@ -743,28 +697,18 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- Mutators -->
 
   <!-- stereotype set 
-
        method is not const
-
        return type is void or bool, or return the object (for chaining), i.e., 'return *this'
-
        number of real calls in expression statements is at most 1
-
        number of data members written to in expression statements is 1
   -->
   <xsl:template match="src:function[
-
                not(src:specifier='const') and
-
                (src:type[src:name='void' or src:name='bool'] or
-
                  count(src:return())=count(src:return()[
                count(*)=2 and *[1][self::src:operator='*'] and *[2][self::src:name='this']])
-
                ) and
-
          not(src:real_call()[2]) and
-
          count(src:data_members_write())=1
               ]
               " mode="set">set </xsl:template>
@@ -772,22 +716,15 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <xsl:template match="src:function" mode="set"/>
 
   <!-- stereotype command
-
        method is not const
-
        return type contains void or bool
-
        for expression statements at least one of the following holds:
-
            more then one data member is written to
-
            exactly one data member is written to and the number of calls
      in expression statements or returns is at least 2
-
            no data members are written to and their is a call not
      in a throw statement that is a simple real call (not a constructor call)
      or a complex call for a data member
-
            Note:  A set is formed by src:union with the written data members and the
      src:type.  This way, the predicate is always evaluated, even if there are
      no data members written.  The actual number of data members written is one
@@ -795,19 +732,12 @@ To identify the stereotype Creator::Factory the following conditions need to be 
      data members written.
   -->
   <xsl:template match="src:function[
-
                not(src:specifier='const') and
-
                src:type[src:name='void' or src:name='bool'] and
-
                src:union(src:data_members_write(), src:type)[
-
                    last()&gt;2 or last()=2 and src:real_call()[2] or last()=1 and
-
        src:real_call()[
-
            src:is_pure_call() and
-
            not(src:is_static()) or src:calling_object()[src:is_data_member()][1]
        ][1]
                ][1]
@@ -816,22 +746,15 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <xsl:template match="src:function" mode="command"/>
 
   <!-- stereotype non-void-command
-
        method is not const
-
        return type is not void or bool (??? void* ???)
-
        for expression statements at least one of the following holds:
-
            more then one data member is written to
-
            exactly one data member is written to and the number of real calls
      is at least 2
-
            no data members are written to and their is a call not
      in a throw statement that is a simple real call (not a constructor call from new)
      or a complex call for a data member
-
            Note:  A set is formed by src:union with the written data members and the
      src:type.  This way, the predicate is always evaluated, even if there are
      no data members written.  The actual number of data members written is one
@@ -839,18 +762,12 @@ To identify the stereotype Creator::Factory the following conditions need to be 
      data members written.
   -->
   <xsl:template match="src:function[
-
                not(src:specifier='const') and
-
                not(src:type[src:name='void' or src:name='bool']) and
-
                src:union(src:data_members_write(), src:type)[
-
                     last()&gt;2 or last()=2 and src:real_call()[2] or last()=1 and
-
                     src:real_call()[src:is_pure_call() and
                         not(src:is_static()) or src:calling_object()[src:is_data_member()][1]][1]][1]
-
               ]
               " mode="non-void-command">non-void-command </xsl:template>
 
@@ -861,17 +778,13 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
 
   <!-- stereotype collaborational-predicate 
-
        method is const
-
        return type includes bool
        
        data members are not used
        
        no pure calls, a() a::b(); no calls on data members 
-
        at least one return expression contains:
-
         false
         true
         no variable, or more then one variable
@@ -880,7 +793,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
         one of the variables is not a data member
   -->
   <xsl:template match="src:function[
-
          src:specifier='const' and
            
                src:type/src:name='bool' and
@@ -896,40 +808,29 @@ To identify the stereotype Creator::Factory the following conditions need to be 
          ) and 
            
          src:return()[
-
                      .='false' or .='true' or
-
                      src:call[1] or
-
                      count(src:name)!=1 or
-
                      *[2][self::src:operator] or
-
                      src:primary_variable_name(src:name)[src:is_declared()]][1]
-
          ]" mode="collaborational-predicate">collaborational-predicate </xsl:template>
 
   <xsl:template match="src:function" mode="collaborational-predicate"/>
 
   <!-- stereotype collaborational-property
-
        method is const
-
        return type is not void or bool
        
        data members are not used
        
        no pure calls, a() a::b(); no calls on data members 
-
        return expression contains one of the following:
-
            more then one variable, or no variables
      a call
      single variable with an operator
      single variable that is not a data member
   -->
   <xsl:template match="src:function[
-
          src:specifier='const' and
            
                not(src:type[src:name='void' or src:name='bool']) and
@@ -949,32 +850,25 @@ To identify the stereotype Creator::Factory the following conditions need to be 
                not(src:return()[
         not(
             *[2][self::src:operator] or
-
             src:call[1] or
-
                         count(src:name)!=1 or
-
                         src:primary_variable_name(src:name)[src:is_declared()]
          )
          ][1])
-
               ]" mode="collaborational-property">collaborational-property </xsl:template>
 
   <xsl:template match="src:function" mode="collaborational-property"/>
 
 
   <!-- stereotype collaborational-voidaccessor 
-
        specifier is const
        
        data members are not used
        
        no pure calls, a() a::b(); no calls on data members 
-
        return is void (??? void * allowed ???)
   -->
   <xsl:template match="src:function[
-
                src:specifier='const' and 
                
                not(src:data_members()) and
@@ -995,43 +889,27 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
 
   <!-- stereotype collaborational-command
-
        method is not const
-
        no data members are written
-
        (
        (one or more calls:
-
            no pure calls, a() a::b()
-
            no calls on data members)
-
        or parameter or local variable is written
        )
-
       Calls allowed:  f->g() where f is not a data member, new f() (which isn't a real call)
   --> 
   <xsl:template match="src:function[
-
                not(src:specifier='const') and
-
          not(src:one_data_members_write()) and
-
                not(
               src:real_call()[src:is_pure_call() and 
-
               (not(src:name/src:operator='::') or src:name/src:name[1]=src:class_name()) or
-
               src:calling_object()[src:is_data_member()]]
          ) and 
-
                (src:one_real_call()
-
                or
-
                src:expr_name()[src:is_written() and src:primary_variable_name(.)[not(src:is_data_member())]] or
-
                src:block//src:decl[src:type/src:name[src:is_object()]][src:init]
                )
               ]
@@ -1042,11 +920,9 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
 
   <!-- stereotype collaborator 
-
        A type name is an object, but not of this class
   -->                                                                                 
   <xsl:template match="src:function[
-
                 src:all_type_names_nonclass_object(.//src:type/src:name, src:class_name())[1]
                ]
          " mode="collaborator">collaborator </xsl:template>
@@ -1057,19 +933,14 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- Factory -->
 
   <!-- stereotype factory
-
        return type includes pointer to object
-
        a return statement includes a new operator, or a variable which is a parameter or a local variable
   -->
   <xsl:template match="src:function[
-
                 src:type[src:modifier='*' and src:name[src:is_object()]] and
           
                 src:return()[
-
               src:operator='new' or
-
         src:primary_variable_name(src:name)[src:is_declared()]
           ][1]
                ]
@@ -1084,19 +955,13 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- stereotype stateless
        
        includes at least one non-comment statement
-
        one real call (including new calls)
-
        no data members used (except for read on 'this')
   -->
   <xsl:template match="src:function[
-
                 src:block/*[not(self::src:comment)][1] and
-
           count(src:stateless_real_call())=1 and
-
           not(src:data_members()[not(.='this' and not(src:is_written()))])
-
          ]" mode="stateless">stateless </xsl:template>
 
   <xsl:template match="src:function" mode="stateless"/>
@@ -1104,40 +969,207 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   <!-- stereotype pure_stateless
        
        includes at least one non-comment statement
-
        no real calls (including new calls)
-
        no data members used
           not(src:stateless_real_call()) and
   -->
   <xsl:template match="src:function[
-
                 src:block/*[not(self::src:comment)][1] and
-
                 (
           count(src:block/src:return) + count(src:block/src:throw) +
           count(src:block/src:expr_stmt[.//src:expr/src:call/src:name='assert']))=
           count(src:block/*[not(self::src:comment)]) and
-
                 not(src:block/src:return//src:name) and 
-
           not(src:data_members())
-
          ]" mode="pure_stateless">pure_stateless </xsl:template>
 
   <xsl:template match="src:function" mode="pure_stateless"/>
 
-  <!-- stereotype empty
 
+
+  <!-- stereotype empty
        no statements, except for comments
   -->
   <xsl:template match="src:function[
-
           not(src:block/*[not(self::src:comment)][1])
-
          ]" mode="empty">empty </xsl:template>
 
   <xsl:template match="src:function" mode="empty"/>
+
+<xsl:template match="src:function[descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]]" 
+        mode="boolean_verifier">boolean_verifier </xsl:template>
+<xsl:template match="src:function" mode="boolean_verifier"/>
+
+<xsl:template match="src:function[descendant::src:expr/src:call[src:name='CPPUNIT_FAIL']]" 
+  mode="utility_verifier">utility_verifier </xsl:template>
+<xsl:template match="src:function" mode="utility_verifier"/>
+  
+  <xsl:template match="src:function[descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]]" 
+    mode="equality_verifier">equality_verifier </xsl:template>
+<xsl:template match="src:function" mode="equality_verifier"/>
+
+  <xsl:template match="src:function[descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]]" 
+    mode="doubles_equality_verifier">doubles_equality_verifier </xsl:template>
+<xsl:template match="src:function" mode="doubles_equality_verifier"/>
+
+  <xsl:template match="src:function[descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']]" 
+    mode="exception_verifier">exception_verifier </xsl:template>
+<xsl:template match="src:function" mode="exception_verifier"/>
+
+<xsl:template match="src:function[descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']]" 
+  mode="no_exception_verifier">no_exception_verifier </xsl:template>
+<xsl:template match="src:function" mode="no_exception_verifier"/>
+
+<xsl:template match="src:function[descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]]" mode="assertion_verifier">assertion_verifier </xsl:template>
+<xsl:template match="src:function" mode="assertion_verifier"/>
+
+<xsl:template match="src:function[descendant::src:name='setUp']" mode="test_initializer">test_initializer </xsl:template>
+<xsl:template match="src:function" mode="test_initializer"/>
+
+<xsl:template match="src:function[descendant::src:name='tearDown']" mode="test_cleaner">test_cleaner </xsl:template>
+<xsl:template match="src:function" mode="test_cleaner"/>
+
+<!-- <xsl:template match="src:function[
+  (
+  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]))+
+  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]))+ 
+  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')])) + 
+  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')])) + 
+  (count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) div count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']))+ 
+  (count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) div count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) )+ 
+  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])) &gt; 1)
+    ]" mode="hybrid_verifier">hybrid_verifier </xsl:template>
+<xsl:template match="src:function" mode="hybrid_verifier"/> -->
+
+<xsl:template match="src:function[
+  (
+  round(count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) div (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) + 1)) + 
+  round(count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) div (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 1)) + 
+  round(count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) div (count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')])+ 1)) + 
+  round(count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) div (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 1)) + 
+  round(count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) div (count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 1))+ 
+  round(count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) div (count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 1))+ 
+  round(count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) div (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) + 1)) &gt; 1)
+    ]" mode="hybrid_verifier">hybrid_verifier </xsl:template>
+<xsl:template match="src:function" mode="hybrid_verifier"/>
+
+<!-- <xsl:template match="src:function[
+  (count(descendant::src:expr_stmt/src:expr/src:call[not(src:name=preceding-sibling::src:call/src:name)]/src:name) &gt; 1)
+    ]" mode="hybrid_verifier">hybrid_verifier </xsl:template>
+<xsl:template match="src:function" mode="hybrid_verifier"/>
+ -->
+ <!-- <xsl:key name="assertion-calls" match="src:call" use="src:name" />
+ <xsl:template match="src:function[descendant::src:expr/src:call[count(. | key('assertion-calls', src:name)) = 1]]" mode="hybrid_verifier">hybrid_verifier 
+  </xsl:template> 
+<xsl:template match="src:function" mode="hybrid_verifier"/> -->
+
+ <!-- <xsl:template match="src:function[(
+  count(.//src:expr_stmt/src:expr/src:call[not(src:expr_stmt/src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL')] =preceding-sibling::src:expr_stmt/src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL')])][(src:name='CPPUNIT_ASSERT_EQUAL')])  &gt; 1 )]" mode="hybrid_verifier">hybrid_verifier 
+  </xsl:template> 
+<xsl:template match="src:function" mode="hybrid_verifier"/> -->
+
+<xsl:template match="src:function[
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])=0) and not(.//src:name='setUp') and 
+  not(.//src:name='tearDown')
+    ]" mode="unclassified">unclassified </xsl:template>
+<xsl:template match="src:function" mode="unclassified"/>
+
+<xsl:template match="src:function[descendant::src:if/src:then[
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )
+  ]]" mode="branch_verifier">branch_verifier </xsl:template>
+<xsl:template match="src:function" mode="branch_verifier"/>
+
+<xsl:template match="src:function[descendant::src:for[
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )
+  ] or descendant::src:while[
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )]
+  ]" mode="iterative_verifier">iterative_verifier </xsl:template>
+<xsl:template match="src:function" mode="iterative_verifier"/>
+
+<xsl:template match="src:function[descendant::src:expr/src:call[(descendant::src:operator='.')] and 
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])=0)
+  ]" 
+  mode="execution_tester">execution_tester </xsl:template>
+<xsl:template match="src:function" mode="execution_tester"/>
+
 
   <!--
       Section responsible for actually applying all of the stereotypes and annotating
@@ -1215,3 +1247,4 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   </xsl:template>
 
 </xsl:stylesheet>
+

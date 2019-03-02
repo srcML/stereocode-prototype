@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="CartesianComplexTest.cpp"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"CartesianComplex.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"TestCartesianComplex.h"</cpp:file></cpp:include>
+
+<comment type="block" format="doxygen">/**
+ * @author Keith Lee
+ *         keithlee [ at ] unc.edu
+ */</comment>
+
+<class>class <name>TestCartesianComplex</name><super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super>  <block>{<private type="default">
+
+</private><public>public:
+<comment type="block">/** @stereotype command collaborator equality_verifier */</comment>
+<function><type><name>void</name></type> <name>testAccessors</name><parameter_list>( )</parameter_list>
+<block>{
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc0_0</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc1_0</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc0_1</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc3_4</name><argument_list>(<argument><expr><literal type="number">3</literal></expr></argument>, <argument><expr><literal type="number">4</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc1_3</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">3</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc2_1</name><argument_list>(<argument><expr><literal type="number">2</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">0.0</literal></expr></argument>, <argument><expr><call><name><name>cc0_0</name><operator>.</operator><name>getReal</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">0.0</literal></expr></argument>, <argument><expr><call><name><name>cc0_0</name><operator>.</operator><name>getImaginary</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">1.0</literal></expr></argument>, <argument><expr><call><name><name>cc1_0</name><operator>.</operator><name>getReal</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">0.0</literal></expr></argument>, <argument><expr><call><name><name>cc1_0</name><operator>.</operator><name>getImaginary</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">0.0</literal></expr></argument>, <argument><expr><call><name><name>cc0_1</name><operator>.</operator><name>getReal</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">1.0</literal></expr></argument>, <argument><expr><call><name><name>cc0_1</name><operator>.</operator><name>getImaginary</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">3.0</literal></expr></argument>, <argument><expr><call><name><name>cc3_4</name><operator>.</operator><name>getReal</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">4.0</literal></expr></argument>, <argument><expr><call><name><name>cc3_4</name><operator>.</operator><name>getImaginary</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">1.0</literal></expr></argument>, <argument><expr><call><name><name>cc1_3</name><operator>.</operator><name>getReal</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">3.0</literal></expr></argument>, <argument><expr><call><name><name>cc1_3</name><operator>.</operator><name>getImaginary</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">2.0</literal></expr></argument>, <argument><expr><call><name><name>cc2_1</name><operator>.</operator><name>getReal</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><literal type="number">1.0</literal></expr></argument>, <argument><expr><call><name><name>cc2_1</name><operator>.</operator><name>getImaginary</name></name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+<comment type="block">/** @stereotype command collaborator boolean_verifier equality_verifier hybrid_verifier */</comment>
+<function><type><name>void</name></type> <name>testEqualityOperators</name><parameter_list>( )</parameter_list>
+<block>{
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc0_0</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc1_0</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc0_1</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name>CartesianComplex</name><argument_list>(<argument><expr><literal type="number">10</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><call><name>CartesianComplex</name><argument_list>(<argument><expr><literal type="number">10</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><name>cc0_0</name> <operator>!=</operator> <name>cc1_0</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><name>cc0_0</name> <operator>!=</operator> <name>cc0_1</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><name>cc0_1</name> <operator>!=</operator> <name>cc1_0</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+<comment type="block">/** @stereotype command collaborator unclassified */</comment>
+<function><type><name>void</name></type> <name>testPrint</name><parameter_list>( )</parameter_list>
+<block>{
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc0_0</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc1_0</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc0_1</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc3_4</name><argument_list>(<argument><expr><literal type="number">3</literal></expr></argument>, <argument><expr><literal type="number">4</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc1_3</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">3</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>CartesianComplex</name></type> <name>cc2_1</name><argument_list>(<argument><expr><literal type="number">2</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+
+    <expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <literal type="string">"testPrint : Cartesian Complex"</literal> <operator>&lt;&lt;</operator> <name>endl</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <name>cc0_0</name> <operator>&lt;&lt;</operator> <name>endl</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <name>cc1_0</name> <operator>&lt;&lt;</operator> <name>endl</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <name>cc0_1</name> <operator>&lt;&lt;</operator> <name>endl</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <name>cc3_4</name> <operator>&lt;&lt;</operator> <name>endl</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <name>cc1_3</name> <operator>&lt;&lt;</operator> <name>endl</name></expr>;</expr_stmt>
+    <expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <name>cc2_1</name> <operator>&lt;&lt;</operator> <name>endl</name></expr>;</expr_stmt>
+}</block></function>
+
+</public>}</block>;</class>
+</unit>
