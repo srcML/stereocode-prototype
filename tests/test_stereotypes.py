@@ -50,7 +50,6 @@ except KeyboardInterrupt:
 
 print "Report:"
 if ki:
-    print
     print "Testing stopped by keyboard"
 
 # print how many passed and failed.

@@ -1,0 +1,16 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="execution_tester.cpp"><class>class <name>suiteOfTests</name> <super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super> <block>{<private type="default">
+    <comment type="block">/* snip */</comment>
+</private><public>public:
+    <comment type="block" format="doxygen">/** @stereotype set collaborator unclassified execution_tester */</comment>
+    <function stereotype="command collaborator unclassified execution_tester "><type><name>void</name></type> <name>ageTest</name><parameter_list>()</parameter_list><block>{
+        <decl_stmt><decl><type><name>AgeCal</name></type> <name>ageCalc</name> <init>= <expr><operator>new</operator> <call><name>AgeCal</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <comment type="line">// inverse asserts:</comment>
+	<for>for<control>(<init><decl><type><name>int</name></type> <name>i</name><init>=<expr><literal type="number">0</literal></expr></init></decl>;</init> <condition><expr><name>i</name><operator>&lt;</operator><literal type="number">10</literal></expr>;</condition> <incr><expr><operator>++</operator><name>i</name><block>{
+        	<if>if<condition>(<expr><name>age</name> <operator>!=</operator> <literal type="number">18</literal></expr>)</condition><then><block>{
+			<expr_stmt><expr><name>cout</name> <operator>&lt;&lt;</operator> <call><name><name>ageCalc</name><operator>.</operator><name>result</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+		<expr_stmt/></block></then></if>}</block></expr></incr>
+	}</control></for>
+    }</block></function>
+</public>}</block>;</class>
+</unit>

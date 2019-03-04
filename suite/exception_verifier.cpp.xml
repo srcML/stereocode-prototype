@@ -1,0 +1,15 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="exception_verifier.cpp"><comment type="line">// CppUnit-Tutorial</comment>
+<comment type="line">// file: fractiontest.cc</comment>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"fractiontest.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"pch.h"</cpp:file></cpp:include>
+
+<expr_stmt><expr><call><name>CPPUNIT_TEST_SUITE_REGISTRATION</name><argument_list>(<argument><expr><name>fractiontest</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<class>class <name>fractiontest</name> <super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super>  <block>{<private type="default">
+<comment type="block" format="doxygen">/** @stereotype command exception_verifier */</comment>
+<function stereotype="command collaborator exception_verifier "><type><name>void</name></type> <name>exceptionTest</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
+<block>{
+	<comment type="line">// an exception has to be thrown here</comment>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_THROW</name><argument_list>(<argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><name>DivisionByZeroException</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+</private>}</block>;</class>
+</unit>

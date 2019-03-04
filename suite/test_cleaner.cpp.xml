@@ -1,0 +1,15 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="test_cleaner.cpp"><class>class <name>ComplexNumberTest</name> <super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super>  <block>{<private type="default">
+</private><private>private:
+  <decl_stmt><decl><type><name>Complex</name> <modifier>*</modifier></type><name>m_10_1</name></decl>, <modifier>*</modifier><decl><type ref="prev"/><name>m_1_1</name></decl>, <modifier>*</modifier><decl><type ref="prev"/><name>m_11_2</name></decl>;</decl_stmt>
+</private><public>public:
+
+  <comment type="block" format="doxygen">/** @stereotype test_cleaner */</comment>
+  <function stereotype="collaborator test_cleaner "><type><name>void</name></type> <name>tearDown</name><parameter_list>()</parameter_list> 
+  <block>{
+    <expr_stmt><expr><operator>delete</operator> <name>m_10_1</name></expr>;</expr_stmt>
+    <expr_stmt><expr><operator>delete</operator> <name>m_1_1</name></expr>;</expr_stmt>
+    <expr_stmt><expr><operator>delete</operator> <name>m_11_2</name></expr>;</expr_stmt>
+  }</block></function>
+
+</public>}</block>;</class>
+</unit>

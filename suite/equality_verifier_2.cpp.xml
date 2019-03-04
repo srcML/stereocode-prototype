@@ -1,4 +1,4 @@
-<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="g3Test.cpp"><class>class <name>g3Test</name> <super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super> <block>{<private type="default">
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="equality_verifier_2.cpp"><class>class <name>g3Test</name> <super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super> <block>{<private type="default">
 	
   </private><public>public:
 	<comment type="block" format="doxygen">/** @stereotype command equality_verifier */</comment>
