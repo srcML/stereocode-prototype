@@ -546,6 +546,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:apply-templates select="." mode="iterative_verifier"/>
     <xsl:apply-templates select="." mode="execution_tester"/>
     <xsl:apply-templates select="." mode="api_utility_verifier"/>
+    <xsl:apply-templates select="." mode="public_field_verifier"/>
   </xsl:template>
 
 
@@ -1032,7 +1033,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:template match="src:function[descendant::src:name='tearDown']" mode="test_cleaner">test_cleaner </xsl:template>
 <xsl:template match="src:function" mode="test_cleaner"/>
 
-<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[not(contains(src:name,'CPPUNIT'))]]" 
+<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[not(contains(src:name,'CPPUNIT')) and descendant::src:expr/src:name or descendant::src:expr/src:call]]" 
   mode="api_utility_verifier">api_utility_verifier </xsl:template>
 <xsl:template match="src:function" mode="api_utility_verifier"/>
 
@@ -1138,6 +1139,15 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   mode="execution_tester">execution_tester </xsl:template>
 <xsl:template match="src:function" mode="execution_tester"/>
 
+
+<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[contains(src:name,'CPPUNIT_ASSERT')]/descendant::src:expr/src:name[src:operator='.']]" mode="public_field_verifier">
+    <xsl:variable name="object_name" select="descendant::src:expr_stmt/src:expr/src:call/descendant::src:expr/src:name/src:name"/>
+    <xsl:if test="descendant::src:decl_stmt/src:decl/src:name = $object_name">
+        <xsl:variable name="name_of_class" select="descendant::src:decl_stmt/src:decl/src:type/src:name"/>
+          <xsl:if test="not(/src:unit/src:class/src:name = $name_of_class)">public_field_verifier </xsl:if>
+    </xsl:if>
+  </xsl:template>
+<xsl:template match="src:function" mode="public_field_verifier"/>
 
   <!--
       Section responsible for actually applying all of the stereotypes and annotating
