@@ -5,6 +5,7 @@ from subprocess import check_output
 import difflib
 
 
+
 # total number of errors
 error_count = 0
 
@@ -13,6 +14,16 @@ total_count = 0
 
 # total number of passed tests
 passed_count = 0
+
+def cleanFile(fileName):
+	file = open(fileName)
+	basename = os.path.splitext(fileName)[0]
+	newFile = basename + '_cleaned.xml'
+	w = open(newFile, "wt")
+	for line in file:
+		if line.strip():
+			w.write(line)
+	return open(newFile).readlines()
 
 try:
 
@@ -34,10 +45,11 @@ try:
 		check_output(['python', 'stereocode.py', '-m', 'XmlAttr', '-i', basename + '_input.xml', '-o', basename + '_transformed.xml'])
 
 		# verify test
-		diff = difflib.unified_diff(open('suite/' + file).readlines(), open(basename + '_transformed.xml').readlines(), lineterm='')
+		diff = list(difflib.unified_diff(cleanFile('suite/' + file), cleanFile(basename + '_transformed.xml'), lineterm=''))
 
 		# count success and failure and not crash or quit on failure
-		if len(list(diff)) > 0:
+		if len(diff) > 0:
+			print "".join(diff)
 			error_count = error_count + 1
 		else:
 			passed_count = passed_count + 1

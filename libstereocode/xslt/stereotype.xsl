@@ -545,6 +545,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:apply-templates select="." mode="branch_verifier"/>
     <xsl:apply-templates select="." mode="iterative_verifier"/>
     <xsl:apply-templates select="." mode="execution_tester"/>
+    <xsl:apply-templates select="." mode="api_utility_verifier"/>
   </xsl:template>
 
 
@@ -985,8 +986,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
   <xsl:template match="src:function" mode="pure_stateless"/>
 
-
-
   <!-- stereotype empty
        no statements, except for comments
   -->
@@ -1033,25 +1032,9 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:template match="src:function[descendant::src:name='tearDown']" mode="test_cleaner">test_cleaner </xsl:template>
 <xsl:template match="src:function" mode="test_cleaner"/>
 
-<!-- <xsl:template match="src:function[
-  (
-  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
-        (src:name='CPPUNIT_ASSERT_MESSAGE')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
-        (src:name='CPPUNIT_ASSERT_MESSAGE')]))+
-  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]))+ 
-  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
-    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
-    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')])) + 
-  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
-    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
-    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')])) + 
-  (count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) div count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']))+ 
-  (count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) div count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) )+ 
-  (count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
-  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) div count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
-  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])) &gt; 1)
-    ]" mode="hybrid_verifier">hybrid_verifier </xsl:template>
-<xsl:template match="src:function" mode="hybrid_verifier"/> -->
+<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[not(contains(src:name,'CPPUNIT'))]]" 
+  mode="api_utility_verifier">api_utility_verifier </xsl:template>
+<xsl:template match="src:function" mode="api_utility_verifier"/>
 
 <xsl:template match="src:function[
   (
@@ -1072,21 +1055,6 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) + 1)) &gt; 1)
     ]" mode="hybrid_verifier">hybrid_verifier </xsl:template>
 <xsl:template match="src:function" mode="hybrid_verifier"/>
-
-<!-- <xsl:template match="src:function[
-  (count(descendant::src:expr_stmt/src:expr/src:call[not(src:name=preceding-sibling::src:call/src:name)]/src:name) &gt; 1)
-    ]" mode="hybrid_verifier">hybrid_verifier </xsl:template>
-<xsl:template match="src:function" mode="hybrid_verifier"/>
- -->
- <!-- <xsl:key name="assertion-calls" match="src:call" use="src:name" />
- <xsl:template match="src:function[descendant::src:expr/src:call[count(. | key('assertion-calls', src:name)) = 1]]" mode="hybrid_verifier">hybrid_verifier 
-  </xsl:template> 
-<xsl:template match="src:function" mode="hybrid_verifier"/> -->
-
- <!-- <xsl:template match="src:function[(
-  count(.//src:expr_stmt/src:expr/src:call[not(src:expr_stmt/src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL')] =preceding-sibling::src:expr_stmt/src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL')])][(src:name='CPPUNIT_ASSERT_EQUAL')])  &gt; 1 )]" mode="hybrid_verifier">hybrid_verifier 
-  </xsl:template> 
-<xsl:template match="src:function" mode="hybrid_verifier"/> -->
 
 <xsl:template match="src:function[
   (
