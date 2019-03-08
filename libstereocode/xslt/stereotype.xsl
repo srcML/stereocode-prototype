@@ -1033,7 +1033,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:template match="src:function[descendant::src:name='tearDown']" mode="test_cleaner">test_cleaner </xsl:template>
 <xsl:template match="src:function" mode="test_cleaner"/>
 
-<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[not(contains(src:name,'CPPUNIT')) and descendant::src:expr/src:name or descendant::src:expr/src:call]]" 
+<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[not(contains(src:name,'CPPUNIT')) and (descendant::src:expr/src:name or descendant::src:expr/src:call)]]" 
   mode="api_utility_verifier">api_utility_verifier </xsl:template>
 <xsl:template match="src:function" mode="api_utility_verifier"/>
 
@@ -1087,8 +1087,36 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
   count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
   (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
-  )
-  ]]" mode="branch_verifier">branch_verifier </xsl:template>
+  )]
+  or descendant::src:elseif[
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )]
+  or descendant::src:else[
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )] 
+  ]" mode="branch_verifier">branch_verifier </xsl:template>
 <xsl:template match="src:function" mode="branch_verifier"/>
 
 <xsl:template match="src:function[descendant::src:for[
@@ -1104,8 +1132,22 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
   count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
   (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
-  )
-  ] or descendant::src:while[
+  )] 
+  or descendant::src:while[
+  (
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
+        (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:expr/src:call[src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )]
+  or descendant::src:do[
   (
   count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
         (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
@@ -1122,7 +1164,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   ]" mode="iterative_verifier">iterative_verifier </xsl:template>
 <xsl:template match="src:function" mode="iterative_verifier"/>
 
-<xsl:template match="src:function[descendant::src:expr/src:call[(descendant::src:operator='.')] and 
+<xsl:template match="src:function[descendant::src:expr/src:call[descendant::src:operator='.'] and 
   (
   count(descendant::src:expr/src:call[(src:name='CPPUNIT_ASSERT') or 
         (src:name='CPPUNIT_ASSERT_MESSAGE')]) +
