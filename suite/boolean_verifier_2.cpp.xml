@@ -1,0 +1,37 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="boolean_verifier_2.cpp"><cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"MyClass.hpp"</cpp:file></cpp:include>
+
+<struct>struct <name>callable</name>
+<block>{<public type="default">
+  <comment type="block" format="doxygen">/** @stereotype empty unclassified */</comment>
+  <function type="operator" stereotype="empty unclassified "><type><name>void</name></type> <name>operator<name>()</name></name><parameter_list>()</parameter_list>
+  <block>{
+  }</block></function>
+</public>}</block>;</struct>
+
+<class>class <name>MyClassTest</name> <super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestCase</name></name></super>
+<block>{<private type="default">
+</private><public>public:
+  <comment type="block" format="doxygen">/** @stereotype command stateless boolean_verifier */</comment>
+  <function stereotype="command stateless boolean_verifier "><type><name>void</name></type> <name>testEquality</name><parameter_list>()</parameter_list>
+  <block>{
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><literal type="number">1</literal> <operator>==</operator> <literal type="number">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  }</block></function>
+
+  <comment type="block" format="doxygen">/** @stereotype command collaborator boolean_verifier */</comment>
+  <function stereotype="command collaborator boolean_verifier "><type><name>void</name></type> <name>testCreation</name><parameter_list>()</parameter_list>
+  <block>{
+    <decl_stmt><decl><type><name><name>MyClass</name><argument_list type="generic">&lt;<argument><expr><name>callable</name></expr></argument>&gt;</argument_list></name><modifier>*</modifier></type> <name>tp</name> <init>= <expr><operator>new</operator> <call><name><name>MyClass</name><argument_list type="generic">&lt;<argument><expr><name>callable</name></expr></argument>&gt;</argument_list></name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_MESSAGE</name><argument_list>(<argument><expr><call><name><name>tp</name><operator>-&gt;</operator><name>done</name></name><argument_list>()</argument_list></call> <operator>==</operator> <literal type="boolean">true</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><operator>delete</operator> <name>tp</name></expr>;</expr_stmt>
+  }</block></function>
+
+  <comment type="block" format="doxygen">/** @stereotype non-void-command collaborator factory unclassified */</comment>
+  <function stereotype="non-void-command collaborator factory unclassified "><specifier>static</specifier> <type><name><name>CppUnit</name><operator>::</operator><name>Test</name></name><modifier>*</modifier></type> <name>suite</name><parameter_list>()</parameter_list>
+  <block>{
+    <decl_stmt><decl><type><name><name>CppUnit</name><operator>::</operator><name>TestSuite</name></name><modifier>*</modifier></type> <name>suiteOfTests</name> <init>= <expr><operator>new</operator> <call><name><name>CppUnit</name><operator>::</operator><name>TestSuite</name></name><argument_list>(<argument><expr><literal type="string">"MyClassTest"</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name><name>suiteOfTests</name><operator>-&gt;</operator><name>addTest</name></name><argument_list>(<argument><expr><operator>new</operator> <call><name><name>CppUnit</name><operator>::</operator><name><name>TestCaller</name><argument_list type="generic">&lt;<argument><expr><name>MyClassTest</name></expr></argument>&gt;</argument_list></name></name><argument_list>(<argument><expr><literal type="string">"testEquality"</literal></expr></argument>,
+                                              <argument><expr><operator>&amp;</operator><name><name>ThreadPoolTest</name><operator>::</operator><name>testEquality</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <return>return <expr><name>suiteOfTests</name></expr>;</return>
+  }</block></function>
+</public>}</block>;</class>
+</unit>

@@ -17,13 +17,10 @@ passed_count = 0
 
 def cleanFile(fileName):
 	file = open(fileName)
-	basename = os.path.splitext(fileName)[0]
-	newFile = basename + '_cleaned.xml'
-	w = open(newFile, "wt")
-	for line in file:
-		if line.strip():
-			w.write(line)
-	return open(newFile).readlines()
+	contents = file.read().strip()
+	file.close()
+
+	return contents.splitlines()
 
 try:
 
@@ -49,7 +46,7 @@ try:
 
 		# count success and failure and not crash or quit on failure
 		if len(diff) > 0:
-			print "".join(diff)
+			print basename + '_transformed.xml'
 			error_count = error_count + 1
 		else:
 			passed_count = passed_count + 1
@@ -63,6 +60,16 @@ except KeyboardInterrupt:
 print "Report:"
 if ki:
     print "Testing stopped by keyboard"
+
+current_dir = os.getcwd()
+for eachFile in os.listdir(current_dir):
+	if os.path.splitext(eachFile)[1] == '.cpp' or os.path.splitext(eachFile)[1] == '.xml':		
+		try:
+			os.remove(eachFile)
+		except Exception as e:
+			print(e)
+	else:
+		continue
 
 # print how many passed and failed.
 if error_count == 0:

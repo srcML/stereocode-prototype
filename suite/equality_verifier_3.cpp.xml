@@ -1,0 +1,38 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="equality_verifier_3.cpp"><cpp:empty>#source: https:</cpp:empty><comment type="line">//github.com/Ultimaker/CppUnit/blob/master/examples/cppunittest/assertion_traitsTest.cpp</comment>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;cppunit/TestAssert.h&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"CoreSuite.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"assertion_traitsTest.h"</cpp:file></cpp:include>
+
+
+<expr_stmt><expr><call><name>CPPUNIT_TEST_SUITE_NAMED_REGISTRATION</name><argument_list>( <argument><expr><name>assertion_traitsTest</name></expr></argument>,
+                                       <argument><expr><call><name>coreSuiteName</name><argument_list>()</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+<constructor><name><name>assertion_traitsTest</name><operator>::</operator><name>assertion_traitsTest</name></name><parameter_list>()</parameter_list>
+<block>{
+}</block></constructor>
+
+
+<comment type="block" format="doxygen">/** @stereotype command equality_verifier */</comment>
+<function stereotype="command equality_verifier "><type><name>void</name></type>
+<name><name>assertion_traitsTest</name><operator>::</operator><name>test_toString</name></name><parameter_list>()</parameter_list>
+<block>{
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name><name>std</name><operator>::</operator><name>string</name></name><argument_list>( <argument><expr><literal type="string">"abc"</literal></expr></argument> )</argument_list></call></expr></argument>, 
+			  <argument><expr><call><name><name>CPPUNIT_NS</name><operator>::</operator><name><name>assertion_traits</name><argument_list type="generic">&lt;<argument><expr><specifier>const</specifier> <name>char</name><operator>*</operator></expr></argument>&gt;</argument_list></name><operator>::</operator><name>toString</name></name><argument_list>( <argument><expr><literal type="string">"abc"</literal></expr></argument> )</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name><name>std</name><operator>::</operator><name>string</name></name><argument_list>( <argument><expr><literal type="string">"33"</literal></expr></argument> )</argument_list></call></expr></argument>, 
+			  <argument><expr><call><name><name>CPPUNIT_NS</name><operator>::</operator><name><name>assertion_traits</name><argument_list type="generic">&lt;<argument><expr><name>int</name></expr></argument>&gt;</argument_list></name><operator>::</operator><name>toString</name></name><argument_list>( <argument><expr><literal type="number">33</literal></expr></argument> )</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+    <comment type="line">// Test that assertion_traits&lt;double&gt;::toString() produces </comment>
+    <comment type="line">// more than the standard 6 digits of precision.</comment>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name><name>std</name><operator>::</operator><name>string</name></name><argument_list>( <argument><expr><literal type="string">"33.1"</literal></expr></argument> )</argument_list></call></expr></argument>, 
+			  <argument><expr><call><name><name>CPPUNIT_NS</name><operator>::</operator><name><name>assertion_traits</name><argument_list type="generic">&lt;<argument><expr><name>double</name></expr></argument>&gt;</argument_list></name><operator>::</operator><name>toString</name></name><argument_list>( <argument><expr><literal type="number">33.1</literal></expr></argument> )</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name><name>std</name><operator>::</operator><name>string</name></name><argument_list>( <argument><expr><literal type="string">"33.001"</literal></expr></argument> )</argument_list></call></expr></argument>, 
+			  <argument><expr><call><name><name>CPPUNIT_NS</name><operator>::</operator><name><name>assertion_traits</name><argument_list type="generic">&lt;<argument><expr><name>double</name></expr></argument>&gt;</argument_list></name><operator>::</operator><name>toString</name></name><argument_list>( <argument><expr><literal type="number">33.001</literal></expr></argument> )</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name><name>std</name><operator>::</operator><name>string</name></name><argument_list>( <argument><expr><literal type="string">"33.00001"</literal></expr></argument> )</argument_list></call></expr></argument>, 
+			  <argument><expr><call><name><name>CPPUNIT_NS</name><operator>::</operator><name><name>assertion_traits</name><argument_list type="generic">&lt;<argument><expr><name>double</name></expr></argument>&gt;</argument_list></name><operator>::</operator><name>toString</name></name><argument_list>( <argument><expr><literal type="number">33.00001</literal></expr></argument> )</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name><name>std</name><operator>::</operator><name>string</name></name><argument_list>( <argument><expr><literal type="string">"33.0000001"</literal></expr></argument> )</argument_list></call></expr></argument>, 
+			  <argument><expr><call><name><name>CPPUNIT_NS</name><operator>::</operator><name><name>assertion_traits</name><argument_list type="generic">&lt;<argument><expr><name>double</name></expr></argument>&gt;</argument_list></name><operator>::</operator><name>toString</name></name><argument_list>( <argument><expr><literal type="number">33.0000001</literal></expr></argument> )</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>( <argument><expr><call><name><name>std</name><operator>::</operator><name>string</name></name><argument_list>( <argument><expr><literal type="string">"33.0000000001"</literal></expr></argument> )</argument_list></call></expr></argument>, 
+			  <argument><expr><call><name><name>CPPUNIT_NS</name><operator>::</operator><name><name>assertion_traits</name><argument_list type="generic">&lt;<argument><expr><name>double</name></expr></argument>&gt;</argument_list></name><operator>::</operator><name>toString</name></name><argument_list>( <argument><expr><literal type="number">33.0000000001</literal></expr></argument> )</argument_list></call></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+</unit>

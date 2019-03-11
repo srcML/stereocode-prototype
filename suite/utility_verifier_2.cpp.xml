@@ -1,0 +1,63 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="utility_verifier_2.cpp"><comment type="line">//source: https://docs.opendap.org/index.php/UnitTests</comment>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"config.h"</cpp:file></cpp:include>        <comment type="line">// Build by autoconf</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;cppunit/TextTestRunner.h&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;cppunit/extensions/TestFactoryRegistry.h&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;cppunit/extensions/HelperMacros.h&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"AttrTable.h"</cpp:file></cpp:include>     <comment type="line">// The class to test</comment>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"debug.h"</cpp:file></cpp:include>         <comment type="line">// Debug macros</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"GetOpt.h"</cpp:file></cpp:include>        <comment type="line">// getopt C++ wrapper</comment>
+
+<decl_stmt><decl><specifier>static</specifier> <type><name>bool</name></type> <name>debug</name> <init>= <expr><literal type="boolean">false</literal></expr></init></decl>;</decl_stmt> <comment type="line">// Set down in main()</comment>
+
+<cpp:undef>#<cpp:directive>undef</cpp:directive> <name>DBG</name></cpp:undef>
+<cpp:define>#<cpp:directive>define</cpp:directive> <cpp:macro><name>DBG</name><parameter_list>(<parameter><type><name>x</name></type></parameter>)</parameter_list></cpp:macro> <cpp:value>do { if (debug) (x); } while(false);</cpp:value></cpp:define>
+<using>using <name>namepsace</name> <name>CppUnit</name>;</using>
+
+<namespace>namespace <name>libdap</name> <block>{
+
+<class>class <name>AttrTableTest</name><super>: <specifier>public</specifier> <name>TestFixture</name></super> <block>{<private type="default">
+    </private><private>private:
+        <decl_stmt><decl><type><name>AttrTable</name> <modifier>*</modifier></type><name>at1</name></decl>;</decl_stmt>
+
+    </private><public>public:
+        <constructor><name>AttrTableTest</name><parameter_list>()</parameter_list> <block>{ }</block></constructor>
+        <destructor><name>~<name>AttrTableTest</name></name><parameter_list>()</parameter_list> <block>{ }</block></destructor>
+
+        <comment type="block" format="doxygen">/** @stereotype set test_initializer */</comment>
+        <function stereotype="set test_initializer "><type><name>void</name></type> <name>setUp</name><parameter_list>()</parameter_list>
+        <block>{
+            <expr_stmt><expr><name>at1</name> <operator>=</operator> <operator>new</operator> <name>AttrTable</name></expr>;</expr_stmt>
+        }</block></function>
+
+        <comment type="block" format="doxygen">/** @stereotype set test_cleaner */</comment>
+        <function stereotype="set test_cleaner "><type><name>void</name></type> <name>tearDown</name><parameter_list>()</parameter_list>
+        <block>{
+            <expr_stmt><expr><operator>delete</operator> <name>at1</name></expr>;</expr_stmt>
+            <expr_stmt><expr><name>at1</name> <operator>=</operator> <literal type="number">0</literal></expr>;</expr_stmt>
+        }</block></function>
+
+    <comment type="line">// Tests and macros here...</comment>
+	<comment type="block" format="doxygen">/** @stereotype command collaborator boolean_verifier utility_verifier hybrid_verifier */</comment>
+	<function stereotype="command collaborator boolean_verifier utility_verifier hybrid_verifier "><type><name>void</name></type> <name>test_method</name><parameter_list>()</parameter_list>
+<block>{
+    <try>try <block>{
+        <comment type="line">// at1 is a class member, so it can be used in a method. Assume other code initialized at1...</comment>
+        <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><call><name><name>at1</name><operator>-&gt;</operator><name>name</name></name><argument_list>()</argument_list></call> <operator>==</operator> <literal type="string">"AttrTable"</literal></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="line">// It's common to call CPPUNIT_ASSERT() more than once</comment>
+        <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><call><name><name>at1</name><operator>-&gt;</operator><name>size</name></name><argument_list>()</argument_list></call> <operator>==</operator> <literal type="number">7</literal></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+    }</block>
+    <catch>catch<parameter_list>( <parameter><decl><type><name>Error</name> <modifier>&amp;</modifier></type><name>e</name></decl></parameter> )</parameter_list> <block>{
+        <comment type="line">// CppUnit does not know about exceptions other than its own, so if the code under test throws,</comment>
+        <comment type="line">// it can lead to some odd messages. Catching the exceptions and then using CPPUNIT_FAIL is a </comment>
+        <comment type="line">// good approach to that issue.</comment>
+        <macro><name>CPPUNIT_FAIL</name><argument_list>( <argument><literal type="string">"AttrTable threw an exception: "</literal> + e.get_error_message()</argument> )</argument_list></macro>
+    }</block></catch></try>
+}</block></function>
+
+</public>}</block>;</class>
+
+}</block></namespace> <comment type="line">// namespace libdap</comment>
+</unit>

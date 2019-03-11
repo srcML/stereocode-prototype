@@ -4,12 +4,74 @@
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"pch.h"</cpp:file></cpp:include>
 
 <expr_stmt><expr><call><name>CPPUNIT_TEST_SUITE_REGISTRATION</name><argument_list>(<argument><expr><name>fractiontest</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
 <class>class <name>fractiontest</name> <super>: <specifier>public</specifier> <name><name>CppUnit</name><operator>::</operator><name>TestFixture</name></name></super>  <block>{<private type="default">
+<comment type="block" format="doxygen">/** @stereotype command test_initializer */</comment>
+<function stereotype="command test_initializer "><type><name>void</name></type> <name>setUp</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
+<block>{
+	<comment type="line">// set up test environment (initializing objects)</comment>
+	<expr_stmt><expr><name>a</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>b</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">2</literal></expr></argument>, <argument><expr><literal type="number">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>c</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">2</literal></expr></argument>, <argument><expr><literal type="number">6</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>d</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>(<argument><expr><operator>-</operator><literal type="number">5</literal></expr></argument>, <argument><expr><literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>e</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">5</literal></expr></argument>, <argument><expr><operator>-</operator><literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>f</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>(<argument><expr><operator>-</operator><literal type="number">5</literal></expr></argument>, <argument><expr><operator>-</operator><literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>g</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">5</literal></expr></argument>, <argument><expr><literal type="number">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><name>h</name> <operator>=</operator> <operator>new</operator> <call><name>Fraction</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+
+<comment type="block" format="doxygen">/** @stereotype test_cleaner */</comment>
+<function stereotype="test_cleaner "><type><name>void</name></type> <name>tearDown</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
+<block>{
+	<comment type="line">// finally delete objects</comment>
+	<expr_stmt><expr><operator>delete</operator> <name>a</name></expr>;</expr_stmt> <expr_stmt><expr><operator>delete</operator> <name>b</name></expr>;</expr_stmt> <expr_stmt><expr><operator>delete</operator> <name>c</name></expr>;</expr_stmt> <expr_stmt><expr><operator>delete</operator> <name>d</name></expr>;</expr_stmt>
+	<expr_stmt><expr><operator>delete</operator> <name>e</name></expr>;</expr_stmt> <expr_stmt><expr><operator>delete</operator> <name>f</name></expr>;</expr_stmt> <expr_stmt><expr><operator>delete</operator> <name>g</name></expr>;</expr_stmt> <expr_stmt><expr><operator>delete</operator> <name>h</name></expr>;</expr_stmt>
+}</block></function>
+
+<comment type="block" format="doxygen">/** @stereotype command equality_verifier */</comment>
+<function stereotype="command equality_verifier "><type><name>void</name></type> <name>addTest</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
+<block>{
+	<comment type="line">// check subtraction results</comment>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>a</name> <operator>+</operator> <operator>*</operator><name>b</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">7</literal></expr></argument>, <argument><expr><literal type="number">6</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>b</name> <operator>+</operator> <operator>*</operator><name>c</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>d</name> <operator>+</operator> <operator>*</operator><name>e</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><operator>-</operator><literal type="number">5</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>e</name> <operator>+</operator> <operator>*</operator><name>f</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>h</name> <operator>+</operator> <operator>*</operator><name>c</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">2</literal></expr></argument>, <argument><expr><literal type="number">6</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>a</name> <operator>+</operator> <operator>*</operator><name>b</name> <operator>+</operator> <operator>*</operator><name>c</name> <operator>+</operator> <operator>*</operator><name>d</name> <operator>+</operator> <operator>*</operator><name>e</name> <operator>+</operator> <operator>*</operator><name>f</name> <operator>+</operator> <operator>*</operator><name>g</name> <operator>+</operator> <operator>*</operator><name>h</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">3</literal></expr></argument>, <argument><expr><literal type="number">2</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+
+<comment type="block" format="doxygen">/** @stereotype command equality_verifier */</comment>
+<function stereotype="command equality_verifier "><type><name>void</name></type> <name>subTest</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
+<block>{
+	<comment type="line">// check addition results</comment>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>a</name> <operator>-</operator> <operator>*</operator><name>b</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><operator>-</operator><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">6</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>b</name> <operator>-</operator> <operator>*</operator><name>c</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">3</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>b</name> <operator>-</operator> <operator>*</operator><name>c</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">2</literal></expr></argument>, <argument><expr><literal type="number">6</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>d</name> <operator>-</operator> <operator>*</operator><name>e</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>d</name> <operator>-</operator> <operator>*</operator><name>e</name> <operator>-</operator> <operator>*</operator><name>f</name> <operator>-</operator> <operator>*</operator><name>g</name> <operator>-</operator> <operator>*</operator><name>h</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><operator>-</operator><literal type="number">5</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
 <comment type="block" format="doxygen">/** @stereotype command exception_verifier */</comment>
-<function stereotype="command collaborator exception_verifier "><type><name>void</name></type> <name>exceptionTest</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
+<function stereotype="command exception_verifier "><type><name>void</name></type> <name>exceptionTest</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
 <block>{
 	<comment type="line">// an exception has to be thrown here</comment>
 	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_THROW</name><argument_list>(<argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><name>DivisionByZeroException</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+
+<comment type="block" format="doxygen">/** @stereotype command boolean_verifier equality_verifier hybrid_verifier */</comment>
+<function stereotype="command boolean_verifier equality_verifier hybrid_verifier "><type><name>void</name></type> <name>equalTest</name><parameter_list>(<parameter><decl><type><name>void</name></type></decl></parameter>)</parameter_list>
+<block>{
+	<comment type="line">// test successful, if true is returned</comment>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><operator>*</operator><name>d</name> <operator>==</operator> <operator>*</operator><name>e</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call> <operator>==</operator> <call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">2</literal></expr></argument>, <argument><expr><literal type="number">2</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call> <operator>!=</operator> <call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>, <argument><expr><literal type="number">2</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<comment type="line">// both must have equal valued</comment>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>f</name></expr></argument>, <argument><expr><operator>*</operator><name>g</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>h</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+	<expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><operator>*</operator><name>h</name></expr></argument>, <argument><expr><call><name>Fraction</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>, <argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
 }</block></function>
 </private>}</block>;</class>
 </unit>

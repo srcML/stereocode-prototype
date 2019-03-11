@@ -2,7 +2,7 @@
     <comment type="block">/* snip */</comment>
 </private><public>public:
     <comment type="block" format="doxygen">/** @stereotype command boolean_verifier equality_verifier doubles_equality_verifier exception_verifier no_exception_verifier assertion_verifier utility_verifier hybrid_verifier branch_verifier iterative_verifier */</comment>
-    <function stereotype="command collaborator boolean_verifier equality_verifier doubles_equality_verifier exception_verifier no_exception_verifier assertion_verifier utility_verifier hybrid_verifier branch_verifier iterative_verifier "><type><name>void</name></type> <name>ageTest</name><parameter_list>()</parameter_list><block>{
+    <function stereotype="command boolean_verifier equality_verifier doubles_equality_verifier exception_verifier no_exception_verifier assertion_verifier utility_verifier hybrid_verifier branch_verifier iterative_verifier "><type><name>void</name></type> <name>ageTest</name><parameter_list>()</parameter_list><block>{
         <decl_stmt><decl><type><name>int</name></type> <name>age</name> <init>= <expr><call><name><name>ClassImTesting</name><operator>.</operator><name>getAge</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
 
         <comment type="line">// simple asserts</comment>
@@ -27,5 +27,9 @@
 	}</control></for>
     }</block></function>
 
+    <comment type="block" format="doxygen">/** @stereotype test_initializer */</comment>
+    <function stereotype="test_initializer "><type><name>void</name></type> <name>setUp</name><parameter_list>()</parameter_list><block>{<expr_stmt><expr><operator>...</operator></expr></expr_stmt>}</block></function>    <comment type="line">// used to set up the require preconditions</comment>
+    <comment type="block" format="doxygen">/** @stereotype test_cleaner */</comment>
+    <function stereotype="test_cleaner "><type><name>void</name></type> <name>tearDown</name><parameter_list>()</parameter_list><block>{<expr_stmt><expr><operator>...</operator></expr></expr_stmt>}</block></function> <comment type="line">// called after tests are run, in order to clean up.</comment>
 </public>}</block>;</class>
 </unit>

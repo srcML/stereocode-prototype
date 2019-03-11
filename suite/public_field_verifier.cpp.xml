@@ -1,0 +1,85 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="public_field_verifier.cpp"><comment type="block">/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */</comment>
+<comment type="block">/*
+ * This file is part of the LibreOffice project.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */</comment>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;com/sun/star/frame/Desktop.hpp&gt;</cpp:file></cpp:include>
+
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;comphelper/processfactory.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;sfx2/app.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;sfx2/objsh.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;sfx2/sfxbasemodel.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;test/unoapi_test.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;vcl/bitmapaccess.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;vcl/pngwrite.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;vcl/gdimtf.hxx&gt;</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;tools/stream.hxx&gt;</cpp:file></cpp:include>
+
+<using>using <namespace>namespace <name><name>com</name><operator>::</operator><name>sun</name><operator>::</operator><name>star</name></name>;</namespace></using>
+
+<class>class <name>Test</name> <super>: <specifier>public</specifier> <name>UnoApiTest</name></super>
+<block>{<private type="default">
+</private><public>public:
+    <constructor><name>Test</name><parameter_list>()</parameter_list> <member_init_list>: <call><name>UnoApiTest</name><argument_list>(<argument><expr><literal type="string">"/cppcanvas/qa/extras/emfplus/data/"</literal></expr></argument>)</argument_list></call>
+    </member_init_list><block>{
+    }</block></constructor>
+
+    <comment type="block" format="doxygen">/** @stereotype command test_initializer */</comment>
+    <function stereotype="command test_initializer "><specifier>virtual</specifier> <type><name>void</name></type> <name>setUp</name><parameter_list>()</parameter_list> <specifier>override</specifier>
+    <block>{
+        <expr_stmt><expr><call><name><name>UnoApiTest</name><operator>::</operator><name>setUp</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name><name>mxDesktop</name><operator>.</operator><name>set</name></name><argument_list>(<argument><expr><call><name><name>frame</name><operator>::</operator><name>Desktop</name><operator>::</operator><name>create</name></name><argument_list>(<argument><expr><call><name><name>comphelper</name><operator>::</operator><name>getComponentContext</name></name><argument_list>(<argument><expr><call><name>getMultiServiceFactory</name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name><name>SfxApplication</name><operator>::</operator><name>GetOrCreate</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    }</block></function><empty_stmt>;</empty_stmt>
+
+    <comment type="block" format="doxygen">/** @stereotype command test_cleaner */</comment>
+    <function stereotype="command test_cleaner "><specifier>virtual</specifier> <type><name>void</name></type> <name>tearDown</name><parameter_list>()</parameter_list> <specifier>override</specifier>
+    <block>{
+        <if>if <condition>(<expr><call><name><name>mxComponent</name><operator>.</operator><name>is</name></name><argument_list>()</argument_list></call></expr>)</condition><then>
+        <block>{
+            <expr_stmt><expr><call><name>closeDocument</name><argument_list>(<argument><expr><name>mxComponent</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name><name>mxComponent</name><operator>-&gt;</operator><name>dispose</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        }</block></then></if>
+        <expr_stmt><expr><call><name><name>UnoApiTest</name><operator>::</operator><name>tearDown</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    }</block></function><empty_stmt>;</empty_stmt>
+
+    <comment type="block" format="doxygen">/** @stereotype non-void-command collaborator boolean_verifier equality_verifier hybrid_verifier branch_verifier api_utility_verifier public_field_verifier */</comment>
+    <function stereotype="non-void-command collaborator boolean_verifier equality_verifier hybrid_verifier branch_verifier api_utility_verifier public_field_verifier "><type><name>Bitmap</name></type> <name>load</name><parameter_list>(<parameter><decl><type><specifier>const</specifier> <name>char</name><modifier>*</modifier></type> <name>pName</name></decl></parameter>)</parameter_list>
+    <block>{
+        <decl_stmt><decl><type><name>OUString</name></type> <name>aFileURL</name></decl>;</decl_stmt>
+        <expr_stmt><expr><call><name>createFileURL</name><argument_list>(<argument><expr><call><name><name>OUString</name><operator>::</operator><name>createFromAscii</name></name><argument_list>(<argument><expr><name>pName</name></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><name>aFileURL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><name>mxComponent</name> <operator>=</operator> <call><name>loadFromDesktop</name><argument_list>(<argument><expr><name>aFileURL</name></expr></argument>, <argument><expr><literal type="string">"com.sun.star.drawing.DrawingDocument"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <decl_stmt><decl><type><name>SfxBaseModel</name><modifier>*</modifier></type> <name>pModel</name> <init>= <expr><cast type="dynamic">dynamic_cast<argument_list type="generic">&lt;<argument><expr><name>SfxBaseModel</name><operator>*</operator></expr></argument>&gt;</argument_list><argument_list>(<argument><expr><call><name><name>mxComponent</name><operator>.</operator><name>get</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></cast></expr></init></decl>;</decl_stmt>
+        <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><name>pModel</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <decl_stmt><decl><type><name>SfxObjectShell</name><modifier>*</modifier></type> <name>pShell</name> <init>= <expr><call><name><name>pModel</name><operator>-&gt;</operator><name>GetObjectShell</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name><name>std</name><operator>::</operator><name><name>shared_ptr</name><argument_list type="generic">&lt;<argument><expr><name>GDIMetaFile</name></expr></argument>&gt;</argument_list></name></name></type> <name>xMetaFile</name> <init>= <expr><call><name><name>pShell</name><operator>-&gt;</operator><name>GetPreviewMetaFile</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>BitmapEx</name></type> <name>aResultBitmap</name></decl>;</decl_stmt>
+        <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><call><name><name>xMetaFile</name><operator>-&gt;</operator><name>CreateThumbnail</name></name><argument_list>(<argument><expr><name>aResultBitmap</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <comment type="line">// If this is set, the metafile will be dumped as a PNG one for debug purposes.</comment>
+        <decl_stmt><decl><type><name>char</name><modifier>*</modifier></type> <name>pEnv</name> <init>= <expr><call><name>getenv</name><argument_list>(<argument><expr><literal type="string">"CPPCANVAS_DEBUG_EMFPLUS_DUMP_TO"</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+        <if>if <condition>(<expr><name>pEnv</name></expr>)</condition><then>
+        <block>{
+            <decl_stmt><decl><type><name>SvFileStream</name></type> <name>aStream</name><argument_list>(<argument><expr><call><name><name>OUString</name><operator>::</operator><name>fromUtf8</name></name><argument_list>(<argument><expr><name>pEnv</name></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><name><name>StreamMode</name><operator>::</operator><name>WRITE</name></name></expr></argument>)</argument_list></decl>;</decl_stmt>
+            <decl_stmt><decl><type><name><name>vcl</name><operator>::</operator><name>PNGWriter</name></name></type> <name>aWriter</name><argument_list>(<argument><expr><name>aResultBitmap</name></expr></argument>)</argument_list></decl>;</decl_stmt>
+            <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><call><name><name>aWriter</name><operator>.</operator><name>Write</name></name><argument_list>(<argument><expr><name>aStream</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        }</block></then></if>
+
+    <comment type="line">// The green star was missing.</comment>
+    <decl_stmt><decl><type><name>Color</name></type> <name>aColor</name><argument_list>(<argument><expr><call><name><name>pAccess</name><operator>-&gt;</operator><name>GetPixel</name></name><argument_list>(<argument><expr><literal type="number">142</literal></expr></argument>, <argument><expr><literal type="number">140</literal></expr></argument>)</argument_list></call><operator>.</operator><call><name>GetColor</name><argument_list>()</argument_list></call></expr></argument>)</argument_list></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><call><name>sal_uInt8</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><call><name><name>aColor</name><operator>.</operator><name>GetRed</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><call><name>sal_uInt8</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><call><name><name>aColor</name><operator>.</operator><name>GetBlue</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><call><name><name>aColor</name><operator>.</operator><name>GetGreen</name></name><argument_list>()</argument_list></call> <operator>==</operator> <literal type="number">0xfe</literal> <operator>||</operator> <call><name><name>aColor</name><operator>.</operator><name>GetGreen</name></name><argument_list>()</argument_list></call> <operator>==</operator> <literal type="number">0xff</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return>return <expr><call><name><name>aResultBitmap</name><operator>.</operator><name>GetBitmap</name></name><argument_list>()</argument_list></call></expr>;</return>
+    }</block></function>
+    
+    <decl_stmt><decl><type><name><name>uno</name><operator>::</operator><name><name>Reference</name><argument_list type="generic">&lt;<argument><expr><name><name>lang</name><operator>::</operator><name>XComponent</name></name></expr></argument>&gt;</argument_list></name></name></type> <name>mxComponent</name></decl>;</decl_stmt>
+</public>}</block>;</class>
+
+
+<comment type="block">/* vim:set shiftwidth=4 softtabstop=4 expandtab: */</comment>
+</unit>
