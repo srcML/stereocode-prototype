@@ -1191,9 +1191,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:template match="src:function[descendant::src:name='tearDown']" mode="test_cleaner">test_cleaner </xsl:template>
 <xsl:template match="src:function" mode="test_cleaner"/>
 
-<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[not(contains(src:name,'CPPUNIT')) and not(src:name/src:operator)] and not(descendant::src:name='setUp') and not(descendant::src:name='tearDown')]" 
-  mode="api_utility_verifier">api_utility_verifier </xsl:template>
-<xsl:template match="src:function" mode="api_utility_verifier"/>
+
 
 <xsl:template match="src:function[
   (
@@ -1349,6 +1347,10 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   </xsl:template>
 <xsl:template match="src:function" mode="public_field_verifier"/>
 
+<xsl:template match="src:function[descendant::src:expr_stmt/src:expr]" mode="api_utility_verifier">
+  <xsl:if test="descendant::src:expr_stmt/src:expr[not(contains(src:operator,'.')) and not(contains(src:operator,'='))]/src:call[not(contains(src:name,'CPPUNIT'))]/src:name[not(contains(src:operator,'.'))]">api_utility_verifier </xsl:if>
+</xsl:template>
+<xsl:template match="src:function" mode="api_utility_verifier"/>
   <!--
       Section responsible for actually applying all of the stereotypes and annotating
       the source code with a comment.
@@ -1425,5 +1427,4 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   </xsl:template>
 
 </xsl:stylesheet>
-
 
