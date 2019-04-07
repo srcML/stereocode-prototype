@@ -1185,10 +1185,10 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS']]" mode="assertion_verifier">assertion_verifier </xsl:template>
 <xsl:template match="src:function" mode="assertion_verifier"/>
 
-<xsl:template match="src:function[descendant::src:name='setUp']" mode="test_initializer">test_initializer </xsl:template>
+<xsl:template match="src:function[src:name='setUp' or src:name[src:name='setUp']]" mode="test_initializer">test_initializer </xsl:template>
 <xsl:template match="src:function" mode="test_initializer"/>
 
-<xsl:template match="src:function[descendant::src:name='tearDown']" mode="test_cleaner">test_cleaner </xsl:template>
+<xsl:template match="src:function[src:name='tearDown' or src:name[src:name='tearDown']]" mode="test_cleaner">test_cleaner </xsl:template>
 <xsl:template match="src:function" mode="test_cleaner"/>
 
 
@@ -1225,8 +1225,9 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
   count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
   count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
-  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) = 0) and not(.//src:name='setUp') and 
-  not(.//src:name='tearDown')]" mode="unclassified">unclassified </xsl:template>
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) = 0) and not(src:name='setUp') and 
+  not(src:name='tearDown') and not(src:name[src:name='setUp']) and 
+  not(src:name[src:name='tearDown'])]" mode="unclassified">unclassified </xsl:template>
 <xsl:template match="src:function" mode="unclassified"/>
 
 <xsl:template match="src:function[descendant::src:if/src:then[
@@ -1348,7 +1349,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:template match="src:function" mode="public_field_verifier"/>
 
 <xsl:template match="src:function[descendant::src:expr_stmt/src:expr]" mode="api_utility_verifier">
-  <xsl:if test="descendant::src:expr_stmt/src:expr[not(contains(src:operator,'.')) and not(contains(src:operator,'='))]/src:call[not(contains(src:name,'CPPUNIT'))]/src:name[not(contains(src:operator,'.'))]">api_utility_verifier </xsl:if>
+  <xsl:if test="descendant::src:expr_stmt/src:expr[not(src:operator)]/src:call[not(contains(src:name,'CPPUNIT')) and not(src:argument_list='()')]/src:name[not(src:operator)]">api_utility_verifier </xsl:if>
 </xsl:template>
 <xsl:template match="src:function" mode="api_utility_verifier"/>
   <!--
@@ -1427,4 +1428,3 @@ To identify the stereotype Creator::Factory the following conditions need to be 
   </xsl:template>
 
 </xsl:stylesheet>
-
