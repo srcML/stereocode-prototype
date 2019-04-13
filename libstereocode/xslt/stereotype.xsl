@@ -1321,7 +1321,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 <xsl:template match="src:function" mode="iterative_verifier"/>
 
 <xsl:template match="src:function[descendant::src:expr/src:call[descendant::src:operator='.'] 
-  and not(descendant::src:name='setUp') and not(descendant::src:name='tearDown') and 
+  and not(descendant::src:name='setUp') and not(descendant::src:name[src:name='setUp']) and not(descendant::src:name='tearDown') and not(descendant::src:name[src:name='tearDown']) and 
    (
   count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
         (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +

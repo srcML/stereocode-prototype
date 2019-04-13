@@ -262,7 +262,407 @@ class TestStereotypeXslt(unittest.TestCase):
         })
 
 
+    #start cppUnit stereotype
+    @srcMLifyCode("tests/test_data/api_utility_verifier.cpp")
+    def test_api_utility_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
 
+
+    @srcMLifyCode("tests/test_data/assertion_verifier.cpp")
+    def test_assertion_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/boolean_verifier.cpp")
+    def test_boolean_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/boolean_verifier_2.cpp")
+    def test_boolean_verifier2(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/boolean_verifier_3.cpp")
+    def test_boolean_verifier3(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/branch_verifier.cpp")
+    def test_branch_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/branch_verifier_2.cpp")
+    def test_branch_verifier2(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/doubles_equality_verifier.cpp")
+    def test_doubles_equality_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/equality_verifier.cpp")
+    def test_equality_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/equality_verifier_2.cpp")
+    def test_equality_verifier2(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/equality_verifier_3.cpp")
+    def test_equality_verifier3(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/exception_verifier.cpp")
+    def test_exception_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/execution_tester.cpp")
+    def test_execution_tester(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/hybrid_verifier.cpp")
+    def test_hybrid_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/hybrid_verifier_2.cpp")
+    def test_hybrid_verifier2(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/iterative_verifier.cpp")
+    def test_iterative_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/public_field_verifier.cpp")
+    def test_public_field_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/public_field_verifier_2.cpp")
+    def test_public_field_verifier2(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/test_cleaner.cpp")
+    def test_test_cleaner(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+
+    @srcMLifyCode("tests/test_data/test_initializer.cpp")
+    def test_test_initializer(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/utility_verifier.cpp")
+    def test_utility_verifier(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
+
+    @srcMLifyCode("tests/test_data/utility_verifier_2.cpp")
+    def test_utility_verifier2(self, tree):
+        executeAndTestTransform(self, tree, stereocodeDoc, {
+            "matchesWithAStereotype": 8,
+            "functionInfo":
+            [
+                ("checkWidth", ["unclassified"]),
+                ("replaceColumn", ["unclassified"]),
+                ("addColumn", ["unclassified"]),
+                ("doubleArrayAt", ["unclassified"]),
+                ("checkWidth", ['command', 'collaborator']),
+                ("t_action",["get"]),
+                ("checkForImage", ["collaborator"]),
+                ("setLabelAt", ["command"]),
+                
+            ]
+        })
 
 
     # 
