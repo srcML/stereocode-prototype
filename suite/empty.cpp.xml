@@ -1,0 +1,5 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="empty.cpp"><comment type="block" format="doxygen">/** @stereotype empty unclassified */</comment>
+<function stereotype="empty unclassified "><type><name>void</name></type> <name><name>SearchTest</name><operator>::</operator><name>testSearched</name></name><parameter_list>()</parameter_list>
+<block>{
+
+}</block></function></unit>

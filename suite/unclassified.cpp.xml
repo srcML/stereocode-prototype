@@ -1,0 +1,7 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="unclassified.cpp"><comment type="block" format="doxygen">/** @stereotype unclassified */</comment>
+<function stereotype="unclassified "><type><name>void</name></type>
+<name><name>ObjectStorageTest</name><operator>::</operator><name>test_validate_keys</name></name><parameter_list>()</parameter_list> <block>{
+  <decl_stmt><decl><type><name><name>torrent</name><operator>::</operator><name>raw_string</name></name></type> <name>raw_string_4</name><argument_list>(<argument><expr><literal type="string">"test_4\0foo"</literal></expr></argument>, <argument><expr><literal type="number">10</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+
+  <macro><name>ASSERT_CATCH_INPUT_ERROR</name><argument_list>( <argument>{ m_storage.insert(raw_string_4, torrent::Object(<literal type="string">"a"</literal>), rpc::object_storage::flag_string_type); }</argument> )</argument_list></macro><empty_stmt>;</empty_stmt>
+}</block></function></unit>

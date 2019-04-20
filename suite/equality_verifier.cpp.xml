@@ -1,0 +1,8 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="equality_verifier.cpp"><comment type="block" format="doxygen">/** @stereotype equality_verifier api_utility_verifier */</comment>
+<function stereotype="equality_verifier api_utility_verifier "><type><name>void</name></type> <name><name>GameTest</name><operator>::</operator><name>testAllGutter</name></name><parameter_list>()</parameter_list>
+<block>{
+  <expr_stmt><expr><call><name>rollMany</name><argument_list>(<argument><expr><literal type="number">20</literal></expr></argument>, <argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>, <argument><expr><call><name><name>game</name><operator>-&gt;</operator><name>score</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function>
+
+</unit>

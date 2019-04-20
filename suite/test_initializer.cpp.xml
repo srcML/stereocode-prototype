@@ -1,0 +1,7 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="test_initializer.cpp"><comment type="block" format="doxygen">/** @stereotype test_initializer api_utility_verifier */</comment>
+<function stereotype="test_initializer api_utility_verifier "><type><name>void</name></type>
+<name><name>HashCheckQueueTest</name><operator>::</operator><name>setUp</name></name><parameter_list>()</parameter_list> <block>{
+  <expr_stmt><expr><call><name><name>torrent</name><operator>::</operator><name>Poll</name><operator>::</operator><name>slot_create_poll</name></name><argument_list>()</argument_list></call> <operator>=</operator> <call><name><name>tr1</name><operator>::</operator><name>bind</name></name><argument_list>(<argument><expr><operator>&amp;</operator><name>create_select_poll</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+  <expr_stmt><expr><call><name>signal</name><argument_list>(<argument><expr><name>SIGUSR1</name></expr></argument>, <argument><expr><operator>(</operator><name>sig_t</name><operator>)</operator><operator>&amp;</operator><name>do_nothing</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+}</block></function></unit>

@@ -1,0 +1,16 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="branch_verifier.cpp"><comment type="block" format="doxygen">/** @stereotype boolean_verifier branch_verifier api_utility_verifier */</comment>
+<function stereotype="boolean_verifier branch_verifier api_utility_verifier "><type><name>Trigger</name><modifier>*</modifier></type> <name><name>MockAiObjectContext</name><operator>::</operator><name>GetTrigger</name></name><parameter_list>(<parameter><decl><type><name>string</name></type>  <name>name</name></decl></parameter>)</parameter_list>
+<block>{
+    <if>if <condition>(<expr><operator>!</operator><call><name><name>realContext</name><operator>-&gt;</operator><name>GetTrigger</name></name><argument_list>(<argument><expr><name>name</name></expr></argument>)</argument_list></call></expr>)</condition><then>
+    <block>{
+        <expr_stmt><expr><call><name>reportNotFound</name><argument_list>(<argument><expr><literal type="string">"Trigger"</literal></expr></argument>, <argument><expr><name>name</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><literal type="boolean">false</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></then></if>
+
+    <decl_stmt><decl><type><name>Trigger</name><modifier>*</modifier></type> <name>trigger</name> <init>= <expr><name><name>triggers</name><index>[<expr><name>name</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
+    <if>if <condition>(<expr><name>trigger</name></expr>)</condition><then>
+        <block type="pseudo"><return>return <expr><name>trigger</name></expr>;</return></block></then></if>
+
+    <return>return <expr><name><name>triggers</name><index>[<expr><name>name</name></expr>]</index></name> <operator>=</operator> <operator>new</operator> <call><name>MockTrigger</name><argument_list>(<argument><expr><name>ai</name></expr></argument>, <argument><expr><name>name</name></expr></argument>)</argument_list></call></expr>;</return>
+}</block></function>
+</unit>

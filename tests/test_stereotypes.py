@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 from subprocess import check_output
 import difflib
+import fileinput
 
 
 
@@ -16,6 +17,15 @@ total_count = 0
 passed_count = 0
 
 def cleanFile(fileName):
+	with fileinput.FileInput(fileName, inplace=True) as f:
+		    for line in f:
+		    	line = line.replace("non-void-command ", "")
+	    		line = line.replace("command ", "")
+	    		line = line.replace("set ","")
+	    		line = line.replace("factory ","")
+	    		line = line.replace("collaborator ", "")
+	    		line = line.replace("stateless ", "")
+	    		print(line, end='')
 	file = open(fileName)
 	contents = file.read().strip()
 	file.close()
@@ -46,7 +56,8 @@ try:
 
 		# count success and failure and not crash or quit on failure
 		if len(diff) > 0:
-			print basename + '_transformed.xml'
+			print(diff)
+			print("")
 			error_count = error_count + 1
 		else:
 			passed_count = passed_count + 1
@@ -57,9 +68,9 @@ try:
 except KeyboardInterrupt:
     ki = True
 
-print "Report:"
+print("Report")
 if ki:
-    print "Testing stopped by keyboard"
+    print("Testing stopped by keyboard")
 
 current_dir = os.getcwd()
 for eachFile in os.listdir(current_dir):
@@ -73,10 +84,10 @@ for eachFile in os.listdir(current_dir):
 
 # print how many passed and failed.
 if error_count == 0:
-    print "Errors: 0 out of " + str(total_count) + " cases"
+    print("Errors: 0 out of " + str(total_count) + " cases")
 else:
-	print "Passed tests:  " + str(passed_count) + " out of " + str(total_count) + " cases"
-	print "Errors found:  " + str(error_count) + " out of " + str(total_count) + " cases"
+	print("Passed tests:  " + str(passed_count) + " out of " + str(total_count) + " cases")
+	print("Errors found:  " + str(error_count) + " out of " + str(total_count) + " cases")
 
 
 exit

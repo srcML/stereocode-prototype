@@ -1,0 +1,63 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="utility_verifier.cpp"><comment type="block" format="doxygen">/** @stereotype equality_verifier utility_verifier hybrid_verifier branch_verifier api_utility_verifier public_field_verifier */</comment>
+<function stereotype="equality_verifier utility_verifier hybrid_verifier branch_verifier api_utility_verifier public_field_verifier "><type><name>void</name></type> <name><name>test</name><operator>::</operator><name>BootstrapFixture</name><operator>::</operator><name>validate</name></name><parameter_list>(<parameter><decl><type><specifier>const</specifier> <name>OUString</name><modifier>&amp;</modifier></type> <name>rPath</name></decl></parameter>, <parameter><decl><type><name><name>test</name><operator>::</operator><name>ValidationFormat</name></name></type> <name>eFormat</name></decl></parameter> )</parameter_list>
+<block>{
+    <expr_stmt><expr><operator>(</operator><name>void</name><operator>)</operator><name>rPath</name></expr>;</expr_stmt>
+    <expr_stmt><expr><operator>(</operator><name>void</name><operator>)</operator><name>eFormat</name></expr>;</expr_stmt>
+
+<cpp:if>#<cpp:directive>if</cpp:directive> <expr><name>HAVE_EXPORT_VALIDATION</name></expr></cpp:if>
+    <decl_stmt><decl><type><name>OUString</name></type> <name>aValidator</name></decl>;</decl_stmt>
+    <if>if<condition>( <expr><name>eFormat</name> <operator>==</operator> <name><name>test</name><operator>::</operator><name>OOXML</name></name></expr> )</condition><then>
+    <block>{
+        <expr_stmt><expr><name>aValidator</name> <operator>=</operator> <literal type="string">"officeotron "</literal></expr>;</expr_stmt>
+    }</block></then>
+    <else>else
+    <block>{
+        <expr_stmt><expr><name>aValidator</name> <operator>=</operator> <literal type="string">"odfvalidator "</literal></expr>;</expr_stmt>
+    }</block></else></if>
+
+    <decl_stmt><decl><type><name><name>utl</name><operator>::</operator><name>TempFile</name></name></type> <name>aOutput</name></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name><name>aOutput</name><operator>.</operator><name>EnableKillingFile</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    <decl_stmt><decl><type><name>OUString</name></type> <name>aOutputFile</name> <init>= <expr><call><name><name>aOutput</name><operator>.</operator><name>GetFileName</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>OUString</name></type> <name>aCommand</name> <init>= <expr><name>aValidator</name> <operator>+</operator> <name>rPath</name> <operator>+</operator> <literal type="string">" &gt; "</literal> <operator>+</operator> <name>aOutputFile</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt><decl><type><name>int</name></type> <name>returnValue</name> <init>= <expr><call><name>system</name><argument_list>(<argument><expr><call><name>OUStringToOString</name><argument_list>(<argument><expr><name>aCommand</name></expr></argument>, <argument><expr><name>RTL_TEXTENCODING_UTF8</name></expr></argument>)</argument_list></call><operator>.</operator><call><name>getStr</name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL_MESSAGE</name><argument_list>(
+        <argument><expr><call><name>OUStringToOString</name><argument_list>(<argument><expr><call><name>OUString</name><argument_list>(<argument><expr><literal type="string">"failed to execute: "</literal></expr></argument>)</argument_list></call> <operator>+</operator> <name>aCommand</name></expr></argument>,
+            <argument><expr><name>RTL_TEXTENCODING_UTF8</name></expr></argument>)</argument_list></call><operator>.</operator><call><name>getStr</name><argument_list>()</argument_list></call></expr></argument>, <argument><expr><literal type="number">0</literal></expr></argument>, <argument><expr><name>returnValue</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <decl_stmt><decl><type><name>OString</name></type> <name>aContentString</name> <init>= <expr><call><name>loadFile</name><argument_list>(<argument><expr><call><name><name>aOutput</name><operator>.</operator><name>GetURL</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>OUString</name></type> <name>aContentOUString</name> <init>= <expr><call><name>OStringToOUString</name><argument_list>(<argument><expr><name>aContentString</name></expr></argument>, <argument><expr><name>RTL_TEXTENCODING_UTF8</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <if>if<condition>( <expr><name>eFormat</name> <operator>==</operator> <name><name>test</name><operator>::</operator><name>OOXML</name></name> <operator>&amp;&amp;</operator> <operator>!</operator><call><name><name>aContentOUString</name><operator>.</operator><name>isEmpty</name></name><argument_list>()</argument_list></call></expr> )</condition><then>
+    <block>{
+        <comment type="line">// check for validation errors here</comment>
+        <decl_stmt><decl><type><name>sal_Int32</name></type> <name>nIndex</name> <init>= <expr><call><name><name>aContentOUString</name><operator>.</operator><name>lastIndexOf</name></name><argument_list>(<argument><expr><literal type="string">"Grand total of errors in submitted package: "</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+        <if>if<condition>(<expr><name>nIndex</name> <operator>==</operator> <operator>-</operator><literal type="number">1</literal></expr>)</condition><then>
+        <block>{
+            <expr_stmt><expr><call><name>SAL_WARN</name><argument_list>(<argument><expr><literal type="string">"test"</literal></expr></argument>, <argument><expr><literal type="string">"no summary line"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        }</block></then>
+        <else>else
+        <block>{
+            <decl_stmt><decl><type><name>sal_Int32</name></type> <name>nStartOfNumber</name> <init>= <expr><name>nIndex</name> <operator>+</operator> <call><name><name>std</name><operator>::</operator><name>strlen</name></name><argument_list>(<argument><expr><literal type="string">"Grand total of errors in submitted package: "</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+            <decl_stmt><decl><type><name>OUString</name></type> <name>aNumber</name> <init>= <expr><call><name><name>aContentOUString</name><operator>.</operator><name>copy</name></name><argument_list>(<argument><expr><name>nStartOfNumber</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+            <decl_stmt><decl><type><name>sal_Int32</name></type> <name>nErrors</name> <init>= <expr><call><name><name>aNumber</name><operator>.</operator><name>toInt32</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+            <decl_stmt><decl><type><name>OString</name></type> <name>aMsg</name><argument_list>(<argument><expr><literal type="string">"validation error in OOXML export: Errors: "</literal></expr></argument>)</argument_list></decl>;</decl_stmt>
+            <expr_stmt><expr><name>aMsg</name> <operator>=</operator> <name>aMsg</name> <operator>+</operator> <call><name><name>OString</name><operator>::</operator><name>number</name></name><argument_list>(<argument><expr><name>nErrors</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <if>if<condition>(<expr><name>nErrors</name></expr>)</condition><then>
+            <block>{
+                <expr_stmt><expr><call><name>SAL_WARN</name><argument_list>(<argument><expr><literal type="string">"test"</literal></expr></argument>, <argument><expr><name>aContentOUString</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            }</block></then></if>
+            <expr_stmt><expr><call><name>CPPUNIT_ASSERT_EQUAL_MESSAGE</name><argument_list>(<argument><expr><call><name><name>aMsg</name><operator>.</operator><name>getStr</name></name><argument_list>()</argument_list></call></expr></argument>, <argument><expr><call><name>sal_Int32</name><argument_list>(<argument><expr><literal type="number">0</literal></expr></argument>)</argument_list></call></expr></argument>, <argument><expr><name>nErrors</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        }</block></else></if>
+    }</block></then>
+    <elseif>else <if>if<condition>( <expr><name>eFormat</name> <operator>==</operator> <name><name>test</name><operator>::</operator><name>ODF</name></name> <operator>&amp;&amp;</operator> <operator>!</operator><call><name><name>aContentOUString</name><operator>.</operator><name>isEmpty</name></name><argument_list>()</argument_list></call></expr> )</condition><then>
+    <block>{
+        <if>if<condition>( <expr><call><name><name>aContentOUString</name><operator>.</operator><name>indexOf</name></name><argument_list>(<argument><expr><literal type="string">"Error"</literal></expr></argument>)</argument_list></call> <operator>!=</operator> <operator>-</operator><literal type="number">1</literal></expr> )</condition><then>
+        <block>{
+            <expr_stmt><expr><call><name>SAL_WARN</name><argument_list>(<argument><expr><literal type="string">"test"</literal></expr></argument>, <argument><expr><name>aContentOUString</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+            <expr_stmt><expr><call><name>CPPUNIT_FAIL</name><argument_list>(<argument><expr><call><name><name>aContentString</name><operator>.</operator><name>getStr</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        }</block></then></if>
+    }</block></then></if></elseif></if>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+}</block></function>
+</unit>
