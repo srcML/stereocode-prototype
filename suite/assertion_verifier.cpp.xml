@@ -1,0 +1,18 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="assertion_verifier.cpp"><comment type="block" format="doxygen">/** @stereotype assertion_verifier */</comment>
+<function stereotype="assertion_verifier "><type><name>void</name></type> <name><name>TestAssertTest</name><operator>::</operator><name>testAssertAssertionFail</name></name><parameter_list>()</parameter_list>
+<block>{
+   <macro><name>CPPUNIT_ASSERT_ASSERTION_FAIL</name><argument_list>( <argument>throw CPPUNIT_NS::Exception()</argument> )</argument_list></macro><empty_stmt>;</empty_stmt>
+
+   <try>try
+   <block>{
+      <decl_stmt><decl><type><name>int</name></type> <name>x</name></decl>;</decl_stmt>
+      <expr_stmt><expr><call><name>CPPUNIT_ASSERT_ASSERTION_FAIL</name><argument_list>( <argument><expr><name>x</name> <operator>=</operator> <literal type="number">1234</literal></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+   }</block>
+   <catch>catch <parameter_list>( <parameter><decl><type><name><name>CPPUNIT_NS</name><operator>::</operator><name>Exception</name></name> <modifier>&amp;</modifier></type></decl></parameter> )</parameter_list>
+   <block>{
+      <return>return;</return>
+   }</block></catch></try>
+
+   <throw>throw <expr><call><name><name>std</name><operator>::</operator><name>exception</name></name><argument_list>()</argument_list></call></expr>;</throw>
+}</block></function>
+</unit>

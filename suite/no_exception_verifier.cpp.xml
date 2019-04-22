@@ -1,0 +1,50 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="no_exception_verifier.cpp"><comment type="block" format="doxygen">/** @stereotype boolean_verifier no_exception_verifier hybrid_verifier */</comment>
+<function stereotype="boolean_verifier no_exception_verifier hybrid_verifier "><type><name>void</name></type> <name><name>TetrisGameTest</name><operator>::</operator><name>testRunCallback</name></name><parameter_list>()</parameter_list>
+<block>{
+  <decl_stmt><decl><type><name><name>RenderFunc</name><argument_list type="generic">&lt;<argument><expr><name>renderfuncptr</name></expr></argument>&gt;</argument_list></name></type> <name>dummyRenderFunctor</name><argument_list>(<argument><expr><name>dummyRenderCallback</name></expr></argument>)</argument_list></decl>;</decl_stmt>
+  <expr_stmt><expr><name>mptr</name> <operator>=</operator> <operator>new</operator> <call><name>TetrisGame</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+  <comment type="line">// Set callback outside of constructor</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_NO_THROW</name><argument_list>(<argument><expr><call><name><name>mptr</name><operator>-&gt;</operator><name>setRenderer</name></name><argument_list>(<argument><expr><operator>&amp;</operator><name>dummyRenderFunctor</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+  <comment type="line">// Test normal run/stop</comment>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>HAVE_STDCXX_SYNCH</name></cpp:ifdef>
+  <decl_stmt><decl><type><name>auto</name></type> <name>t0</name> <init>= <expr><call><name><name>mclock</name><operator>::</operator><name>now</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//HAVE_STDCXX_SYNCH</comment>
+
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_NO_THROW</name><argument_list>(<argument><expr><call><name><name>mptr</name><operator>-&gt;</operator><name>run</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>HAVE_STDCXX_SYNCH</name></cpp:ifdef>
+  <expr_stmt><expr><call><name><name>std</name><operator>::</operator><name>this_thread</name><operator>::</operator><name>sleep_for</name></name><argument_list>(<argument><expr><call><name><name>std</name><operator>::</operator><name>chrono</name><operator>::</operator><name>seconds</name></name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">//HAVE_STDCXX_SYNCH</comment>
+
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_NO_THROW</name><argument_list>(<argument><expr><call><name><name>mptr</name><operator>-&gt;</operator><name>pause</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>HAVE_STDCXX_SYNCH</name></cpp:ifdef>
+  <decl_stmt><decl><type><name>auto</name></type> <name>t1</name> <init>= <expr><call><name><name>mclock</name><operator>::</operator><name>now</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>int</name></type> <name>frames</name> <init>= <expr><call><name><name>std</name><operator>::</operator><name>chrono</name><operator>::</operator><name><name>duration_cast</name><argument_list type="generic">&lt;<argument><expr><name>duration_frames</name></expr></argument>&gt;</argument_list></name></name><argument_list>(<argument><expr><name>t1</name><operator>-</operator><name>t0</name></expr></argument>)</argument_list></call><operator>.</operator><call><name>count</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+  <comment type="line">//std::cerr &lt;&lt; dummyCount &lt;&lt; " " &lt;&lt; frames;</comment>
+  <decl_stmt><decl><type><specifier>const</specifier> <name>int</name></type> <name>difference</name> <init>= <expr><name>frames</name><operator>-</operator><name>dummyCount</name></expr></init></decl>;</decl_stmt>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><literal type="number">2</literal> <operator>&gt;</operator> <name>difference</name> <operator>&amp;&amp;</operator> <operator>-</operator><literal type="number">2</literal> <operator>&lt;</operator> <name>difference</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else> <comment type="line">// HAVE_STDCXX_SYNCH</comment>
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><literal type="number">0</literal> <operator>&lt;</operator> <name>dummyCount</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// HAVE_STDCXX_SYNCH</comment>
+
+  <comment type="line">// Test that the destructor stops the internal thread.</comment>
+
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_NO_THROW</name><argument_list>(<argument><expr><call><name><name>mptr</name><operator>-&gt;</operator><name>run</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT_NO_THROW</name><argument_list>(<argument><expr><operator>delete</operator> <name>mptr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+  <expr_stmt><expr><name>mptr</name><operator>=</operator><literal type="number">0</literal></expr>;</expr_stmt>
+
+  <expr_stmt><expr><name>dummyCount</name><operator>=</operator><literal type="number">0</literal></expr>;</expr_stmt>
+
+<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> <name>HAVE_STDCXX_SYNCH</name></cpp:ifdef>
+  <expr_stmt><expr><call><name><name>std</name><operator>::</operator><name>this_thread</name><operator>::</operator><name>sleep_for</name></name><argument_list>(<argument><expr><call><name><name>std</name><operator>::</operator><name>chrono</name><operator>::</operator><name>seconds</name></name><argument_list>(<argument><expr><literal type="number">1</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+<cpp:else>#<cpp:directive>else</cpp:directive></cpp:else> <comment type="line">// HAVE_STDCXX_SYNCH</comment>
+<cpp:error>#<cpp:directive>error</cpp:directive> NYI</cpp:error>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif> <comment type="line">// HAVE_STDCXX_SYNCH</comment>
+
+  <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>( <argument><expr><literal type="number">0</literal> <operator>==</operator> <name>dummyCount</name></expr></argument> )</argument_list></call></expr>;</expr_stmt>
+
+}</block></function></unit>

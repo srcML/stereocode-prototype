@@ -532,7 +532,7 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     Classifies stereotypes using criteria on function definition
 
   -->
-  <xsl:template match="src:function" mode="stereotype">
+<xsl:template match="src:function" mode="stereotype">
     <xsl:apply-templates select="." mode="get"/>
     <xsl:apply-templates select="." mode="nonconstget"/>
     <xsl:apply-templates select="." mode="predicate"/>
@@ -550,7 +550,22 @@ To identify the stereotype Creator::Factory the following conditions need to be 
     <xsl:apply-templates select="." mode="stateless"/>
     <xsl:apply-templates select="." mode="pure_stateless"/>
     <xsl:apply-templates select="." mode="empty"/>
-
+    <xsl:apply-templates select="." mode="boolean_verifier"/>
+    <xsl:apply-templates select="." mode="equality_verifier"/>
+    <xsl:apply-templates select="." mode="doubles_equality_verifier"/>
+    <xsl:apply-templates select="." mode="exception_verifier"/>
+    <xsl:apply-templates select="." mode="no_exception_verifier"/>
+    <xsl:apply-templates select="." mode="assertion_verifier"/>
+    <xsl:apply-templates select="." mode="test_cleaner"/>
+    <xsl:apply-templates select="." mode="test_initializer"/>
+    <xsl:apply-templates select="." mode="utility_verifier"/>
+    <xsl:apply-templates select="." mode="hybrid_verifier"/> 
+    <xsl:apply-templates select="." mode="unclassified"/> 
+    <xsl:apply-templates select="." mode="branch_verifier"/>
+    <xsl:apply-templates select="." mode="iterative_verifier"/>
+    <xsl:apply-templates select="." mode="execution_tester"/>
+    <xsl:apply-templates select="." mode="api_utility_verifier"/>
+    <xsl:apply-templates select="." mode="public_field_verifier"/>
   </xsl:template>
 
 
@@ -1139,6 +1154,204 @@ To identify the stereotype Creator::Factory the following conditions need to be 
 
   <xsl:template match="src:function" mode="empty"/>
 
+<xsl:template match="src:function[descendant::src:block[descendant::src:name='CPPUNIT_ASSERT' or 
+        descendant::src:name='CPPUNIT_ASSERT_MESSAGE']]" 
+        mode="boolean_verifier">boolean_verifier </xsl:template>
+<xsl:template match="src:function" mode="boolean_verifier"/>
+
+<xsl:template match="src:function[descendant::src:block[descendant::src:name='CPPUNIT_FAIL']]" 
+  mode="utility_verifier">utility_verifier </xsl:template>
+<xsl:template match="src:function" mode="utility_verifier"/>
+  
+  <xsl:template match="src:function[descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_EQUAL' or 
+    descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE']]" 
+    mode="equality_verifier">equality_verifier </xsl:template>
+<xsl:template match="src:function" mode="equality_verifier"/>
+
+  <xsl:template match="src:function[descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL' or 
+    descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE']]" 
+    mode="doubles_equality_verifier">doubles_equality_verifier </xsl:template>
+<xsl:template match="src:function" mode="doubles_equality_verifier"/>
+
+  <xsl:template match="src:function[descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']]" 
+    mode="exception_verifier">exception_verifier </xsl:template>
+<xsl:template match="src:function" mode="exception_verifier"/>
+
+<xsl:template match="src:function[descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']]" 
+  mode="no_exception_verifier">no_exception_verifier </xsl:template>
+<xsl:template match="src:function" mode="no_exception_verifier"/>
+
+<xsl:template match="src:function[descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL' or 
+  descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS']]" mode="assertion_verifier">assertion_verifier </xsl:template>
+<xsl:template match="src:function" mode="assertion_verifier"/>
+
+<xsl:template match="src:function[src:name='setUp' or src:name[src:name='setUp']]" mode="test_initializer">test_initializer </xsl:template>
+<xsl:template match="src:function" mode="test_initializer"/>
+
+<xsl:template match="src:function[src:name='tearDown' or src:name[src:name='tearDown']]" mode="test_cleaner">test_cleaner </xsl:template>
+<xsl:template match="src:function" mode="test_cleaner"/>
+
+
+
+<xsl:template match="src:function[
+  (
+  round(count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) div (count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) + 1)) + 
+  round(count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) div (count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 1)) + 
+  round(count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) div (count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')])+ 1)) + 
+  round(count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) div (count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 1)) + 
+  round(count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) div (count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 1))+ 
+  round(count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) div (count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 1))+ 
+  round(count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) div (count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) + 1)) &gt; 1)
+    ]" mode="hybrid_verifier">hybrid_verifier </xsl:template>
+<xsl:template match="src:function" mode="hybrid_verifier"/>
+
+<xsl:template match="src:function[
+  (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')]) = 0) and not(src:name='setUp') and 
+  not(src:name='tearDown') and not(src:name[src:name='setUp']) and 
+  not(src:name[src:name='tearDown'])]" mode="unclassified">unclassified </xsl:template>
+<xsl:template match="src:function" mode="unclassified"/>
+
+<xsl:template match="src:function[descendant::src:if/src:then[
+   (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )]
+  or descendant::src:elseif[
+   (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )]
+  or descendant::src:else[
+   (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )] 
+  ]" mode="branch_verifier">branch_verifier </xsl:template>
+<xsl:template match="src:function" mode="branch_verifier"/>
+
+<xsl:template match="src:function[descendant::src:for[
+   (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )] 
+  or descendant::src:while[
+   (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )]
+  or descendant::src:do[
+  (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])  &gt; 0
+  )]
+  ]" mode="iterative_verifier">iterative_verifier </xsl:template>
+<xsl:template match="src:function" mode="iterative_verifier"/>
+
+<xsl:template match="src:function[descendant::src:expr/src:call[descendant::src:operator='.'] 
+  and not(descendant::src:name='setUp') and not(descendant::src:name[src:name='setUp']) and not(descendant::src:name='tearDown') and not(descendant::src:name[src:name='tearDown']) and 
+   (
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT') or 
+        (descendant::src:name='CPPUNIT_ASSERT_MESSAGE')]) +
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_FAIL')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL') or 
+    (descendant::src:name='CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE')]) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_THROW']) + 
+  count(descendant::src:block[descendant::src:name='CPPUNIT_ASSERT_NO_THROW']) + 
+  count(descendant::src:block[(descendant::src:name='CPPUNIT_ASSERT_ASSERTION_FAIL') or 
+  (descendant::src:name='CPPUNIT_ASSERT_ASSERTION_PASS')])=0)
+  ]" 
+  mode="execution_tester">execution_tester </xsl:template>
+<xsl:template match="src:function" mode="execution_tester"/>
+
+
+<xsl:template match="src:function[descendant::src:expr_stmt/src:expr/src:call[contains(src:name,'CPPUNIT_ASSERT')]/descendant::src:expr/descendant::src:name[src:operator='.']]" mode="public_field_verifier">
+    <xsl:variable name="object_name" select="descendant::src:expr_stmt/src:expr/src:call/descendant::src:expr/descendant::src:name/src:name"/>
+    <xsl:if test="descendant::src:decl_stmt/src:decl/src:name = $object_name">
+        <xsl:variable name="name_of_class" select="descendant::src:decl_stmt/src:decl/src:type/src:name"/>
+          <xsl:if test="not(/src:unit/src:class/src:name = $name_of_class)">public_field_verifier </xsl:if>
+    </xsl:if>
+  </xsl:template>
+<xsl:template match="src:function" mode="public_field_verifier"/>
+
+<xsl:template match="src:function[descendant::src:expr_stmt/src:expr]" mode="api_utility_verifier">
+  <xsl:if test="descendant::src:expr_stmt/src:expr[not(src:operator)]/src:call[not(contains(src:name,'CPPUNIT')) and not(src:argument_list='()')]/src:name[not(src:operator)]">api_utility_verifier </xsl:if>
+</xsl:template>
+<xsl:template match="src:function" mode="api_utility_verifier"/>
   <!--
       Section responsible for actually applying all of the stereotypes and annotating
       the source code with a comment.

@@ -262,9 +262,6 @@ class TestStereotypeXslt(unittest.TestCase):
         })
 
 
-
-
-
     # 
     # @srcMLifyCode("tests/test_data/NTupleChiSqFCN.cpp")
     # def test_NTupleChiSqFCN(self, tree):

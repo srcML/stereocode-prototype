@@ -1,0 +1,18 @@
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="0.9.5" language="C++" filename="public_field_verifier.cpp"><comment type="block" format="doxygen">/** @stereotype boolean_verifier public_field_verifier */</comment>
+<function stereotype="boolean_verifier public_field_verifier "><type><name>void</name></type> <name><name>FakeDataLoaderTest</name><operator>::</operator><name>testLoadLevels</name></name><parameter_list>()</parameter_list>
+<block>{
+    <decl_stmt><decl><type><name>PlayableCharacter</name><modifier>*</modifier></type> <name>character</name> <init>= <expr><operator>new</operator> <call><name>PlayableCharacter</name><argument_list>(<argument><expr><literal type="string">"Jerry"</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name><name>map</name><argument_list type="generic">&lt;<argument><expr><name>string</name></expr></argument>, <argument><expr><name>Level</name><modifier>*</modifier></expr></argument>&gt;</argument_list></name></type> <name>levels</name></decl>;</decl_stmt>
+
+    <decl_stmt><decl><type><name>FakeDataLoader</name><modifier>*</modifier></type> <name>fdl</name> <init>= <expr><call><name><name>FakeDataLoader</name><operator>::</operator><name>Instance</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <expr_stmt><expr><call><name><name>fdl</name><operator>-&gt;</operator><name>LoadLevels</name></name><argument_list>(<argument><expr><name>character</name></expr></argument>, <argument><expr><name>levels</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <decl_stmt><decl><type><name><name>map</name><argument_list type="generic">&lt;<argument><expr><name>string</name></expr></argument>, <argument><expr><name>string</name></expr></argument>&gt;</argument_list></name></type> <name>endOfGameText</name></decl>;</decl_stmt>
+
+    <expr_stmt><expr><call><name><name>fdl</name><operator>-&gt;</operator><name>LoadEndOfGameText</name></name><argument_list>(<argument><expr><name>endOfGameText</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><call><name>CPPUNIT_ASSERT</name><argument_list>(<argument><expr><call><name><name>levels</name><operator>.</operator><name>find</name></name><argument_list>(<argument><expr><literal type="string">"intro"</literal></expr></argument>)</argument_list></call> <operator>!=</operator> <call><name><name>levels</name><operator>.</operator><name>end</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt><expr><operator>delete</operator> <name>character</name></expr>;</expr_stmt>
+}</block></function></unit>
